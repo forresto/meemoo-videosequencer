@@ -1,0 +1,185 @@
+body {
+  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  padding: 0;
+  margin: 0;
+
+  background: black;
+  color: white;
+
+  width: 100%;
+  height: 100%;
+}
+h1 {
+  font-size: 1.6em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+object {
+  padding: 0;
+  margin: 0;
+}
+
+.showtriggers {
+  font-family: monospace;
+  font-size: 10px;
+  position: relative;
+  height: 12px;
+}
+.showtrigger {
+  position: absolute;
+  color: white;
+}
+
+.highlight {
+  color: black;
+  background-color: white;
+}
+
+.playprogress {
+  height: 18px;
+  cursor: pointer;
+}
+.loadprogress {
+  margin-top: -1px;
+  margin-bottom: 10px;
+  height: 7px;
+}
+
+#container {
+  position: fixed;
+  top: 20px;
+  left: 0px;
+  width: 640px;
+  height: 480px;
+  padding-bottom: 20px;
+}
+#viewer {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.ui-resizable-helper {
+  border: 1px gray dotted;
+}
+
+.player_d {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+}
+
+#controlform {
+  font-size: x-large;
+}
+
+#setup {
+  position: relative;
+  margin: 10px 10px 0 660px;
+  padding-bottom: 20px;
+}
+section {
+}
+
+#setup.floatingsetup {
+  margin: 0;
+  padding: 10px 0 0 10px;	
+}
+.floatingsetup section {
+  float: left;
+  width: 600px;
+  padding: 0 10px 10px 0;
+}
+
+.additem {
+
+}
+
+.addlink {
+}
+
+.triggerlabel {
+  font-family: monospace;
+  font-weight: normal;
+  margin: 0;
+  width: 65px;
+  height: 30px;
+}
+
+.triggerlabel .ui-button-text {
+  padding: 0;
+  font-size: 12px;
+}
+
+.triggerlabelname {
+  font-size: 10px;
+  position: absolute;
+  top: 0px;
+  left: 2px;
+}
+.triggerlabeltime {
+  font-size: 12px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  text-align: left;
+  width: 45px;
+  white-space: pre;
+}
+
+input.setupinput {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  font-family: monospace;
+  width: 45px;
+}
+
+input.setuptrack {
+}
+
+.ui-buttonset {
+  padding-bottom: 10px;
+}
+
+.controls {
+  display: table;
+}
+
+.control div.controlitemcell {
+  display: table-cell;
+  padding: 0 5px 0 0;
+  margin: 0;
+}
+
+.volumeslider {
+  width: 150px;
+  /* 		height: 10px; */
+  margin-right: 10px;
+}
+
+.statusmessage {
+  margin: 0;
+  width: 150px;
+}
+
+.ui-accordion .ui-accordion-content,
+.ui-tabs .ui-tabs-panel {
+  padding: 10px;
+}
+
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}

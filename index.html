@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sembiki Audio Visual Sequencer</title>
+
+  <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css" />
+  <link rel="stylesheet" type="text/css" href="meemoo.css" /> 
+  
+  <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>  -->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script> 
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script> 
+  <script type="text/javascript" src="lib/modernizr-1.6.min.js"></script>
+  <script type="text/javascript" src="lib/json2-min.js"></script>
+  <script type="text/javascript" src="lib/underscore.js"></script>
+  <script type="text/javascript" src="lib/backbone.js"></script>
+  <script type="text/javascript" src="lib/backbone-localstorage.js"></script>
+</head>
+<body>
+
+  <div id="intro">
+    You need JavaScript and a modern web broswer to load this application.
+  </div>
+  <div id="application">
+  </div>
+
+
+<script type="text/template" id="application-template">
+
+  <div id="container">
+    <iframe src="viewer.html" id="viewer"></iframe>
+    <button id="popoutbutton">Popout Viewer</button>
+  </div>
+  <div id="setup">
+    <!--
+    <section>
+      <h1>Compositions</h1>
+      <div id="compositions">
+        <div class="additem">
+          <button id="addcomposition" type="button">Add/Load Composition</button>
+        </div>
+      </div>
+    </section>
+    -->
+    <section>
+      <h1>Players</h1>
+      <div id="players">
+        <div class="additem">
+          <form onSubmit="return false;">
+            <input type="text" id="addplayerid" value="rr6HKUfKlW0" /><button id="addplayer" type="button">Add Player</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!--
+    <section>
+      <h1>Videos</h1>
+      <div id="videos">
+        <ul id="videos-nav"></ul>
+      </div>
+    </section>
+    <section>
+      <h1>Multitriggers</h1>
+      <div id="multitriggers">
+        <div id="multitriggers-tabs">
+          <ul id="multitriggers-tabs-nav">
+            <li id="addmultili"><a id="addmultitrigger" class="addlink">+ Add Set</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h1>Patterns</h1>
+      <div id="patterns">
+        <div id="patterns-tabs">
+          <ul id="patterns-tabs-nav">
+            <li id="addpatternli"><a id="addpattern" class="addlink">+ Add Pattern</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h1>Sequencer</h1>
+      <div id="sequencer">
+        <div class="additem">
+          <button id="addsequencer" type="button">Add Sequencer</button>
+        </div>
+      </div>
+    </section>
+    -->
+  </div>
+
+</script>
+
+<script type="text/template" id="control-template"> 
+
+  <div id="control_<%= id %>" class="controls video_<%= video_id %>">
+    <div class="controlitemcell">
+      <h2 class="title" title="Video <%= this.model.Video.cid %>"><%= id %></h2>
+    </div>
+    <div class="controlitemcell">
+      <button class="playbutton" type="button">Play</button>
+    </div>
+    <div class="controlitemcell">
+      <button class="pausebutton" type="button">Pause</button>
+    </div>
+    <div class="controlitemcell">
+      <button class="mutebutton" type="button">Mute</button>
+    </div>
+    <div class="controlitemcell">
+      <button class="unmutebutton" type="button">Unmute</button>
+    </div>
+    <div class="controlitemcell">
+      <div class="volumeslider" title="Volume slider"></div>
+    </div>
+    <div class="controlitemcell">
+      <button class="addtriggerbutton" type="button">Add trigger at current playhead location.</button>
+    </div>
+    <div class="controlitemcell">
+      <p id="statusmessage_<%= id %>" class="statusmessage">Loading...</p>
+    </div>
+    <div class="controlitemcell">
+      <button class="removebutton" type="button">Remove this video.</button>
+    </div>
+  </div>
+  <div class="showtriggers showtriggers_<%= video_id %>"></div>
+  <div id="playprogress_<%= this.model.cid %>" class="playprogress" tabindex="0"></div>
+  <div id="loadprogress_<%= this.model.cid %>" class="loadprogress"></div>
+
+</script>
+
+
+<script type="text/template" id="composition-template"> 
+
+  <span class="comp_title"><%= this.model.cid %>: <%= info.title %></span>
+  <span><button class="comp_load_button" type="button">Load</button></span>
+  <span><button class="comp_save_button" type="button">Save</button></span>
+  <span><button class="comp_delete_button" type="button">Delete</button></span>
+
+</script>
+
+<!-- Application --> 
+
+<script type="text/javascript" src="meemoo.js"></script>
+
+<!-- Analytics --> 
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-274009-19']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</body>
+</html>
