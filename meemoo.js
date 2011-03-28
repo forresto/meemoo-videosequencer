@@ -1,7 +1,7 @@
 (function() {
   /*
 
-  HTML Audio Visual Sequencer
+  Meemoo HTML Audio Visual Sequencer
   by Forrest Oliphant
   at Sembiki Interactive http://sembiki.com/
   and Media Lab Helsinki http://mlab.taik.fi/
@@ -12,11 +12,19 @@
   */  var AppView, Composition, CompositionList, CompositionView, Player, PlayerList, PlayerView, Video, VideoList, VideoView, recieveMessage;
   Composition = Backbone.Model.extend({
     defaults: {
-      "title": "Untitled Sq",
-      "description": "mixed with sq.io",
+      "title": "untitled composition",
+      "description": "mixed with sembiki meemoo audio visual sequencer",
       "mixer": "me!"
     },
     initialize: function() {
+      var loadComp, pastedJSON;
+      if (this.get("loadJSON") !== void 0) {
+        pastedJSON = this.get("loadJSON");
+        if (pastedJSON !== "") {
+          loadComp = JSON.parse(pastedJSON);
+          console.log(loadComp);
+        }
+      }
       this.Videos = new VideoList();
       this.Players = new PlayerList();
       return this.View = new CompositionView({
@@ -26,7 +34,11 @@
     toJSON: function() {
       var jsonobject;
       return jsonobject = {
-        info: this.attributes,
+        info: {
+          title: this.get("title"),
+          description: this.get("description"),
+          mixer: this.get("mixer")
+        },
         videos: this.Videos,
         players: this.Players
       };
@@ -50,7 +62,7 @@
     },
     initialize: function() {
       this.render();
-      $("#compositions").append($(this.el));
+      $("#comp_dialog").append($(this.el));
       this.$('.comp_load_button').button({
         icons: {
           primary: "ui-icon-folder-open"
@@ -67,11 +79,22 @@
         }
       });
     },
-    load: function() {},
-    save: function() {
-      return alert(JSON.stringify(this.model));
+    load: function() {
+      return $("#comp_dialog").dialog();
     },
-    "delete": function() {}
+    save: function() {
+      $("#comp_export_dialog textarea").text(JSON.stringify(this.model));
+      return $("#comp_export_dialog").dialog({
+        modal: true,
+        width: 400,
+        height: 300
+      });
+    },
+    "delete": function() {
+      if (confirm("Are you sure you want to remove this composition (" + (this.model.get('title')) + ")?")) {
+        return false;
+      }
+    }
   });
   Video = Backbone.Model.extend({
     initialize: function() {
@@ -348,16 +371,15 @@
       }).click(function() {
         return window.App.popoutViewer();
       });
-      $('#addcomposition').button({
+      $('#loadcomposition').button({
         icons: {
-          primary: "ui-icon-plus"
+          primary: "ui-icon-folder-open"
         }
       }).click(function() {
-        var loadjson, newComp;
-        loadjson = prompt("Paste the saved block of text here, or just press OK for a new empty composition:");
-        newComp = new Composition(loadjson);
-        App.Compositions.add(newComp);
-        return App.Composition = newComp;
+        return $("#comp_dialog").dialog({
+          modal: true,
+          width: 400
+        });
       });
       $('#addplayer').button({
         icons: {
@@ -378,35 +400,60 @@
     popoutViewer: function() {
       this.viewer = window.open("viewer.html", "popoutviewer");
       if (this.viewer.name === "popoutviewer") {
-        $('#container').remove();
-        return $('#setup').addClass("floatingsetup");
+        $('#container').hide();
+        $('#viewer').remove();
+        $('#setup').addClass("floatingsetup");
+        return setTimeout("App.reloadVideos()", 2500);
       }
+    },
+    popinViewer: function() {
+      if (this.viewer.name === "popoutviewer") {
+        $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>');
+        this.viewer = document.getElementById("viewer").contentWindow;
+        $('#container').show();
+        $('#setup').removeClass("floatingsetup");
+        return setTimeout("App.reloadVideos()", 2500);
+      }
+    },
+    reloadVideos: function() {
+      var player, _i, _len, _ref, _results;
+      _ref = App.Composition.Players.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        _results.push(App.postMessageToViewer("create", player.cid, player.Video.get("ytid")));
+      }
+      return _results;
     },
     postMessageToViewer: function(action, id, value) {
       return this.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.origin);
     },
     recieveMessage: function(e) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;
-      playerinfos = e.data.split("|");
-      _results = [];
-      for (_i = 0, _len = playerinfos.length; _i < _len; _i++) {
-        playerinfo = playerinfos[_i];
-        info = playerinfo.split(":");
-        id = info[0];
-        loaded = info[1];
-        totalsize = info[2];
-        time = info[3];
-        totaltime = info[4];
-        _results.push(id !== "" ? (player = this.Composition.Players.getByCid(id), player ? (player.set({
-          loaded: loaded,
-          totalsize: totalsize,
-          time: time,
-          totaltime: totaltime
-        }), player.Video.set({
-          totaltime: totaltime
-        })) : void 0) : void 0);
+      if (e.data === "POPOUTCLOSED") {
+        return App.popinViewer();
+      } else {
+        playerinfos = e.data.split("|");
+        _results = [];
+        for (_i = 0, _len = playerinfos.length; _i < _len; _i++) {
+          playerinfo = playerinfos[_i];
+          info = playerinfo.split(":");
+          id = info[0];
+          loaded = info[1];
+          totalsize = info[2];
+          time = info[3];
+          totaltime = info[4];
+          _results.push(id !== "" ? (player = this.Composition.Players.getByCid(id), player ? (player.set({
+            loaded: loaded,
+            totalsize: totalsize,
+            time: time,
+            totaltime: totaltime
+          }), player.Video.set({
+            totaltime: totaltime
+          })) : void 0) : void 0);
+        }
+        return _results;
       }
-      return _results;
     }
   });
   $(function() {

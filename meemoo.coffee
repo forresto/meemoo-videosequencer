@@ -1,6 +1,6 @@
 ### 
 
-HTML Audio Visual Sequencer 
+Meemoo HTML Audio Visual Sequencer 
 by Forrest Oliphant 
 at Sembiki Interactive http://sembiki.com/ 
 and Media Lab Helsinki http://mlab.taik.fi/ 
@@ -12,17 +12,25 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
 Composition = Backbone.Model.extend
   defaults:
-    "title": "Untitled Sq"
-    "description": "mixed with sq.io"
+    "title": "untitled composition"
+    "description": "mixed with sembiki meemoo audio visual sequencer"
     "mixer": "me!"
     
   initialize: ->
+    if this.get("loadJSON") isnt undefined
+      pastedJSON = this.get("loadJSON")
+      if pastedJSON isnt ""
+        loadComp = JSON.parse(pastedJSON);
+        console.log loadComp
     this.Videos = new VideoList()
     this.Players = new PlayerList()
     this.View = new CompositionView {model:this}
   toJSON: ->
     jsonobject =
-      info: this.attributes
+      info: 
+        title: this.get("title")
+        description: this.get("description")
+        mixer: this.get("mixer")
       videos: this.Videos
       players: this.Players
     
@@ -46,7 +54,7 @@ CompositionView = Backbone.View.extend
     
   initialize: ->
     this.render()
-    $("#compositions").append($(this.el))
+    $("#comp_dialog").append($(this.el))
     
     this.$('.comp_load_button')
       .button
@@ -59,12 +67,18 @@ CompositionView = Backbone.View.extend
         icons: { primary: "ui-icon-trash" }
     
   load: ->
+    $("#comp_dialog").dialog()
     
   save: ->
-    alert JSON.stringify this.model
+    $("#comp_export_dialog textarea").text(JSON.stringify this.model)
+    $("#comp_export_dialog").dialog
+      modal: true
+      width: 400
+      height: 300
     
   delete: ->
-    # if confirm "Are you sure you want to remove this composition (#{this.model.get('title')})?"
+    if confirm "Are you sure you want to remove this composition (#{this.model.get('title')})?"
+      false 
   
   
 Video = Backbone.Model.extend
@@ -318,14 +332,17 @@ AppView = Backbone.View.extend
       .click ->
         window.App.popoutViewer()
         
-    $('#addcomposition')
+    $('#loadcomposition')
       .button
-        icons: { primary: "ui-icon-plus" }
+        icons: { primary: "ui-icon-folder-open" }
       .click ->
-        loadjson = prompt("Paste the saved block of text here, or just press OK for a new empty composition:")
-        newComp = new Composition(loadjson)
-        App.Compositions.add(newComp)
-        App.Composition = newComp
+        $("#comp_dialog").dialog
+          modal: true
+          width: 400
+        # pastedJSON = prompt("Paste the saved block of text here, or just press OK for a new empty composition:")
+        # newComp = new Composition({loadJSON:pastedJSON})
+        # App.Compositions.add(newComp)
+        # App.Composition = newComp
     
     $('#addplayer')
       .button
@@ -339,30 +356,47 @@ AppView = Backbone.View.extend
     this.Composition = new Composition()
     this.Compositions.add(this.Composition)
     
-    
   popoutViewer: ->
     this.viewer = window.open("viewer.html", "popoutviewer")
     if this.viewer.name is "popoutviewer"
-      $('#container').remove();
-      $('#setup').addClass("floatingsetup");
+      $('#container').hide()
+      $('#viewer').remove()
+      $('#setup').addClass("floatingsetup")
+      # Reload videos in popout
+      setTimeout "App.reloadVideos()", 2500
+    
+  popinViewer: ->
+    if this.viewer.name is "popoutviewer"
+      $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>')
+      this.viewer = document.getElementById("viewer").contentWindow
+      $('#container').show()
+      $('#setup').removeClass("floatingsetup")
+      setTimeout "App.reloadVideos()", 2500
+    
+  reloadVideos: ->
+    for player in App.Composition.Players.models
+      App.postMessageToViewer "create", player.cid, player.Video.get("ytid")
       
   postMessageToViewer: (action, id, value) ->
     this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.origin
     
   recieveMessage: (e) ->
-    playerinfos = e.data.split("|")
-    for playerinfo in playerinfos
-      info = playerinfo.split(":")
-      id = info[0]
-      loaded = info[1]
-      totalsize = info[2]
-      time = info[3]
-      totaltime = info[4]
-      if id isnt ""
-        player = this.Composition.Players.getByCid(id)
-        if player
-          player.set({loaded:loaded,totalsize:totalsize,time:time,totaltime:totaltime})
-          player.Video.set({totaltime:totaltime})
+    if e.data is "POPOUTCLOSED"
+      App.popinViewer()
+    else
+      playerinfos = e.data.split("|")
+      for playerinfo in playerinfos
+        info = playerinfo.split(":")
+        id = info[0]
+        loaded = info[1]
+        totalsize = info[2]
+        time = info[3]
+        totaltime = info[4]
+        if id isnt ""
+          player = this.Composition.Players.getByCid(id)
+          if player
+            player.set({loaded:loaded,totalsize:totalsize,time:time,totaltime:totaltime})
+            player.Video.set({totaltime:totaltime})
     
 
 # Initialize app

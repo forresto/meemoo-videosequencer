@@ -18,6 +18,10 @@ h2 {
   font-size: 1.4em;
 }
 
+h2 .ui-button-text {
+  font-size: .7em;
+}
+
 object {
   padding: 0;
   margin: 0;
@@ -174,6 +178,19 @@ input.setuptrack {
 .ui-tabs .ui-tabs-panel {
   padding: 10px;
 }
+
+.dialog {
+  display:none;
+}
+#comp_text_import {
+  width: 350px;
+  height: 50px;
+}
+#comp_text_export {
+  width: 350px;
+  height: 250px;
+}
+
 
 
 

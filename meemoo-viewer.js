@@ -9,11 +9,11 @@
 
   Built with jQuery in CoffeeScript
 
-  */  var ASPECT, ASPECTRATIO, controllerWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToViewer, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
+  */  var ASPECT, ASPECTRATIO, controllerWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
   resizeTimer = null;
   playerinfointerval = null;
   controllerWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
-  postMessageToViewer = function(message) {
+  postMessageToApp = function(message) {
     return controllerWindow.postMessage(message, window.location.origin);
   };
   recieveMessage = function(e) {
@@ -153,8 +153,13 @@
       }
       message += "|";
     }
-    return postMessageToViewer(message);
+    return postMessageToApp(message);
   };
+  $(window).unload(function() {
+    if (window.name === "popoutviewer") {
+      return postMessageToApp("POPOUTCLOSED");
+    }
+  });
   ASPECT = [4, 3];
   ASPECTRATIO = ASPECT[0] / ASPECT[1];
   $(window).resize(function() {

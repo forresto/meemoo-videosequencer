@@ -10,7 +10,7 @@
   <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>  -->
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script> 
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script> 
-  <script type="text/javascript" src="lib/modernizr-1.6.min.js"></script>
+  <!-- <script type="text/javascript" src="lib/modernizr-1.6.min.js"></script> -->
   <script type="text/javascript" src="lib/json2-min.js"></script>
   <script type="text/javascript" src="lib/underscore.js"></script>
   <script type="text/javascript" src="lib/backbone.js"></script>
@@ -28,20 +28,25 @@
 <script type="text/template" id="application-template">
 
   <div id="container">
-    <iframe src="viewer.html" id="viewer"></iframe>
+    <iframe src="viewer.html" id="viewer" name="inviewer"></iframe>
     <button id="popoutbutton">Popout Viewer</button>
   </div>
   <div id="setup">
-    <!--
     <section>
       <h1>Compositions</h1>
       <div id="compositions">
         <div class="additem">
-          <button id="addcomposition" type="button">Add/Load Composition</button>
+          <button id="loadcomposition" type="button">Load Composition...</button>
+        </div>
+        <div id="comp_dialog" class="dialog" title="Load">
+          <h2>Import from text...</h2>
+          <textarea id="comp_text_import"></textarea>
+        </div>
+        <div id="comp_export_dialog" class="dialog" title="Copy this text to share:">
+          <textarea id="comp_text_export"></textarea>
         </div>
       </div>
     </section>
-    -->
     <section>
       <h1>Players</h1>
       <div id="players">
@@ -132,10 +137,16 @@
 
 <script type="text/template" id="composition-template"> 
 
-  <span class="comp_title"><%= this.model.cid %>: <%= info.title %></span>
-  <span><button class="comp_load_button" type="button">Load</button></span>
-  <span><button class="comp_save_button" type="button">Save</button></span>
-  <span><button class="comp_delete_button" type="button">Delete</button></span>
+  <h2>
+    <span class="comp_title">
+      <%= this.model.cid %>: <%= info.title %>
+    </span>
+  </h2>
+  <p>
+    <button class="comp_load_button" type="button">Load</button>
+    <button class="comp_save_button" type="button">Export as text...</button>
+    <button class="comp_delete_button" type="button">Delete</button>
+  </p>
 
 </script>
 

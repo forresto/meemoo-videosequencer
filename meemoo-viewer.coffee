@@ -21,7 +21,7 @@ controllerWindow =
   else if window.parent then window.parent
   
 
-postMessageToViewer = (message) ->
+postMessageToApp = (message) ->
   controllerWindow.postMessage message, window.location.origin
   
 
@@ -44,8 +44,6 @@ recieveMessage = (e) ->
     when "unmute"  then unmute  id
     when "volume"  then volume  id,value
   
-  #TEST
-  # postMessageToViewer(e.data)
 
 window.addEventListener("message", recieveMessage, false)
 
@@ -146,31 +144,11 @@ window.updatePlayerInfo = ->
     if playero and playero.getDuration
       message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration()
     message += "|"
-  postMessageToViewer(message)
-    
-  # for (var i=0; i<myComposition.players.length; i++) {
-  #   var player = document.getElementById("player"+i+"o");
-  #   var playero = myComposition.players[i];
-  #   # Load status
-  #   if(player && player.getDuration) {
-  #     var position = player.getCurrentTime();
-  #     var totaltime = player.getDuration();
-  #     var loaded = player.getVideoBytesLoaded() / player.getVideoBytesTotal();
-  # 
-  #     # Video status
-  #     $('#status'+i).html(position+"/"+totaltime+" seconds, "+Math.floor(loaded * 100)+"% loaded");
-  # 
-  #     # Progress bars
-  #     $('#playprogress'+i).progressbar("value", position/totaltime*100);
-  #     $('#loadprogress'+i).progressbar("value", loaded*100);
-  # 
-  #     # Ready to play
-  #     var thisVideo = myComposition.videos[playero.videoid];
-  #     if (thisVideo.seconds == null && player.getDuration()>0) {
-  #       # Set triggers once only
-  #       thisVideo.loadInfo(player.getDuration(), player.getVideoBytesTotal());
-  #       #setTriggers(i, totaltime);
-
+  postMessageToApp message
+  
+$(window).unload ->
+  if window.name is "popoutviewer"
+    postMessageToApp "POPOUTCLOSED"
 
 
 # 
