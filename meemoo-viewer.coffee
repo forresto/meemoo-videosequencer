@@ -22,7 +22,7 @@ controllerWindow =
   
 
 postMessageToApp = (message) ->
-  controllerWindow.postMessage message, window.location.origin
+  controllerWindow.postMessage message, window.location.protocol + "//" + window.location.host
   
 
 recieveMessage = (e) ->

@@ -426,7 +426,7 @@
       return _results;
     },
     postMessageToViewer: function(action, id, value) {
-      return this.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.origin);
+      return this.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);
     },
     recieveMessage: function(e) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;

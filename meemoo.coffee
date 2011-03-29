@@ -378,7 +378,7 @@ AppView = Backbone.View.extend
       App.postMessageToViewer "create", player.cid, player.Video.get("ytid")
       
   postMessageToViewer: (action, id, value) ->
-    this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.origin
+    this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
     
   recieveMessage: (e) ->
     if e.data is "POPOUTCLOSED"

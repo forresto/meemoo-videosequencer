@@ -14,7 +14,7 @@
   playerinfointerval = null;
   controllerWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
   postMessageToApp = function(message) {
-    return controllerWindow.postMessage(message, window.location.origin);
+    return controllerWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
   };
   recieveMessage = function(e) {
     var action, id, message, value;
