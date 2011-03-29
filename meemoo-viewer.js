@@ -18,7 +18,7 @@
   };
   recieveMessage = function(e) {
     var action, id, message, value;
-    if (e.origin !== controllerWindow.location.origin) {
+    if (e.origin !== window.location.protocol + "//" + window.location.host) {
       return;
     }
     message = e.data.split(":");
@@ -157,8 +157,9 @@
   };
   $(window).unload(function() {
     if (window.name === "popoutviewer") {
-      return postMessageToApp("POPOUTCLOSED");
+      postMessageToApp("-=POPOUTCLOSED=-");
     }
+    return postMessageToApp("-=REFRESH=-");
   });
   ASPECT = [4, 3];
   ASPECTRATIO = ASPECT[0] / ASPECT[1];

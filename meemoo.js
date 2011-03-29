@@ -399,41 +399,40 @@
     },
     popoutViewer: function() {
       this.viewer = window.open("viewer.html", "popoutviewer");
-      if (this.viewer.name === "popoutviewer") {
-        $('#container').hide();
-        $('#viewer').remove();
-        $('#setup').addClass("floatingsetup");
-        return setTimeout("App.reloadVideos()", 2500);
-      }
+      $('#container').hide();
+      $('#viewer').remove();
+      return $('#setup').addClass("floatingsetup");
     },
     popinViewer: function() {
-      if (this.viewer.name === "popoutviewer") {
-        $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>');
-        this.viewer = document.getElementById("viewer").contentWindow;
-        $('#container').show();
-        $('#setup').removeClass("floatingsetup");
-        return setTimeout("App.reloadVideos()", 2500);
-      }
+      $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>');
+      this.viewer = document.getElementById("viewer").contentWindow;
+      $('#container').show();
+      return $('#setup').removeClass("floatingsetup");
     },
     reloadVideos: function() {
-      var player, _i, _len, _ref, _results;
-      _ref = App.Composition.Players.models;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        _results.push(App.postMessageToViewer("create", player.cid, player.Video.get("ytid")));
-      }
-      return _results;
+      this.reload = function() {
+        var player, _i, _len, _ref, _results;
+        _ref = App.Composition.Players.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          player = _ref[_i];
+          _results.push(App.postMessageToViewer("create", player.cid, player.Video.get("ytid")));
+        }
+        return _results;
+      };
+      return setTimeout(this.reload, 2500);
     },
     postMessageToViewer: function(action, id, value) {
-      return this.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);
+      return App.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);
     },
-    recieveMessage: function(e) {
+    recieveMessage: function(msg) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;
-      if (e.data === "POPOUTCLOSED") {
+      if (msg === "-=POPOUTCLOSED=-") {
         return App.popinViewer();
+      } else if (msg === "-=REFRESH=-") {
+        return App.reloadVideos();
       } else {
-        playerinfos = e.data.split("|");
+        playerinfos = msg.split("|");
         _results = [];
         for (_i = 0, _len = playerinfos.length; _i < _len; _i++) {
           playerinfo = playerinfos[_i];
@@ -460,10 +459,11 @@
     return window.App = new AppView();
   });
   recieveMessage = function(e) {
-    if (e.origin !== window.location.origin) {
+    console.log(e.data);
+    if (e.origin !== window.location.protocol + "//" + window.location.host) {
       return;
     }
-    return window.App.recieveMessage(e);
+    return window.App.recieveMessage(e.data);
   };
   window.addEventListener("message", recieveMessage, false);
 }).call(this);

@@ -26,7 +26,7 @@ postMessageToApp = (message) ->
   
 
 recieveMessage = (e) ->
-  if e.origin isnt controllerWindow.location.origin
+  if e.origin isnt window.location.protocol + "//" + window.location.host
     return
   message = e.data.split(":")
   action = message[0] # create, destroy, seek, play, pause, mute
@@ -148,7 +148,8 @@ window.updatePlayerInfo = ->
   
 $(window).unload ->
   if window.name is "popoutviewer"
-    postMessageToApp "POPOUTCLOSED"
+    postMessageToApp "-=POPOUTCLOSED=-"
+  postMessageToApp "-=REFRESH=-"
 
 
 # 

@@ -358,33 +358,32 @@ AppView = Backbone.View.extend
     
   popoutViewer: ->
     this.viewer = window.open("viewer.html", "popoutviewer")
-    if this.viewer.name is "popoutviewer"
-      $('#container').hide()
-      $('#viewer').remove()
-      $('#setup').addClass("floatingsetup")
-      # Reload videos in popout
-      setTimeout "App.reloadVideos()", 2500
+    $('#container').hide()
+    $('#viewer').remove()
+    $('#setup').addClass("floatingsetup")
     
   popinViewer: ->
-    if this.viewer.name is "popoutviewer"
-      $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>')
-      this.viewer = document.getElementById("viewer").contentWindow
-      $('#container').show()
-      $('#setup').removeClass("floatingsetup")
-      setTimeout "App.reloadVideos()", 2500
+    $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>')
+    this.viewer = document.getElementById("viewer").contentWindow
+    $('#container').show()
+    $('#setup').removeClass("floatingsetup")
     
   reloadVideos: ->
-    for player in App.Composition.Players.models
-      App.postMessageToViewer "create", player.cid, player.Video.get("ytid")
+    @reload = ->
+      for player in App.Composition.Players.models
+        App.postMessageToViewer "create", player.cid, player.Video.get("ytid") 
+    setTimeout @reload, 2500
       
   postMessageToViewer: (action, id, value) ->
-    this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
+    App.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
     
-  recieveMessage: (e) ->
-    if e.data is "POPOUTCLOSED"
+  recieveMessage: (msg) ->
+    if msg is "-=POPOUTCLOSED=-"
       App.popinViewer()
+    else if msg is "-=REFRESH=-"
+      App.reloadVideos()
     else
-      playerinfos = e.data.split("|")
+      playerinfos = msg.split("|")
       for playerinfo in playerinfos
         info = playerinfo.split(":")
         id = info[0]
@@ -408,8 +407,9 @@ $ ->
 
 
 recieveMessage = (e) ->
-  if e.origin isnt window.location.origin
+  console.log e.data
+  if e.origin isnt window.location.protocol + "//" + window.location.host
     return
-  window.App.recieveMessage e
+  window.App.recieveMessage e.data
 
 window.addEventListener "message", recieveMessage, false
