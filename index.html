@@ -32,23 +32,32 @@
     <button id="popoutbutton">Popout Viewer</button>
   </div>
   <div id="setup">
-    <!--
     <section>
       <h1>Compositions</h1>
       <div id="compositions">
         <div class="additem">
-          <button id="loadcomposition" type="button">Load Composition...</button>
+          <button id="newcomposition" type="button">New</button>
+          <button id="loadcomposition" type="button">Open...</button>
         </div>
         <div id="comp_dialog" class="dialog" title="Load">
-          <h2>Import from text...</h2>
-          <textarea id="comp_text_import"></textarea>
+          <h2>Import from text</h2>
+          <textarea id="comp_import_text"></textarea>
+          <button id="comp_import_button" type="button">Import</button>
+          <h2>Saved compositions</h2>
         </div>
         <div id="comp_export_dialog" class="dialog" title="Copy this text to share:">
-          <textarea id="comp_text_export"></textarea>
+          <textarea id="comp_export_text"></textarea>
         </div>
+        <div id="comp_info">
+          <h2 id="comp_info_title" class="editable" contenteditable="true" title="Click to edit title">
+          </h2>
+          <p id="comp_info_description" class="editable" contenteditable="true" title="Click to edit description">
+          </p>
+        </div>
+        <button id="composition-save" type="button">Save</button>
+        <button id="composition-export" type="button">Export as text...</button>
       </div>
     </section>
-    -->
     <section>
       <h1>Players</h1>
       <div id="players">
@@ -137,23 +146,22 @@
 </script>
 
 
-<script type="text/template" id="composition-template"> 
+<script type="text/template" id="composition-list-template"> 
 
-  <h2>
-    <span class="comp_title">
-      <%= this.model.cid %>: <%= info.title %>
-    </span>
-  </h2>
-  <p>
-    <button class="comp_load_button" type="button">Load</button>
-    <button class="comp_save_button" type="button">Export as text...</button>
-    <button class="comp_delete_button" type="button">Delete</button>
-  </p>
+  <span title="<%= info.description %>">
+    <%= this.model.cid %>: <%= info.title %>
+  </span>
+  <button class="comp_load_button" type="button">Load</button>
+  <button class="comp_export_button" type="button">Export...</button>
+  <button class="comp_delete_button" type="button">Delete</button>
 
 </script>
 
 <!-- Application --> 
 
+<script type="text/javascript" src="meemoo-composition.js"></script>
+<script type="text/javascript" src="meemoo-video.js"></script>
+<script type="text/javascript" src="meemoo-player.js"></script>
 <script type="text/javascript" src="meemoo.js"></script>
 
 <!-- Analytics --> 

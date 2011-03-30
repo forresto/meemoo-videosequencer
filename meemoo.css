@@ -182,11 +182,11 @@ input.setuptrack {
 .dialog {
   display:none;
 }
-#comp_text_import {
+#comp_import_text {
   width: 350px;
   height: 50px;
 }
-#comp_text_export {
+#comp_export_text {
   width: 350px;
   height: 250px;
 }

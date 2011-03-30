@@ -16,15 +16,15 @@ playerinfointerval = null
 
 # visibleFrames
 
-controllerWindow = 
+appWindow = 
   if window.opener then window.opener 
   else if window.parent then window.parent
   
-
-postMessageToApp = (message) ->
-  controllerWindow.postMessage message, window.location.protocol + "//" + window.location.host
   
-
+postMessageToApp = (message) ->
+  appWindow.postMessage message, window.location.protocol + "//" + window.location.host
+  
+  
 recieveMessage = (e) ->
   if e.origin isnt window.location.protocol + "//" + window.location.host
     return
@@ -49,6 +49,9 @@ window.addEventListener("message", recieveMessage, false)
 
 
 create = (id,value) ->
+  if $("#player_d_"+id).length > 0
+    return
+  
   $('#players').append '<div id="player_d_'+id+'" class="player_d"><div id="player_r_'+id+'"></div></div>'
   
   params = { allowScriptAccess: "always", wmode: "opaque" }
@@ -148,7 +151,7 @@ window.updatePlayerInfo = ->
   
 $(window).unload ->
   if window.name is "popoutviewer"
-    postMessageToApp "-=POPOUTCLOSED=-"
+    postMessageToApp "-=POPOUTCLOSED=-" #FIXME: doesn't fire in Safari, only getting refresh
   postMessageToApp "-=REFRESH=-"
 
 

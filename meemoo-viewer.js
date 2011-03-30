@@ -9,12 +9,12 @@
 
   Built with jQuery in CoffeeScript
 
-  */  var ASPECT, ASPECTRATIO, controllerWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
+  */  var ASPECT, ASPECTRATIO, appWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
   resizeTimer = null;
   playerinfointerval = null;
-  controllerWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
+  appWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
   postMessageToApp = function(message) {
-    return controllerWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
+    return appWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
   };
   recieveMessage = function(e) {
     var action, id, message, value;
@@ -51,6 +51,9 @@
   window.addEventListener("message", recieveMessage, false);
   create = function(id, value) {
     var atts, params;
+    if ($("#player_d_" + id).length > 0) {
+      return;
+    }
     $('#players').append('<div id="player_d_' + id + '" class="player_d"><div id="player_r_' + id + '"></div></div>');
     params = {
       allowScriptAccess: "always",
