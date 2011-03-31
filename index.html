@@ -14,7 +14,7 @@
   <script type="text/javascript" src="lib/json2-min.js"></script>
   <script type="text/javascript" src="lib/underscore.js"></script>
   <script type="text/javascript" src="lib/backbone.js"></script>
-  <!-- <script type="text/javascript" src="lib/backbone-localstorage.js"></script> -->
+  <script type="text/javascript" src="lib/backbone-localstorage.js"></script>
 </head>
 <body>
 
@@ -35,7 +35,7 @@
     <section>
       <h1>Compositions</h1>
       <div id="compositions">
-        <div class="additem">
+        <div class="additem" style="display:none;">
           <button id="newcomposition" type="button">New</button>
           <button id="loadcomposition" type="button">Open...</button>
         </div>
@@ -49,10 +49,9 @@
           <textarea id="comp_export_text"></textarea>
         </div>
         <div id="comp_info">
-          <h2 id="comp_info_title" class="editable" contenteditable="true" title="Click to edit title">
-          </h2>
-          <p id="comp_info_description" class="editable" contenteditable="true" title="Click to edit description">
-          </p>
+          <h2 id="comp_info_title" class="editable" contenteditable="true" title="Click to edit title"></h2>
+          <p id="comp_info_mixer" class="editable" contenteditable="true" title="Click to edit mixer name"></p>
+          <p id="comp_info_description" class="editable" contenteditable="true" title="Click to edit description"></p>
         </div>
         <button id="composition-save" type="button">Save</button>
         <button id="composition-export" type="button">Export as text...</button>
@@ -63,7 +62,7 @@
       <div id="players">
         <div class="additem">
           <form onSubmit="return false;">
-            <input type="text" id="addplayerid" value="mTg5V2oA_hY" /><button id="addplayer" type="button">Add Player</button>
+            <input type="text" id="addplayerid" value="" /><button id="addplayer" type="button">Add Player</button>
           </form>
         </div>
       </div>
@@ -148,8 +147,8 @@
 
 <script type="text/template" id="composition-list-template"> 
 
-  <span title="<%= info.description %>">
-    <%= this.model.cid %>: <%= info.title %>
+  <span title="<%= this.model.get('description') %>">
+    <%= this.model.cid %>: <%= this.model.get('title') %>
   </span>
   <button class="comp_load_button" type="button">Load</button>
   <button class="comp_export_button" type="button">Export...</button>

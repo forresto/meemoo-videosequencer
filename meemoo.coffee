@@ -1,9 +1,9 @@
 ### 
 
 Meemoo HTML Audio Visual Sequencer 
-by Forrest Oliphant 
-at Sembiki Interactive http://sembiki.com/ 
-and Media Lab Helsinki http://mlab.taik.fi/ 
+  by Forrest Oliphant 
+    at Sembiki Interactive http://sembiki.com/ 
+    and Media Lab Helsinki http://mlab.taik.fi/ 
 (copyleft) 2011 
 
 Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
@@ -34,9 +34,6 @@ AppView = Backbone.View.extend
     $('#intro').hide()
     $('#application').html this.template
     
-    # Loading doesn't work yet
-    $('#compositions').parent().hide()
-    
     #TODO multiple/custom keyboard layouts?
     this.triggers = this.triggers_us 
     this.keycodes = this.keycodes_us
@@ -56,9 +53,8 @@ AppView = Backbone.View.extend
         icons: { primary: "ui-icon-document" }
       .click ->
         if confirm "Are you sure you want to start with a new blank composition?"
-          newComp = new Composition()
-          App.Compositions.add(newComp)
-          App.Composition = newComp
+          # newComp = new Composition()
+          App.Composition = App.Compositions.create()
             
     $('#loadcomposition')
       .button
@@ -72,7 +68,11 @@ AppView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-disk" }
       .click ->
-        App.Composition.View.save()
+        App.Composition.save
+          title : $("#comp_info_title").text()
+          mixer : $("#comp_info_mixer").text()
+          description : $("#comp_info_description").text()
+        App.Composition.View.render()
         
     $('#composition-export')
       .button
@@ -80,28 +80,30 @@ AppView = Backbone.View.extend
       .click ->
         App.Composition.View.export()
     
-    
     $('#comp_import_button')
       .button
         icons: { primary: "ui-icon-arrowthickstop-1-s" }
       .click ->
         pastedJSON = $("comp_import_text").text()
-        newComp = new Composition({loadJSON:pastedJSON})
-        App.Compositions.add(newComp)
-        App.Composition = newComp
+        App.Composition = App.Compositions.create({loadJSON:pastedJSON})
     
     $('#addplayer')
       .button
         icons: { primary: "ui-icon-plus" }
       .click ->
-        newId = $('#addplayerid').val()
-        App.Composition.Players.add(new Player({ytid:newId}));
+        App.addPlayer $('#addplayerid').val()
         return false
         
-        
+  initializeCompositions: ->
     this.Compositions = new CompositionList()
-    this.Composition = new Composition()
-    this.Compositions.add(this.Composition)
+    this.Compositions.fetch()
+    #HACK
+    this.reloadVideos()
+      
+  addPlayer: (ytid) ->
+    if App.Composition is undefined
+      App.Composition = App.Compositions.create()
+    App.Composition.Players.add new Player {ytid:ytid}
     
   popoutViewer: ->
     this.viewer = window.open("viewer.html", "popoutviewer")
@@ -115,11 +117,11 @@ AppView = Backbone.View.extend
       this.viewer = document.getElementById("viewer").contentWindow
       $('#container').show()
       $('#setup').removeClass("floatingsetup")
-    
+      
   reloadVideos: ->
     @reload = ->
       for player in App.Composition.Players.models
-        player.set({loaded:0})
+        player.set({loaded:0,time:0})
         App.postMessageToViewer "create", player.cid, player.Video.get("ytid") 
     setTimeout @reload, 2500
       
@@ -150,6 +152,7 @@ AppView = Backbone.View.extend
 # Initialize app
 $ ->
   window.App = new AppView()
+  window.App.initializeCompositions()
   
   
 # Util

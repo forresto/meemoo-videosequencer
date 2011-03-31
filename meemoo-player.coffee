@@ -1,9 +1,9 @@
 ### 
 
 Meemoo HTML Audio Visual Sequencer 
-by Forrest Oliphant 
-at Sembiki Interactive http://sembiki.com/ 
-and Media Lab Helsinki http://mlab.taik.fi/ 
+  by Forrest Oliphant 
+    at Sembiki Interactive http://sembiki.com/ 
+    and Media Lab Helsinki http://mlab.taik.fi/ 
 (copyleft) 2011 
 
 Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
@@ -57,10 +57,12 @@ this.PlayerView = Backbone.View.extend
   play: ->
     this.model.set({playing:true})
     window.App.postMessageToViewer("play", this.model.cid)
+    this.model.Video.View.updateTriggers()
     
   pause: ->
     this.model.set({playing:false})
     window.App.postMessageToViewer("pause", this.model.cid)
+    this.model.Video.View.updateTriggers()
     
   mute: ->
     window.App.postMessageToViewer("mute", this.model.cid)
@@ -110,7 +112,11 @@ this.PlayerView = Backbone.View.extend
     triggerid = App.keycodes.indexOf(keyCode)
     if (triggerid isnt -1)
       seconds = this.model.Video.Triggers[triggerid]
-      if (seconds isnt undefined)
+      if (seconds is undefined or seconds is null)
+        # New trigger
+        this.model.Video.addTrigger triggerid, this.model.get('time')
+      else
+        # Seek to trigger
         this.seek seconds
     
   render: ->
@@ -164,6 +170,5 @@ this.PlayerView = Backbone.View.extend
       .progressbar {value: 0}
     this.$('.loadprogress')
       .progressbar {value: 0}
-      
       
     return this

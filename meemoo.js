@@ -2,9 +2,9 @@
   /*
 
   Meemoo HTML Audio Visual Sequencer
-  by Forrest Oliphant
-  at Sembiki Interactive http://sembiki.com/
-  and Media Lab Helsinki http://mlab.taik.fi/
+    by Forrest Oliphant
+      at Sembiki Interactive http://sembiki.com/
+      and Media Lab Helsinki http://mlab.taik.fi/
   (copyleft) 2011
 
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
@@ -17,7 +17,6 @@
     initialize: function() {
       $('#intro').hide();
       $('#application').html(this.template);
-      $('#compositions').parent().hide();
       this.triggers = this.triggers_us;
       this.keycodes = this.keycodes_us;
       this.viewer = document.getElementById("viewer").contentWindow;
@@ -33,11 +32,8 @@
           primary: "ui-icon-document"
         }
       }).click(function() {
-        var newComp;
         if (confirm("Are you sure you want to start with a new blank composition?")) {
-          newComp = new Composition();
-          App.Compositions.add(newComp);
-          return App.Composition = newComp;
+          return App.Composition = App.Compositions.create();
         }
       });
       $('#loadcomposition').button({
@@ -55,7 +51,12 @@
           primary: "ui-icon-disk"
         }
       }).click(function() {
-        return App.Composition.View.save();
+        App.Composition.save({
+          title: $("#comp_info_title").text(),
+          mixer: $("#comp_info_mixer").text(),
+          description: $("#comp_info_description").text()
+        });
+        return App.Composition.View.render();
       });
       $('#composition-export').button({
         icons: {
@@ -69,29 +70,33 @@
           primary: "ui-icon-arrowthickstop-1-s"
         }
       }).click(function() {
-        var newComp, pastedJSON;
+        var pastedJSON;
         pastedJSON = $("comp_import_text").text();
-        newComp = new Composition({
+        return App.Composition = App.Compositions.create({
           loadJSON: pastedJSON
         });
-        App.Compositions.add(newComp);
-        return App.Composition = newComp;
       });
-      $('#addplayer').button({
+      return $('#addplayer').button({
         icons: {
           primary: "ui-icon-plus"
         }
       }).click(function() {
-        var newId;
-        newId = $('#addplayerid').val();
-        App.Composition.Players.add(new Player({
-          ytid: newId
-        }));
+        App.addPlayer($('#addplayerid').val());
         return false;
       });
+    },
+    initializeCompositions: function() {
       this.Compositions = new CompositionList();
-      this.Composition = new Composition();
-      return this.Compositions.add(this.Composition);
+      this.Compositions.fetch();
+      return this.reloadVideos();
+    },
+    addPlayer: function(ytid) {
+      if (App.Composition === void 0) {
+        App.Composition = App.Compositions.create();
+      }
+      return App.Composition.Players.add(new Player({
+        ytid: ytid
+      }));
     },
     popoutViewer: function() {
       this.viewer = window.open("viewer.html", "popoutviewer");
@@ -115,7 +120,8 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           player = _ref[_i];
           player.set({
-            loaded: 0
+            loaded: 0,
+            time: 0
           });
           _results.push(App.postMessageToViewer("create", player.cid, player.Video.get("ytid")));
         }
@@ -157,7 +163,8 @@
     }
   });
   $(function() {
-    return window.App = new AppView();
+    window.App = new AppView();
+    return window.App.initializeCompositions();
   });
   recieveMessage = function(e) {
     if (e.origin !== window.location.protocol + "//" + window.location.host) {

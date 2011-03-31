@@ -2,9 +2,9 @@
   /*
 
   Meemoo HTML Audio Visual Sequencer
-  by Forrest Oliphant
-  at Sembiki Interactive http://sembiki.com/
-  and Media Lab Helsinki http://mlab.taik.fi/
+    by Forrest Oliphant
+      at Sembiki Interactive http://sembiki.com/
+      and Media Lab Helsinki http://mlab.taik.fi/
   (copyleft) 2011
 
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
@@ -16,7 +16,8 @@
       "mixer": "me!"
     },
     initialize: function() {
-      var loadComp, pastedJSON;
+      var addID, loadComp, newPlayer, pastedJSON, player, video, _i, _len, _ref, _results;
+      App.Composition = this;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -26,25 +27,49 @@
       }
       this.Videos = new VideoList();
       this.Players = new PlayerList();
-      return this.View = new CompositionView({
+      this.View = new CompositionView({
         model: this
       });
+      if (this.attributes.players) {
+        _ref = this.attributes.players;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          player = _ref[_i];
+          _results.push((function() {
+            var _i, _len, _ref, _results;
+            _ref = this.attributes.videos;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              video = _ref[_i];
+              _results.push(player.video_id === video.id ? (addID = video.ytid, addID !== "" ? (newPlayer = new Player({
+                ytid: addID
+              }), this.Players.add(newPlayer), newPlayer.Video.Triggers = video.triggers, newPlayer.Video.View.updateTriggers()) : void 0) : void 0);
+            }
+            return _results;
+          }).call(this));
+        }
+        return _results;
+      }
     },
     toJSON: function() {
       var jsonobject;
       return jsonobject = {
-        info: {
-          title: this.get("title"),
-          description: this.get("description"),
-          mixer: this.get("mixer")
-        },
+        id: this.id,
+        title: this.get("title"),
+        description: this.get("description"),
+        mixer: this.get("mixer"),
         videos: this.Videos,
         players: this.Players
       };
+    },
+    "delete": function() {
+      this.destroy();
+      return this.View.remove();
     }
   });
   this.CompositionList = Backbone.Collection.extend({
-    model: Composition
+    model: Composition,
+    localStorage: new Store("compositions")
   });
   this.CompositionView = Backbone.View.extend({
     tagName: "div",
@@ -57,13 +82,6 @@
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
-      return this;
-    },
-    initialize: function() {
-      this.render();
-      $("#comp_dialog").append($(this.el));
-      $("#comp_info_title").text(this.model.get("title"));
-      $("#comp_info_description").text(this.model.get("description"));
       this.$('.comp_load_button').button({
         icons: {
           primary: "ui-icon-folder-open"
@@ -74,17 +92,22 @@
           primary: "ui-icon-clipboard"
         }
       });
-      return this.$('.comp_delete_button').button({
+      this.$('.comp_delete_button').button({
         icons: {
           primary: "ui-icon-trash"
         }
       });
+      return this;
+    },
+    initialize: function() {
+      this.render();
+      $("#comp_dialog").append($(this.el));
+      $("#comp_info_title").text(this.model.get("title"));
+      $("#comp_info_mixer").text(this.model.get("mixer"));
+      return $("#comp_info_description").text(this.model.get("description"));
     },
     save: function() {
-      return this.model.set({
-        title: $("#comp_info_title").text(),
-        description: $("#comp_info_description").text()
-      });
+      return this.render();
     },
     load: function() {
       return false;
@@ -99,8 +122,11 @@
     },
     "delete": function() {
       if (confirm("Are you sure you want to remove this composition (" + (this.model.get('title')) + ")?")) {
-        return false;
+        return this.model["delete"]();
       }
+    },
+    remove: function() {
+      return $(this.el).remove();
     }
   });
 }).call(this);

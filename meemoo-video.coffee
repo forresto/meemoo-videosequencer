@@ -1,9 +1,9 @@
 ### 
 
 Meemoo HTML Audio Visual Sequencer 
-by Forrest Oliphant 
-at Sembiki Interactive http://sembiki.com/ 
-and Media Lab Helsinki http://mlab.taik.fi/ 
+  by Forrest Oliphant 
+    at Sembiki Interactive http://sembiki.com/ 
+    and Media Lab Helsinki http://mlab.taik.fi/ 
 (copyleft) 2011 
 
 Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
@@ -16,11 +16,11 @@ this.Video = Backbone.Model.extend
     this.View = new VideoView {model:this}
     this.addTrigger 0, 0
   addTrigger: (position, time) ->
-    if position < App.triggers.length
+    if position < App.triggers.length # if there is room for triggers
       time = parseFloat(time)
-      if _.indexOf(this.Triggers, time, true) is -1
+      if _.indexOf(this.Triggers, time, true) is -1 # if the time isn't a trigger already
         this.Triggers[position] = time
-        this.Triggers.sort((a,b) -> a-b)
+        # this.Triggers.sort((a,b) -> a-b)
         this.View.updateTriggers()
   toJSON: ->
     jsonobject =
@@ -57,6 +57,7 @@ this.VideoView = Backbone.View.extend
   updateTriggers: ->
     triggershtml = ""
     for trigger in this.model.Triggers
-      left = trigger / this.model.get("totaltime") * 100
-      triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
+      if trigger isnt null
+        left = trigger / this.model.get("totaltime") * 100
+        triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
     $(".showtriggers_#{this.model.cid}").html(triggershtml)

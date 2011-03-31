@@ -2,9 +2,9 @@
   /*
 
   Meemoo HTML Audio Visual Sequencer
-  by Forrest Oliphant
-  at Sembiki Interactive http://sembiki.com/
-  and Media Lab Helsinki http://mlab.taik.fi/
+    by Forrest Oliphant
+      at Sembiki Interactive http://sembiki.com/
+      and Media Lab Helsinki http://mlab.taik.fi/
   (copyleft) 2011
 
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
@@ -22,9 +22,6 @@
         time = parseFloat(time);
         if (_.indexOf(this.Triggers, time, true) === -1) {
           this.Triggers[position] = time;
-          this.Triggers.sort(function(a, b) {
-            return a - b;
-          });
           return this.View.updateTriggers();
         }
       }
@@ -69,8 +66,10 @@
       _ref = this.model.Triggers;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         trigger = _ref[_i];
-        left = trigger / this.model.get("totaltime") * 100;
-        triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+        if (trigger !== null) {
+          left = trigger / this.model.get("totaltime") * 100;
+          triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+        }
       }
       return $(".showtriggers_" + this.model.cid).html(triggershtml);
     }
