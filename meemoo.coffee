@@ -97,13 +97,17 @@ AppView = Backbone.View.extend
   initializeCompositions: ->
     this.Compositions = new CompositionList()
     this.Compositions.fetch()
-    #HACK
-    this.reloadVideos()
+    if this.Compositions.length > 0
+      this.loadComposition this.Compositions.at this.Compositions.length-1
+      
+  loadComposition: (comp) ->
+    this.Composition = comp
+    this.Composition.initializeView()
       
   addPlayer: (ytid) ->
-    if App.Composition is undefined
-      App.Composition = App.Compositions.create()
-    App.Composition.Players.add new Player {ytid:ytid}
+    if this.Composition is undefined
+      this.Composition = this.Compositions.create()
+    this.Composition.addPlayer ytid
     
   popoutViewer: ->
     this.viewer = window.open("viewer.html", "popoutviewer")
@@ -123,7 +127,11 @@ AppView = Backbone.View.extend
       for player in App.Composition.Players.models
         player.set({loaded:0,time:0})
         App.postMessageToViewer "create", player.cid, player.Video.get("ytid") 
-    setTimeout @reload, 2500
+    @reloadTriggers = ->
+      for video in App.Composition.Videos.models
+        video.View.updateTriggers()
+    setTimeout @reload, 2000
+    setTimeout @reloadTriggers, 5000 #TODO save video lengths to video
       
   postMessageToViewer: (action, id, value) ->
     App.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host

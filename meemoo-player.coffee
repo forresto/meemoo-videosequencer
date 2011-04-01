@@ -14,10 +14,13 @@ this.Player = Backbone.Model.extend
   # loaded, totalsize, time, totaltime
   initialize: ->
     if this.get("ytid")
-      this.Video = App.Composition.Videos.getOrAddVideo this.get "ytid"
-      this.View = new PlayerView {model:this}
-      this.Video.View.updateTriggers()
-      this.set({playing:true})
+      this.Video = this.get("Composition").Videos.getOrAddVideo this.get "ytid"
+    if this.get("Composition") is App.Composition
+      this.initializeView()
+      this.Video.initializeView()
+  initializeView: ->
+    this.View = new PlayerView {model:this}
+    this.set({playing:true})
   remove: ->
     App.Composition.Players.remove(this)
     # this.destroy()
@@ -28,10 +31,8 @@ this.Player = Backbone.Model.extend
       id: this.cid
       video_id: this.Video.cid
 
-
 this.PlayerList = Backbone.Collection.extend
   model: Player
-
 
 this.PlayerView = Backbone.View.extend
   

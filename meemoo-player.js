@@ -12,15 +12,20 @@
   */  this.Player = Backbone.Model.extend({
     initialize: function() {
       if (this.get("ytid")) {
-        this.Video = App.Composition.Videos.getOrAddVideo(this.get("ytid"));
-        this.View = new PlayerView({
-          model: this
-        });
-        this.Video.View.updateTriggers();
-        return this.set({
-          playing: true
-        });
+        this.Video = this.get("Composition").Videos.getOrAddVideo(this.get("ytid"));
       }
+      if (this.get("Composition") === App.Composition) {
+        this.initializeView();
+        return this.Video.initializeView();
+      }
+    },
+    initializeView: function() {
+      this.View = new PlayerView({
+        model: this
+      });
+      return this.set({
+        playing: true
+      });
     },
     remove: function() {
       return App.Composition.Players.remove(this);

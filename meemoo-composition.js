@@ -17,7 +17,6 @@
     },
     initialize: function() {
       var addID, loadComp, newPlayer, pastedJSON, player, video, _i, _len, _ref, _results;
-      App.Composition = this;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -25,11 +24,11 @@
           console.log(loadComp);
         }
       }
-      this.Videos = new VideoList();
-      this.Players = new PlayerList();
       this.View = new CompositionView({
         model: this
       });
+      this.Videos = new VideoList();
+      this.Players = new PlayerList();
       if (this.attributes.players) {
         _ref = this.attributes.players;
         _results = [];
@@ -41,15 +40,36 @@
             _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               video = _ref[_i];
-              _results.push(player.video_id === video.id ? (addID = video.ytid, addID !== "" ? (newPlayer = new Player({
-                ytid: addID
-              }), this.Players.add(newPlayer), newPlayer.Video.Triggers = video.triggers, newPlayer.Video.View.updateTriggers()) : void 0) : void 0);
+              _results.push(player.video_id === video.id ? (addID = video.ytid, addID !== "" ? (newPlayer = this.addPlayer(addID), newPlayer.Video.Triggers = video.triggers) : void 0) : void 0);
             }
             return _results;
           }).call(this));
         }
         return _results;
       }
+    },
+    initializeView: function() {
+      var player, video, _i, _j, _len, _len2, _ref, _ref2;
+      _ref = this.Players.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        player.initializeView();
+      }
+      _ref2 = this.Videos.models;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        video = _ref2[_j];
+        video.initializeView();
+      }
+      return App.reloadVideos();
+    },
+    addPlayer: function(ytid) {
+      var newPlayer;
+      newPlayer = new Player({
+        Composition: this,
+        ytid: ytid
+      });
+      this.Players.add(newPlayer);
+      return newPlayer;
     },
     toJSON: function() {
       var jsonobject;

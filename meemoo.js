@@ -88,15 +88,19 @@
     initializeCompositions: function() {
       this.Compositions = new CompositionList();
       this.Compositions.fetch();
-      return this.reloadVideos();
+      if (this.Compositions.length > 0) {
+        return this.loadComposition(this.Compositions.at(this.Compositions.length - 1));
+      }
+    },
+    loadComposition: function(comp) {
+      this.Composition = comp;
+      return this.Composition.initializeView();
     },
     addPlayer: function(ytid) {
-      if (App.Composition === void 0) {
-        App.Composition = App.Compositions.create();
+      if (this.Composition === void 0) {
+        this.Composition = this.Compositions.create();
       }
-      return App.Composition.Players.add(new Player({
-        ytid: ytid
-      }));
+      return this.Composition.addPlayer(ytid);
     },
     popoutViewer: function() {
       this.viewer = window.open("viewer.html", "popoutviewer");
@@ -127,7 +131,18 @@
         }
         return _results;
       };
-      return setTimeout(this.reload, 2500);
+      this.reloadTriggers = function() {
+        var video, _i, _len, _ref, _results;
+        _ref = App.Composition.Videos.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          video = _ref[_i];
+          _results.push(video.View.updateTriggers());
+        }
+        return _results;
+      };
+      setTimeout(this.reload, 2000);
+      return setTimeout(this.reloadTriggers, 5000);
     },
     postMessageToViewer: function(action, id, value) {
       return App.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);

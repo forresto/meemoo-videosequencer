@@ -12,17 +12,21 @@
   */  this.Video = Backbone.Model.extend({
     initialize: function() {
       this.Triggers = [];
-      this.View = new VideoView({
+      return this.addTrigger(0, 0);
+    },
+    initializeView: function() {
+      return this.View = new VideoView({
         model: this
       });
-      return this.addTrigger(0, 0);
     },
     addTrigger: function(position, time) {
       if (position < App.triggers.length) {
         time = parseFloat(time);
-        if (_.indexOf(this.Triggers, time, true) === -1) {
+        if (this.Triggers.indexOf(time) === -1) {
           this.Triggers[position] = time;
-          return this.View.updateTriggers();
+          if (this.View) {
+            return this.View.updateTriggers();
+          }
         }
       }
     },
@@ -59,7 +63,9 @@
     render: function() {
       return this;
     },
-    initialize: function() {},
+    initialize: function() {
+      return this.updateTriggers();
+    },
     updateTriggers: function() {
       var left, trigger, triggershtml, _i, _len, _ref;
       triggershtml = "";

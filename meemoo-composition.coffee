@@ -20,16 +20,15 @@ this.Composition = Backbone.Model.extend
   #   "change": this.View.render()
     
   initialize: ->
-    App.Composition = this
-    
     if this.get("loadJSON") isnt undefined
+      #TODO
       pastedJSON = this.get("loadJSON")
       if pastedJSON isnt ""
         loadComp = JSON.parse(pastedJSON);
         console.log loadComp
+    this.View = new CompositionView {model:this}
     this.Videos = new VideoList()
     this.Players = new PlayerList()
-    this.View = new CompositionView {model:this}
     
     # Repopulate players and videos
     if this.attributes.players
@@ -38,11 +37,21 @@ this.Composition = Backbone.Model.extend
           if player.video_id == video.id
             addID = video.ytid
             if addID isnt ""
-              newPlayer = new Player {ytid:addID}
-              this.Players.add newPlayer
+              newPlayer = this.addPlayer addID
               newPlayer.Video.Triggers = video.triggers
-              newPlayer.Video.View.updateTriggers()
+              # newPlayer.Video.View.updateTriggers()
     
+  initializeView: ->
+    for player in this.Players.models
+      player.initializeView()
+    for video in this.Videos.models
+      video.initializeView()
+    App.reloadVideos()
+      
+  addPlayer: (ytid) ->
+    newPlayer = new Player {Composition:this, ytid:ytid}
+    this.Players.add newPlayer
+    newPlayer
     
   toJSON: ->
     jsonobject =

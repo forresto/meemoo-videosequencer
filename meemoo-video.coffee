@@ -13,15 +13,17 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 this.Video = Backbone.Model.extend
   initialize: ->
     this.Triggers = []
-    this.View = new VideoView {model:this}
     this.addTrigger 0, 0
+  initializeView: ->
+    this.View = new VideoView {model:this}
   addTrigger: (position, time) ->
     if position < App.triggers.length # if there is room for triggers
       time = parseFloat(time)
-      if _.indexOf(this.Triggers, time, true) is -1 # if the time isn't a trigger already
+      if this.Triggers.indexOf(time) is -1 # if the time isn't a trigger already
         this.Triggers[position] = time
         # this.Triggers.sort((a,b) -> a-b)
-        this.View.updateTriggers()
+        if this.View
+          this.View.updateTriggers()
   toJSON: ->
     jsonobject =
       id: this.cid
@@ -51,6 +53,7 @@ this.VideoView = Backbone.View.extend
     return this
     
   initialize: ->
+    this.updateTriggers()
     # this.render()
     # $("#videos").append($(this.el))
     
