@@ -74,7 +74,7 @@
       _ref = this.model.Triggers;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         trigger = _ref[_i];
-        if (trigger >= 0) {
+        if (trigger !== null && trigger >= 0) {
           left = trigger / this.model.get("totaltime") * 100;
           triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
         }

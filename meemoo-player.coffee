@@ -137,7 +137,7 @@ this.PlayerView = Backbone.View.extend
         seconds = this.model.Video.Triggers[last]
       if last is 0 then seconds = 0
     else #next
-      while last < this.model.Video.Triggers.length-2 && seconds is null
+      while last < this.model.Video.Triggers.length-1 && seconds is null
         last++
         seconds = this.model.Video.Triggers[last]
     if seconds isnt undefined and seconds isnt null
