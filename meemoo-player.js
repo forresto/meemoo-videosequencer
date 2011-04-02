@@ -157,9 +157,12 @@
       last = this.lastTrigger;
       seconds = null;
       if (prev) {
-        while (last > 1 && seconds === null) {
+        while (last > 0 && seconds === null) {
           last--;
           seconds = this.model.Video.Triggers[last];
+        }
+        if (last === 0) {
+          seconds = 0;
         }
       } else {
         while (last < this.model.Video.Triggers.length - 2 && seconds === null) {
