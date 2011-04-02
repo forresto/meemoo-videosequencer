@@ -94,6 +94,29 @@ AppView = Backbone.View.extend
         App.addPlayer $('#addplayerid').val()
         return false
         
+    $('#automulti')
+      .button
+        icons: { primary: "ui-icon-battery-1" }
+      .mouseover ->
+        $(this).focus()
+      .keydown (e) ->
+        keyCode = e.keyCode
+        triggerid = App.keycodes.indexOf(keyCode)
+        player = Math.floor(triggerid / 10)
+        if App.Composition.Players.models[player]
+          App.Composition.Players.models[player].View.trigger(triggerid % 10)
+          
+    $('#automulti2')
+      .button
+        icons: { primary: "ui-icon-battery-3" }
+      .mouseover ->
+        $(this).focus()
+      .keydown (e) ->
+        keyCode = e.keyCode
+        triggerid = App.keycodes.indexOf(keyCode)
+        for player in App.Composition.Players.models
+          player.View.trigger(triggerid)
+        
   initializeCompositions: ->
     this.Compositions = new CompositionList()
     this.Compositions.fetch()

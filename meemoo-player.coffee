@@ -94,16 +94,14 @@ this.PlayerView = Backbone.View.extend
     this.seek seekpercent * this.model.get('totaltime')
     
   seek: (seconds) ->
-    # don't seek over the buffer
-    if this.model.get('loaded') is this.model.get('totalsize') or seconds / this.model.get('totaltime') < (this.model.get('loaded') - 250000) / this.model.get('totalsize')
+    # don't seek over the buffer, safety of 10 seconds
+    if this.model.get('loaded') is this.model.get('totalsize') or seconds + 10 / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')
       this.$('.playprogress').progressbar "value", seconds/this.model.get('totaltime')*100
       window.App.postMessageToViewer "seek", this.model.cid, seconds
       
   focusPrev: () ->
     this.$('.playprogress').parent().prev().children('.playprogress').focus()
-    #TODO: use .navigable
-    # document.activeElement
-    
+      
   focusNext: () ->
     this.$('.playprogress').parent().next().children('.playprogress').focus()
       
@@ -115,10 +113,15 @@ this.PlayerView = Backbone.View.extend
       when 40 then this.focusNext() # down
       when 37 then this.triggerArp(true) # left
       when 39 then this.triggerArp(false) # right
-      else this.trigger e.keyCode # trigger keys
+      else this.triggerCode e.keyCode # trigger keys
       
-  trigger: (keyCode) ->
+      
+  triggerCode: (keyCode) ->
     triggerid = App.keycodes.indexOf(keyCode)
+    this.trigger(triggerid)
+    
+  # add or trigger
+  trigger: (triggerid) ->
     if (triggerid isnt -1)
       seconds = this.model.Video.Triggers[triggerid]
       if (seconds is undefined or seconds is null)
@@ -132,12 +135,12 @@ this.PlayerView = Backbone.View.extend
     last = this.lastTrigger
     seconds = null
     if prev
-      while last > 0 && seconds is null
+      while last > 0 && (seconds is null or seconds is undefined)
         last--
         seconds = this.model.Video.Triggers[last]
       if last is 0 then seconds = 0
     else #next
-      while last < this.model.Video.Triggers.length-1 && seconds is null
+      while last < this.model.Video.Triggers.length-1 && (seconds is null or seconds is undefined)
         last++
         seconds = this.model.Video.Triggers[last]
     if seconds isnt undefined and seconds isnt null

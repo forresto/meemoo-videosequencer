@@ -112,7 +112,7 @@
       return this.seek(seekpercent * this.model.get('totaltime'));
     },
     seek: function(seconds) {
-      if (this.model.get('loaded') === this.model.get('totalsize') || seconds / this.model.get('totaltime') < (this.model.get('loaded') - 250000) / this.model.get('totalsize')) {
+      if (this.model.get('loaded') === this.model.get('totalsize') || seconds + 10 / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')) {
         this.$('.playprogress').progressbar("value", seconds / this.model.get('totaltime') * 100);
         return window.App.postMessageToViewer("seek", this.model.cid, seconds);
       }
@@ -136,12 +136,16 @@
         case 39:
           return this.triggerArp(false);
         default:
-          return this.trigger(e.keyCode);
+          return this.triggerCode(e.keyCode);
       }
     },
-    trigger: function(keyCode) {
-      var seconds, triggerid;
+    triggerCode: function(keyCode) {
+      var triggerid;
       triggerid = App.keycodes.indexOf(keyCode);
+      return this.trigger(triggerid);
+    },
+    trigger: function(triggerid) {
+      var seconds;
       if (triggerid !== -1) {
         seconds = this.model.Video.Triggers[triggerid];
         if (seconds === void 0 || seconds === null) {
@@ -157,7 +161,7 @@
       last = this.lastTrigger;
       seconds = null;
       if (prev) {
-        while (last > 0 && seconds === null) {
+        while (last > 0 && (seconds === null || seconds === void 0)) {
           last--;
           seconds = this.model.Video.Triggers[last];
         }
@@ -165,7 +169,7 @@
           seconds = 0;
         }
       } else {
-        while (last < this.model.Video.Triggers.length - 1 && seconds === null) {
+        while (last < this.model.Video.Triggers.length - 1 && (seconds === null || seconds === void 0)) {
           last++;
           seconds = this.model.Video.Triggers[last];
         }

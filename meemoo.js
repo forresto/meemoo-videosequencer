@@ -76,13 +76,46 @@
           loadJSON: pastedJSON
         });
       });
-      return $('#addplayer').button({
+      $('#addplayer').button({
         icons: {
           primary: "ui-icon-plus"
         }
       }).click(function() {
         App.addPlayer($('#addplayerid').val());
         return false;
+      });
+      $('#automulti').button({
+        icons: {
+          primary: "ui-icon-battery-1"
+        }
+      }).mouseover(function() {
+        return $(this).focus();
+      }).keydown(function(e) {
+        var keyCode, player, triggerid;
+        keyCode = e.keyCode;
+        triggerid = App.keycodes.indexOf(keyCode);
+        player = Math.floor(triggerid / 10);
+        if (App.Composition.Players.models[player]) {
+          return App.Composition.Players.models[player].View.trigger(triggerid % 10);
+        }
+      });
+      return $('#automulti2').button({
+        icons: {
+          primary: "ui-icon-battery-3"
+        }
+      }).mouseover(function() {
+        return $(this).focus();
+      }).keydown(function(e) {
+        var keyCode, player, triggerid, _i, _len, _ref, _results;
+        keyCode = e.keyCode;
+        triggerid = App.keycodes.indexOf(keyCode);
+        _ref = App.Composition.Players.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          player = _ref[_i];
+          _results.push(player.View.trigger(triggerid));
+        }
+        return _results;
       });
     },
     initializeCompositions: function() {
