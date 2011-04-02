@@ -23,11 +23,13 @@
       if (position < App.triggers.length) {
         time = parseFloat(time);
         if (this.Triggers.indexOf(time) === -1) {
-          this.Triggers[position] = time;
-          if (this.View) {
-            return this.View.updateTriggers();
-          }
+          return this.Triggers[position] = time;
         }
+      }
+    },
+    change: function() {
+      if (this.View) {
+        return this.View.updateTriggers();
       }
     },
     toJSON: function() {

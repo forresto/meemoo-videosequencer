@@ -40,6 +40,8 @@ this.PlayerView = Backbone.View.extend
   className: "control"
   template: _.template $('#control-template').html()
   
+  lastTrigger: 0
+  
   events:
     "click .playbutton" : "play"
     "click .pausebutton" : "pause"
@@ -108,9 +110,11 @@ this.PlayerView = Backbone.View.extend
   playprogressKey: (e) ->
     # console.log e.keyCode
     switch e.keyCode
-      when 32 then this.playpause() # space: pause/play
-      when 38 then this.focusPrev() # up: pause/play
-      when 40 then this.focusNext() # down: pause/play
+      when 32 then this.playpause() # space
+      when 38 then this.focusPrev() # up
+      when 40 then this.focusNext() # down
+      when 37 then this.triggerArp(true) # left
+      when 39 then this.triggerArp(false) # right
       else this.trigger e.keyCode # trigger keys
       
   trigger: (keyCode) ->
@@ -121,8 +125,23 @@ this.PlayerView = Backbone.View.extend
         # New trigger
         this.model.Video.addTrigger triggerid, this.model.get('time')
       else
-        # Seek to trigger
+        this.lastTrigger = triggerid
         this.seek seconds
+        
+  triggerArp: (prev) ->
+    last = this.lastTrigger
+    seconds = null
+    if prev
+      while last > 1 && seconds is null
+        last--
+        seconds = this.model.Video.Triggers[last]
+    else #next
+      while last < this.model.Video.Triggers.length-2 && seconds is null
+        last++
+        seconds = this.model.Video.Triggers[last]
+    if seconds isnt undefined and seconds isnt null
+      this.lastTrigger = last
+      this.seek seconds
     
   render: ->
     $(this.el).html this.template this.model.toJSON()

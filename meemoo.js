@@ -149,7 +149,6 @@
     },
     recieveMessage: function(msg) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;
-      console.log(msg);
       if (msg === "-=POPOUTCLOSED=-") {
         return this.popinViewer();
       } else if (msg === "-=REFRESH=-") {

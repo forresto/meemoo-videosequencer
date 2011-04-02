@@ -137,7 +137,7 @@ AppView = Backbone.View.extend
     this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
     
   recieveMessage: (msg) ->
-    console.log msg
+    # console.log msg
     if msg is "-=POPOUTCLOSED=-"
       this.popinViewer()
     else if msg is "-=REFRESH=-"

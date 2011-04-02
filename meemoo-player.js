@@ -48,6 +48,7 @@
     tagName: "div",
     className: "control",
     template: _.template($('#control-template').html()),
+    lastTrigger: 0,
     events: {
       "click .playbutton": "play",
       "click .pausebutton": "pause",
@@ -130,6 +131,10 @@
           return this.focusPrev();
         case 40:
           return this.focusNext();
+        case 37:
+          return this.triggerArp(true);
+        case 39:
+          return this.triggerArp(false);
         default:
           return this.trigger(e.keyCode);
       }
@@ -142,8 +147,29 @@
         if (seconds === void 0 || seconds === null) {
           return this.model.Video.addTrigger(triggerid, this.model.get('time'));
         } else {
+          this.lastTrigger = triggerid;
           return this.seek(seconds);
         }
+      }
+    },
+    triggerArp: function(prev) {
+      var last, seconds;
+      last = this.lastTrigger;
+      seconds = null;
+      if (prev) {
+        while (last > 1 && seconds === null) {
+          last--;
+          seconds = this.model.Video.Triggers[last];
+        }
+      } else {
+        while (last < this.model.Video.Triggers.length - 2 && seconds === null) {
+          last++;
+          seconds = this.model.Video.Triggers[last];
+        }
+      }
+      if (seconds !== void 0 && seconds !== null) {
+        this.lastTrigger = last;
+        return this.seek(seconds);
       }
     },
     render: function() {

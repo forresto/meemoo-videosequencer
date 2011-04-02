@@ -21,9 +21,10 @@ this.Video = Backbone.Model.extend
       time = parseFloat(time)
       if this.Triggers.indexOf(time) is -1 # if the time isn't a trigger already
         this.Triggers[position] = time
-        # this.Triggers.sort((a,b) -> a-b)
-        if this.View
-          this.View.updateTriggers()
+  change: ->
+    # this.Triggers.sort((a,b) -> a-b)
+    if this.View
+      this.View.updateTriggers()
   toJSON: ->
     jsonobject =
       id: this.cid
