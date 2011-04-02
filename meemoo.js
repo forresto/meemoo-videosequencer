@@ -25,7 +25,7 @@
           primary: "ui-icon-newwin"
         }
       }).click(function() {
-        return window.App.popoutViewer();
+        return App.popoutViewer();
       });
       $('#newcomposition').button({
         icons: {
@@ -142,17 +142,18 @@
         return _results;
       };
       setTimeout(this.reload, 2000);
-      return setTimeout(this.reloadTriggers, 5000);
+      return setTimeout(this.reloadTriggers, 7000);
     },
     postMessageToViewer: function(action, id, value) {
-      return App.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);
+      return this.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);
     },
     recieveMessage: function(msg) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;
+      console.log(msg);
       if (msg === "-=POPOUTCLOSED=-") {
-        return App.popinViewer();
+        return this.popinViewer();
       } else if (msg === "-=REFRESH=-") {
-        return App.reloadVideos();
+        return this.reloadVideos();
       } else {
         playerinfos = msg.split("|");
         _results = [];
@@ -179,13 +180,13 @@
   });
   $(function() {
     window.App = new AppView();
-    return window.App.initializeCompositions();
+    return App.initializeCompositions();
   });
   recieveMessage = function(e) {
     if (e.origin !== window.location.protocol + "//" + window.location.host) {
       return;
     }
-    return window.App.recieveMessage(e.data);
+    return App.recieveMessage(e.data);
   };
   window.addEventListener("message", recieveMessage, false);
 }).call(this);

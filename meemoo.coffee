@@ -46,7 +46,7 @@ AppView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-newwin" }
       .click ->
-        window.App.popoutViewer()
+        App.popoutViewer()
         
     $('#newcomposition')
       .button
@@ -131,16 +131,17 @@ AppView = Backbone.View.extend
       for video in App.Composition.Videos.models
         video.View.updateTriggers()
     setTimeout @reload, 2000
-    setTimeout @reloadTriggers, 5000 #TODO save video lengths to video
+    setTimeout @reloadTriggers, 7000 #TODO save video lengths to video
       
   postMessageToViewer: (action, id, value) ->
-    App.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
+    this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
     
   recieveMessage: (msg) ->
+    console.log msg
     if msg is "-=POPOUTCLOSED=-"
-      App.popinViewer()
+      this.popinViewer()
     else if msg is "-=REFRESH=-"
-      App.reloadVideos()
+      this.reloadVideos()
     else
       playerinfos = msg.split("|")
       for playerinfo in playerinfos
@@ -160,7 +161,7 @@ AppView = Backbone.View.extend
 # Initialize app
 $ ->
   window.App = new AppView()
-  window.App.initializeCompositions()
+  App.initializeCompositions()
   
   
 # Util
@@ -169,6 +170,6 @@ $ ->
 recieveMessage = (e) ->
   if e.origin isnt window.location.protocol + "//" + window.location.host
     return
-  window.App.recieveMessage e.data
+  App.recieveMessage e.data
 
 window.addEventListener "message", recieveMessage, false

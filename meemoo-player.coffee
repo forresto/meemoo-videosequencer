@@ -89,14 +89,18 @@ this.PlayerView = Backbone.View.extend
   
   playprogressClick: (e) ->
     seekpercent = (e.layerX - 5) / $(e.currentTarget).width()
-    if this.model.get('loaded') is this.model.get('totalsize') or seekpercent < (this.model.get('loaded') - 250000) / this.model.get('totalsize')
-      this.seek seekpercent * this.model.get('totaltime')
-
+    this.seek seekpercent * this.model.get('totaltime')
+    
   seek: (seconds) ->
-    window.App.postMessageToViewer("seek", this.model.cid, seconds)
-
+    # don't seek over the buffer
+    if this.model.get('loaded') is this.model.get('totalsize') or seconds / this.model.get('totaltime') < (this.model.get('loaded') - 250000) / this.model.get('totalsize')
+      this.$('.playprogress').progressbar "value", seconds/this.model.get('totaltime')*100
+      window.App.postMessageToViewer "seek", this.model.cid, seconds
+      
   focusPrev: () ->
     this.$('.playprogress').parent().prev().children('.playprogress').focus()
+    #TODO: use .navigable
+    # document.activeElement
     
   focusNext: () ->
     this.$('.playprogress').parent().next().children('.playprogress').focus()

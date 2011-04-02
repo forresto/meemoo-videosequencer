@@ -108,12 +108,13 @@
     playprogressClick: function(e) {
       var seekpercent;
       seekpercent = (e.layerX - 5) / $(e.currentTarget).width();
-      if (this.model.get('loaded') === this.model.get('totalsize') || seekpercent < (this.model.get('loaded') - 250000) / this.model.get('totalsize')) {
-        return this.seek(seekpercent * this.model.get('totaltime'));
-      }
+      return this.seek(seekpercent * this.model.get('totaltime'));
     },
     seek: function(seconds) {
-      return window.App.postMessageToViewer("seek", this.model.cid, seconds);
+      if (this.model.get('loaded') === this.model.get('totalsize') || seconds / this.model.get('totaltime') < (this.model.get('loaded') - 250000) / this.model.get('totalsize')) {
+        this.$('.playprogress').progressbar("value", seconds / this.model.get('totaltime') * 100);
+        return window.App.postMessageToViewer("seek", this.model.cid, seconds);
+      }
     },
     focusPrev: function() {
       return this.$('.playprogress').parent().prev().children('.playprogress').focus();
