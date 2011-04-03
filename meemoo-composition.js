@@ -13,10 +13,11 @@
     defaults: {
       "title": "untitled composition",
       "description": "mixed with sembiki meemoo audio visual sequencer",
-      "mixer": "me!"
+      "mixer": "me!",
+      "bpm": 100
     },
     initialize: function() {
-      var addID, loadComp, newPlayer, pastedJSON, player, video, _i, _len, _ref, _results;
+      var addID, loadComp, newPlayer, pastedJSON, player, video, _i, _j, _len, _len2, _ref, _ref2;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -24,32 +25,36 @@
           console.log(loadComp);
         }
       }
-      this.View = new CompositionView({
-        model: this
-      });
       this.Videos = new VideoList();
       this.Players = new PlayerList();
       if (this.attributes.players) {
         _ref = this.attributes.players;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           player = _ref[_i];
-          _results.push((function() {
-            var _i, _len, _ref, _results;
-            _ref = this.attributes.videos;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              video = _ref[_i];
-              _results.push(player.video_id === video.id ? (addID = video.ytid, addID !== "" ? (newPlayer = this.addPlayer(addID), newPlayer.Video.Triggers = video.triggers) : void 0) : void 0);
+          _ref2 = this.attributes.videos;
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            video = _ref2[_j];
+            if (player.video_id === video.id) {
+              addID = video.ytid;
+              if (addID !== "") {
+                newPlayer = this.addPlayer(addID);
+                newPlayer.Video.Triggers = video.triggers;
+              }
             }
-            return _results;
-          }).call(this));
+          }
         }
-        return _results;
       }
+      this.Patterns = new PatternList();
+      this.Patterns.add(new Pattern({
+        Composition: this
+      }));
+      return this.Sequences = new SequenceList();
     },
     initializeView: function() {
-      var player, video, _i, _j, _len, _len2, _ref, _ref2;
+      var pattern, player, sequence, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
+      this.View = new CompositionView({
+        model: this
+      });
       _ref = this.Players.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         player = _ref[_i];
@@ -59,6 +64,16 @@
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         video = _ref2[_j];
         video.initializeView();
+      }
+      _ref3 = this.Patterns.models;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        pattern = _ref3[_k];
+        pattern.initializeView();
+      }
+      _ref4 = this.Sequences.models;
+      for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+        sequence = _ref4[_l];
+        sequence.initializeView();
       }
       return App.reloadVideos();
     },
@@ -78,8 +93,11 @@
         title: this.get("title"),
         description: this.get("description"),
         mixer: this.get("mixer"),
+        bpm: this.get("bpm"),
         videos: this.Videos,
-        players: this.Players
+        players: this.Players,
+        patterns: this.Patterns,
+        sequences: this.Sequences
       };
     },
     "delete": function() {
@@ -124,7 +142,14 @@
       $("#comp_dialog").append($(this.el));
       $("#comp_info_title").text(this.model.get("title"));
       $("#comp_info_mixer").text(this.model.get("mixer"));
-      return $("#comp_info_description").text(this.model.get("description"));
+      $("#comp_info_description").text(this.model.get("description"));
+      $("#bpm").val(this.model.get("bpm"));
+      $("#patterns-tabs").tabs();
+      return $("#addpattern").click(function() {
+        return App.Composition.Patterns.add(new Pattern({
+          Composition: App.Composition
+        }));
+      });
     },
     save: function() {
       return this.render();

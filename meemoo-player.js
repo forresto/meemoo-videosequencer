@@ -112,7 +112,7 @@
       return this.seek(seekpercent * this.model.get('totaltime'));
     },
     seek: function(seconds) {
-      if (this.model.get('loaded') === this.model.get('totalsize') || seconds + 10 / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')) {
+      if (this.model.get('loaded') === this.model.get('totalsize') || (seconds + 10) / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')) {
         this.$('.playprogress').progressbar("value", seconds / this.model.get('totaltime') * 100);
         return window.App.postMessageToViewer("seek", this.model.cid, seconds);
       }

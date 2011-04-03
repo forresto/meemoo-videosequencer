@@ -52,6 +52,7 @@
           <h2 id="comp_info_title" class="editable" contenteditable="true" title="Click to edit title"></h2>
           <p id="comp_info_mixer" class="editable" contenteditable="true" title="Click to edit mixer name"></p>
           <p id="comp_info_description" class="editable" contenteditable="true" title="Click to edit description"></p>
+          <p style="display:none"><input id="bpm" type="number" min="0" max="500" value="0"></input> bpm</p>
         </div>
         <button id="composition-save" type="button">Save</button>
         <button id="composition-export" type="button">Export as text...</button>
@@ -62,7 +63,7 @@
       <div id="players">
         <div class="additem">
           <form onSubmit="return false;">
-            <input type="text" id="addplayerid" value="" /><button id="addplayer" type="button">Add Player</button>
+            <input type="text" id="addplayerid" value="" /><button id="addplayer">Add Player</button>
           </form>
         </div>
       </div>
@@ -78,6 +79,16 @@
         </button>
       </div>
     </section>
+    <section style="display:none">
+      <h1>Patterns</h1>
+      <div id="patterns">
+        <div id="patterns-tabs">
+          <ul id="patterns-tabs-nav">
+            <li id="addpatternli"><a id="addpattern" class="addlink">+ Add Pattern</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
     <!--
     <section>
       <h1>Videos</h1>
@@ -91,16 +102,6 @@
         <div id="multitriggers-tabs">
           <ul id="multitriggers-tabs-nav">
             <li id="addmultili"><a id="addmultitrigger" class="addlink">+ Add Set</a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-    <section>
-      <h1>Patterns</h1>
-      <div id="patterns">
-        <div id="patterns-tabs">
-          <ul id="patterns-tabs-nav">
-            <li id="addpatternli"><a id="addpattern" class="addlink">+ Add Pattern</a></li>
           </ul>
         </div>
       </div>
@@ -167,11 +168,27 @@
 
 </script>
 
+<script type="text/template" id="pattern-template"> 
+  <div>
+    <input id="pattern_<%= this.model.cid %>_beats" type="number" min="0" max="64" step="4" value="16"></input> beats
+  </div>
+</script>
+
+<script type="text/template" id="track-template">
+  Track <%= this.model.cid %>
+</script>
+
+<script type="text/template" id="sequence-template"> 
+</script>
+
+
 <!-- Application --> 
 
 <script type="text/javascript" src="meemoo-composition.js"></script>
 <script type="text/javascript" src="meemoo-video.js"></script>
 <script type="text/javascript" src="meemoo-player.js"></script>
+<script type="text/javascript" src="meemoo-pattern.js"></script>
+<script type="text/javascript" src="meemoo-sequence.js"></script>
 <script type="text/javascript" src="meemoo.js"></script>
 
 <!-- Analytics --> 

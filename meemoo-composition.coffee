@@ -15,6 +15,7 @@ this.Composition = Backbone.Model.extend
     "title": "untitled composition"
     "description": "mixed with sembiki meemoo audio visual sequencer"
     "mixer": "me!"
+    "bpm": 100
     
   # events:
   #   "change": this.View.render()
@@ -26,11 +27,11 @@ this.Composition = Backbone.Model.extend
       if pastedJSON isnt ""
         loadComp = JSON.parse(pastedJSON);
         console.log loadComp
-    this.View = new CompositionView {model:this}
+    
+    # Repopulate players and videos
     this.Videos = new VideoList()
     this.Players = new PlayerList()
     
-    # Repopulate players and videos
     if this.attributes.players
       for player in this.attributes.players
         for video in this.attributes.videos
@@ -39,18 +40,35 @@ this.Composition = Backbone.Model.extend
             if addID isnt ""
               newPlayer = this.addPlayer addID
               newPlayer.Video.Triggers = video.triggers
-              # newPlayer.Video.View.updateTriggers()
+              
+    # Repopulate patterns and sequences
+    this.Patterns = new PatternList()
+    this.Patterns.add new Pattern({Composition:this})
+    this.Sequences = new SequenceList()
+    
+    # if this.attributes.patterns
+    
+    # if this.attributes.sequences
     
   initializeView: ->
+    this.View = new CompositionView {model:this}
     for player in this.Players.models
       player.initializeView()
     for video in this.Videos.models
       video.initializeView()
+    for pattern in this.Patterns.models
+      pattern.initializeView()
+    for sequence in this.Sequences.models
+      sequence.initializeView()
     App.reloadVideos()
       
   addPlayer: (ytid) ->
-    newPlayer = new Player {Composition:this, ytid:ytid}
+    newPlayer = new Player 
+      Composition:this
+      ytid:ytid
     this.Players.add newPlayer
+    # for pattern in this.Patterns
+    #   pattern.addPlayer newPlayer.cid
     newPlayer
     
   toJSON: ->
@@ -59,8 +77,11 @@ this.Composition = Backbone.Model.extend
       title: this.get("title")
       description: this.get("description")
       mixer: this.get("mixer")
+      bpm: this.get("bpm")
       videos: this.Videos
       players: this.Players
+      patterns: this.Patterns
+      sequences: this.Sequences
       
   delete: ->
     this.destroy()
@@ -104,6 +125,11 @@ this.CompositionView = Backbone.View.extend
     $("#comp_info_title").text this.model.get("title")
     $("#comp_info_mixer").text this.model.get("mixer")
     $("#comp_info_description").text this.model.get("description")
+    $("#bpm").val this.model.get("bpm")
+    
+    $("#patterns-tabs").tabs()
+    $("#addpattern").click ->
+      App.Composition.Patterns.add new Pattern({Composition:App.Composition})
     
     
   save: ->

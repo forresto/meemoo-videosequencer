@@ -72,6 +72,7 @@ AppView = Backbone.View.extend
           title : $("#comp_info_title").text()
           mixer : $("#comp_info_mixer").text()
           description : $("#comp_info_description").text()
+          bpm : parseInt $("#bpm").val()
         App.Composition.View.render()
         
     $('#composition-export')

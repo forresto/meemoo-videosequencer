@@ -95,7 +95,7 @@ this.PlayerView = Backbone.View.extend
     
   seek: (seconds) ->
     # don't seek over the buffer, safety of 10 seconds
-    if this.model.get('loaded') is this.model.get('totalsize') or seconds + 10 / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')
+    if this.model.get('loaded') is this.model.get('totalsize') or (seconds + 10) / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')
       this.$('.playprogress').progressbar "value", seconds/this.model.get('totaltime')*100
       window.App.postMessageToViewer "seek", this.model.cid, seconds
       

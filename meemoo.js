@@ -54,7 +54,8 @@
         App.Composition.save({
           title: $("#comp_info_title").text(),
           mixer: $("#comp_info_mixer").text(),
-          description: $("#comp_info_description").text()
+          description: $("#comp_info_description").text(),
+          bpm: parseInt($("#bpm").val())
         });
         return App.Composition.View.render();
       });
