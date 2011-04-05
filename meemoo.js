@@ -71,10 +71,15 @@
       });
     },
     initializeCompositions: function() {
+      var newComp;
       this.Compositions = new CompositionList();
       this.Compositions.fetch();
       if (this.Compositions.length > 0) {
         return this.loadComposition(this.Compositions.at(this.Compositions.length - 1));
+      } else {
+        newComp = new Composition();
+        App.Compositions.add(newComp);
+        return App.loadComposition(newComp);
       }
     },
     loadComposition: function(comp) {

@@ -86,10 +86,15 @@ AppView = Backbone.View.extend
     this.Compositions.fetch()
     if this.Compositions.length > 0
       this.loadComposition this.Compositions.at this.Compositions.length-1
+    else
+      newComp = new Composition()
+      App.Compositions.add(newComp)
+      App.loadComposition newComp
+    
       
   loadComposition: (comp) ->
     try 
-      this.Composition.View.remove()
+      this.Composition.View.remove() # remove old view
     
     this.Composition = comp
     this.Composition.initializeView()
