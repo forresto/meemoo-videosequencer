@@ -17,6 +17,7 @@
     initialize: function() {
       $('#intro').hide();
       $('#application').html(this.template);
+      this.timer = null;
       this.triggers = this.triggers_us;
       this.keycodes = this.keycodes_us;
       this.viewer = document.getElementById("viewer").contentWindow;
@@ -33,7 +34,7 @@
         }
       }).click(function() {
         if (confirm("Are you sure you want to start with a new blank composition?")) {
-          return App.Composition = App.Compositions.create();
+          return App.loadComposition(App.Compositions.create());
         }
       });
       $('#loadcomposition').button({
@@ -46,26 +47,6 @@
           width: 400
         });
       });
-      $('#composition-save').button({
-        icons: {
-          primary: "ui-icon-disk"
-        }
-      }).click(function() {
-        App.Composition.save({
-          title: $("#comp_info_title").text(),
-          mixer: $("#comp_info_mixer").text(),
-          description: $("#comp_info_description").text(),
-          bpm: parseInt($("#bpm").val())
-        });
-        return App.Composition.View.render();
-      });
-      $('#composition-export').button({
-        icons: {
-          primary: "ui-icon-clipboard"
-        }
-      }).click(function() {
-        return App.Composition.View["export"]();
-      });
       $('#comp_import_button').button({
         icons: {
           primary: "ui-icon-arrowthickstop-1-s"
@@ -77,46 +58,13 @@
           loadJSON: pastedJSON
         });
       });
-      $('#addplayer').button({
+      return $('#addplayer').button({
         icons: {
           primary: "ui-icon-plus"
         }
       }).click(function() {
         App.addPlayer($('#addplayerid').val());
         return false;
-      });
-      $('#automulti').button({
-        icons: {
-          primary: "ui-icon-battery-1"
-        }
-      }).mouseover(function() {
-        return $(this).focus();
-      }).keydown(function(e) {
-        var keyCode, player, triggerid;
-        keyCode = e.keyCode;
-        triggerid = App.keycodes.indexOf(keyCode);
-        player = Math.floor(triggerid / 10);
-        if (App.Composition.Players.models[player]) {
-          return App.Composition.Players.models[player].View.trigger(triggerid % 10);
-        }
-      });
-      return $('#automulti2').button({
-        icons: {
-          primary: "ui-icon-battery-3"
-        }
-      }).mouseover(function() {
-        return $(this).focus();
-      }).keydown(function(e) {
-        var keyCode, player, triggerid, _i, _len, _ref, _results;
-        keyCode = e.keyCode;
-        triggerid = App.keycodes.indexOf(keyCode);
-        _ref = App.Composition.Players.models;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          player = _ref[_i];
-          _results.push(player.View.trigger(triggerid));
-        }
-        return _results;
       });
     },
     initializeCompositions: function() {
@@ -127,6 +75,9 @@
       }
     },
     loadComposition: function(comp) {
+      try {
+        this.Composition.View.remove();
+      } catch (_e) {}
       this.Composition = comp;
       return this.Composition.initializeView();
     },
@@ -179,7 +130,10 @@
       return setTimeout(this.reloadTriggers, 7000);
     },
     postMessageToViewer: function(action, id, value) {
-      return this.viewer.postMessage("" + action + ":" + id + ":" + value, window.location.protocol + "//" + window.location.host);
+      return this.postRawMessageToViewer("" + action + ":" + id + ":" + value);
+    },
+    postRawMessageToViewer: function(message) {
+      return this.viewer.postMessage(message, window.location.protocol + "//" + window.location.host);
     },
     recieveMessage: function(msg) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;
@@ -219,7 +173,8 @@
     if (e.origin !== window.location.protocol + "//" + window.location.host) {
       return;
     }
-    return App.recieveMessage(e.data);
+    App.recieveMessage(e.data);
+    return e.data;
   };
   window.addEventListener("message", recieveMessage, false);
 }).call(this);

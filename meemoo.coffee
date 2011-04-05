@@ -34,6 +34,8 @@ AppView = Backbone.View.extend
     $('#intro').hide()
     $('#application').html this.template
     
+    this.timer = null
+    
     #TODO multiple/custom keyboard layouts?
     this.triggers = this.triggers_us 
     this.keycodes = this.keycodes_us
@@ -53,8 +55,7 @@ AppView = Backbone.View.extend
         icons: { primary: "ui-icon-document" }
       .click ->
         if confirm "Are you sure you want to start with a new blank composition?"
-          # newComp = new Composition()
-          App.Composition = App.Compositions.create()
+          App.loadComposition App.Compositions.create()
             
     $('#loadcomposition')
       .button
@@ -64,23 +65,6 @@ AppView = Backbone.View.extend
           modal: true
           width: 400
           
-    $('#composition-save')
-      .button
-        icons: { primary: "ui-icon-disk" }
-      .click ->
-        App.Composition.save
-          title : $("#comp_info_title").text()
-          mixer : $("#comp_info_mixer").text()
-          description : $("#comp_info_description").text()
-          bpm : parseInt $("#bpm").val()
-        App.Composition.View.render()
-        
-    $('#composition-export')
-      .button
-        icons: { primary: "ui-icon-clipboard" }
-      .click ->
-        App.Composition.View.export()
-    
     $('#comp_import_button')
       .button
         icons: { primary: "ui-icon-arrowthickstop-1-s" }
@@ -95,29 +79,6 @@ AppView = Backbone.View.extend
         App.addPlayer $('#addplayerid').val()
         return false
         
-    $('#automulti')
-      .button
-        icons: { primary: "ui-icon-battery-1" }
-      .mouseover ->
-        $(this).focus()
-      .keydown (e) ->
-        keyCode = e.keyCode
-        triggerid = App.keycodes.indexOf(keyCode)
-        player = Math.floor(triggerid / 10)
-        if App.Composition.Players.models[player]
-          App.Composition.Players.models[player].View.trigger(triggerid % 10)
-          
-    $('#automulti2')
-      .button
-        icons: { primary: "ui-icon-battery-3" }
-      .mouseover ->
-        $(this).focus()
-      .keydown (e) ->
-        keyCode = e.keyCode
-        triggerid = App.keycodes.indexOf(keyCode)
-        for player in App.Composition.Players.models
-          player.View.trigger(triggerid)
-        
   initializeCompositions: ->
     this.Compositions = new CompositionList()
     this.Compositions.fetch()
@@ -125,6 +86,9 @@ AppView = Backbone.View.extend
       this.loadComposition this.Compositions.at this.Compositions.length-1
       
   loadComposition: (comp) ->
+    try 
+      this.Composition.View.remove()
+    
     this.Composition = comp
     this.Composition.initializeView()
       
@@ -158,7 +122,11 @@ AppView = Backbone.View.extend
     setTimeout @reloadTriggers, 7000 #TODO save video lengths to video
       
   postMessageToViewer: (action, id, value) ->
-    this.viewer.postMessage "#{action}:#{id}:#{value}", window.location.protocol + "//" + window.location.host
+    this.postRawMessageToViewer "#{action}:#{id}:#{value}"
+    
+  postRawMessageToViewer: (message) ->
+    # console.log message
+    this.viewer.postMessage message, window.location.protocol + "//" + window.location.host
     
   recieveMessage: (msg) ->
     # console.log msg
@@ -180,7 +148,7 @@ AppView = Backbone.View.extend
           if player
             player.set({loaded:loaded,totalsize:totalsize,time:time,totaltime:totaltime})
             player.Video.set({totaltime:totaltime})
-    
+            
 
 # Initialize app
 $ ->
@@ -195,5 +163,6 @@ recieveMessage = (e) ->
   if e.origin isnt window.location.protocol + "//" + window.location.host
     return
   App.recieveMessage e.data
+  e.data
 
 window.addEventListener "message", recieveMessage, false

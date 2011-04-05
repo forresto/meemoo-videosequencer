@@ -191,6 +191,37 @@ input.setuptrack {
   height: 250px;
 }
 
+.track {
+  font-family: monospace;
+  padding: 2px 5px 0px 5px;
+  white-space: nowrap;
+}
+  .beat {
+    display: inline-block;
+    text-align: center;
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    margin: 0 2px 0 0;
+    background-color: white;
+    color: black;
+  }
+  .beat:focus {
+  }
+  .beat:nth-child(4n+1) {
+    background-color: #DDD;
+    color: black;
+  }
+  .beat.active {
+    background-color: black;
+    color: white;
+  }
+  
+input.comp_info_bpm,
+input.pattern_beats {
+  width: 3em;
+}
+
 
 
 

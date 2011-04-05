@@ -104,7 +104,7 @@
       }
     },
     playprogressOver: function(e) {
-      return e.currentTarget.focus();
+      return $(e.currentTarget).focus();
     },
     playprogressClick: function(e) {
       var seekpercent;
@@ -118,10 +118,12 @@
       }
     },
     focusPrev: function() {
-      return this.$('.playprogress').parent().prev().children('.playprogress').focus();
+      this.$('.playprogress').parent().prev().children('.playprogress').focus();
+      return false;
     },
     focusNext: function() {
-      return this.$('.playprogress').parent().next().children('.playprogress').focus();
+      this.$('.playprogress').parent().next().children('.playprogress').focus();
+      return false;
     },
     playprogressKey: function(e) {
       switch (e.keyCode) {
@@ -142,19 +144,28 @@
     triggerCode: function(keyCode) {
       var triggerid;
       triggerid = App.keycodes.indexOf(keyCode);
-      return this.trigger(triggerid);
+      if (triggerid !== -1) {
+        return this.triggerOrAdd(triggerid);
+      }
+    },
+    triggerOrAdd: function(triggerid) {
+      var seconds;
+      seconds = this.model.Video.Triggers[triggerid];
+      if (seconds === void 0 || seconds === null) {
+        return this.model.Video.addTrigger(triggerid, this.model.get('time'));
+      } else {
+        this.lastTrigger = triggerid;
+        return this.seek(seconds);
+      }
     },
     trigger: function(triggerid) {
       var seconds;
-      if (triggerid !== -1) {
-        seconds = this.model.Video.Triggers[triggerid];
-        if (seconds === void 0 || seconds === null) {
-          return this.model.Video.addTrigger(triggerid, this.model.get('time'));
-        } else {
-          this.lastTrigger = triggerid;
-          return this.seek(seconds);
-        }
+      seconds = this.model.Video.Triggers[triggerid];
+      if (seconds === void 0 || seconds === null) {
+        return;
       }
+      this.lastTrigger = triggerid;
+      return this.seek(seconds);
     },
     triggerArp: function(prev) {
       var last, seconds;
@@ -193,7 +204,7 @@
     initialize: function() {
       window.App.postMessageToViewer("create", this.model.cid, this.model.get("ytid"));
       this.render();
-      $("#players").append($(this.el));
+      this.model.get("Composition").View.$(".players").append($(this.el));
       this.$('.playbutton').button({
         icons: {
           primary: "ui-icon-play"

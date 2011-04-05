@@ -35,7 +35,7 @@
     <section>
       <h1>Compositions</h1>
       <div id="compositions">
-        <div class="additem" style="display:none">
+        <div class="additem">
           <button id="newcomposition" type="button">New</button>
           <button id="loadcomposition" type="button">Open...</button>
         </div>
@@ -48,76 +48,85 @@
         <div id="comp_export_dialog" class="dialog" title="Copy this text to share:">
           <textarea id="comp_export_text"></textarea>
         </div>
-        <div id="comp_info">
-          <h2 id="comp_info_title" class="editable" contenteditable="true" title="Click to edit title"></h2>
-          <p id="comp_info_mixer" class="editable" contenteditable="true" title="Click to edit mixer name"></p>
-          <p id="comp_info_description" class="editable" contenteditable="true" title="Click to edit description"></p>
-          <p style="display:none"><input id="bpm" type="number" min="0" max="500" value="0"></input> bpm</p>
-        </div>
-        <button id="composition-save" type="button">Save</button>
-        <button id="composition-export" type="button">Export as text...</button>
       </div>
     </section>
-    <section>
-      <h1>Players</h1>
-      <div id="players">
-        <div class="additem">
-          <form onSubmit="return false;">
-            <input type="text" id="addplayerid" value="" /><button id="addplayer">Add Player</button>
-          </form>
-        </div>
-      </div>
-    </section>
-    <section>
-      <h1>Multitriggers</h1>
-      <div id="multitriggers">
-        <button id="automulti" class="navigable" tabindex="0">
-          Trigger 0-9 of the first four
-        </button>
-        <button id="automulti2" class="navigable" tabindex="0">
-          All triggers of all players
-        </button>
-      </div>
-    </section>
-    <section style="display:none">
-      <h1>Patterns</h1>
-      <div id="patterns">
-        <div id="patterns-tabs">
-          <ul id="patterns-tabs-nav">
-            <li id="addpatternli"><a id="addpattern" class="addlink">+ Add Pattern</a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-    <!--
-    <section>
-      <h1>Videos</h1>
-      <div id="videos">
-        <ul id="videos-nav"></ul>
-      </div>
-    </section>
-    <section>
-      <h1>Multitriggers</h1>
-      <div id="multitriggers">
-        <div id="multitriggers-tabs">
-          <ul id="multitriggers-tabs-nav">
-            <li id="addmultili"><a id="addmultitrigger" class="addlink">+ Add Set</a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-    <section>
-      <h1>Sequencer</h1>
-      <div id="sequencer">
-        <div class="additem">
-          <button id="addsequencer" type="button">Add Sequencer</button>
-        </div>
-      </div>
-    </section>
-    -->
   </div>
 
 </script>
+
+
+<script type="text/template" id="composition-template">
+  
+  <section>
+    <div id="comp_info">
+      <h2 class="comp_info_title editable" contenteditable="true" title="Click to edit title"><%= this.model.get("title") %></h2>
+      <p class="comp_info_mixer editable" contenteditable="true" title="Click to edit mixer name"><%= this.model.get("mixer") %></p>
+      <p class="comp_info_description editable" contenteditable="true" title="Click to edit description"><%= this.model.get("description") %></p>
+      <p><input class="comp_info_bpm" type="number" min="0" max="500" value="<%= this.model.get("bpm") %>"></input> bpm</p>
+    </div>
+    <button class="composition-save-button" type="button">Save</button>
+    <button class="composition-export-button" type="button">Export as text...</button>
+  </section>
+  <section>
+    <h1>Players</h1>
+    <div class="players">
+      <div class="additem">
+        <form onSubmit="return false;">
+          <input type="text" id="addplayerid" value="" /><button id="addplayer">Add Player</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h1>Multitriggers</h1>
+    <div class="multitriggers">
+      <button class="automulti navigable" tabindex="0">
+        Trigger 0-9 of the first four
+      </button>
+      <button class="automulti2 navigable" tabindex="0">
+        All triggers of all players
+      </button>
+    </div>
+  </section>
+  <section>
+    <h1>Patterns</h1>
+    <div class="patterns">
+      <div class="patterns-tabs">
+        <ul class="patterns-tabs-nav">
+          <li class="addpatternli"><a class="pattern-add-link addlink">+ Add Pattern</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!--
+  <section>
+    <h1>Videos</h1>
+    <div id="videos">
+      <ul id="videos-nav"></ul>
+    </div>
+  </section>
+  <section>
+    <h1>Multitriggers</h1>
+    <div id="multitriggers">
+      <div id="multitriggers-tabs">
+        <ul id="multitriggers-tabs-nav">
+          <li id="addmultili"><a id="addmultitrigger" class="addlink">+ Add Set</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h1>Sequencer</h1>
+    <div id="sequencer">
+      <div class="additem">
+        <button id="addsequencer" type="button">Add Sequencer</button>
+      </div>
+    </div>
+  </section>
+  -->
+  
+</script>
+
 
 <script type="text/template" id="control-template"> 
 
@@ -170,12 +179,20 @@
 
 <script type="text/template" id="pattern-template"> 
   <div>
-    <input id="pattern_<%= this.model.cid %>_beats" type="number" min="0" max="64" step="4" value="16"></input> beats
+    Pattern <%= this.model.cid %> 
+    <button class="pattern_play_button" type="button">Play</button>
+    <button class="pattern_stop_button" type="button">Stop</button>
+    <input class="pattern_beats navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="1" max="64" step="1" value="<%= this.model.beats %>"></input> beats
+    <button class="pattern_addtrack_button" type="button">Add Track</button>
+  </div>
+  <div id="pattern_<%= this.model.cid %>_newtrack_dialog" class="pattern_newtrack_dialog dialog" title="Choose a player:">
+  </div>
+  <div class="pattern_tracks">
   </div>
 </script>
 
 <script type="text/template" id="track-template">
-  Track <%= this.model.cid %>
+  Player <%= this.model.get("Player").cid %>
 </script>
 
 <script type="text/template" id="sequence-template"> 

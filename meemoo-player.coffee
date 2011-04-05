@@ -87,7 +87,7 @@ this.PlayerView = Backbone.View.extend
       this.model.Video.addTrigger this.model.Video.Triggers.length, this.model.get('time')
       
   playprogressOver: (e) ->
-    e.currentTarget.focus()
+    $(e.currentTarget).focus()
   
   playprogressClick: (e) ->
     seekpercent = (e.layerX - 5) / $(e.currentTarget).width()
@@ -101,10 +101,12 @@ this.PlayerView = Backbone.View.extend
       
   focusPrev: () ->
     this.$('.playprogress').parent().prev().children('.playprogress').focus()
+    false
       
   focusNext: () ->
     this.$('.playprogress').parent().next().children('.playprogress').focus()
-      
+    false
+    
   playprogressKey: (e) ->
     # console.log e.keyCode
     switch e.keyCode
@@ -115,21 +117,26 @@ this.PlayerView = Backbone.View.extend
       when 39 then this.triggerArp(false) # right
       else this.triggerCode e.keyCode # trigger keys
       
-      
   triggerCode: (keyCode) ->
     triggerid = App.keycodes.indexOf(keyCode)
-    this.trigger(triggerid)
-    
-  # add or trigger
-  trigger: (triggerid) ->
     if (triggerid isnt -1)
-      seconds = this.model.Video.Triggers[triggerid]
-      if (seconds is undefined or seconds is null)
-        # New trigger
-        this.model.Video.addTrigger triggerid, this.model.get('time')
-      else
-        this.lastTrigger = triggerid
-        this.seek seconds
+      this.triggerOrAdd(triggerid)
+    
+  triggerOrAdd: (triggerid) ->
+    seconds = this.model.Video.Triggers[triggerid]
+    if (seconds is undefined or seconds is null)
+      # New trigger
+      this.model.Video.addTrigger triggerid, this.model.get('time')
+    else
+      this.lastTrigger = triggerid
+      this.seek seconds
+  
+  trigger: (triggerid) ->
+    seconds = this.model.Video.Triggers[triggerid]
+    if (seconds is undefined or seconds is null)
+      return
+    this.lastTrigger = triggerid
+    this.seek seconds
         
   triggerArp: (prev) ->
     last = this.lastTrigger
@@ -161,7 +168,7 @@ this.PlayerView = Backbone.View.extend
     window.App.postMessageToViewer "create", this.model.cid, this.model.get("ytid")
     
     this.render()
-    $("#players").append($(this.el))
+    this.model.get("Composition").View.$(".players").append($(this.el))
     
     # jQuery UI elements
     this.$('.playbutton')

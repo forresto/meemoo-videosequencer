@@ -17,41 +17,52 @@
     return appWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
   };
   recieveMessage = function(e) {
-    var action, id, message, value;
+    var action, id, item, message, messages, value, _i, _len, _results;
     if (e.origin !== window.location.protocol + "//" + window.location.host) {
       return;
     }
-    message = e.data.split(":");
-    action = message[0];
-    id = message[1];
-    value = message[2];
-    switch (action) {
-      case "create":
-        return create(id, value);
-      case "remove":
-        return remove(id);
-      case "seek":
-        return seek(id, value);
-      case "play":
-        return play(id);
-      case "pause":
-        return pause(id);
-      case "hide":
-        return hide(id);
-      case "show":
-        return show(id);
-      case "mute":
-        return mute(id);
-      case "unmute":
-        return unmute(id);
-      case "volume":
-        return volume(id, value);
+    messages = e.data.split("|");
+    _results = [];
+    for (_i = 0, _len = messages.length; _i < _len; _i++) {
+      item = messages[_i];
+      message = item.split(":");
+      action = message[0];
+      id = message[1];
+      value = message[2];
+      _results.push((function() {
+        switch (action) {
+          case "create":
+            return create(id, value);
+          case "remove":
+            return remove(id);
+          case "seek":
+            return seek(id, value);
+          case "play":
+            return play(id);
+          case "pause":
+            return pause(id);
+          case "hide":
+            return hide(id);
+          case "show":
+            return show(id);
+          case "mute":
+            return mute(id);
+          case "unmute":
+            return unmute(id);
+          case "volume":
+            return volume(id, value);
+        }
+      })());
     }
+    return _results;
   };
   window.addEventListener("message", recieveMessage, false);
   create = function(id, value) {
     var atts, params;
     if ($("#player_d_" + id).length > 0) {
+      return;
+    }
+    if (value.length < 3) {
       return;
     }
     $('#players').append('<div id="player_d_' + id + '" class="player_d"><div id="player_r_' + id + '"></div></div>');
@@ -69,49 +80,67 @@
   remove = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    player.stopVideo();
-    $(player).parent().remove();
-    return sizePosition();
+    if (player) {
+      player.stopVideo();
+      $(player).parent().remove();
+      return sizePosition();
+    }
   };
   seek = function(id, value) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return player.seekTo(value, false);
+    if (player) {
+      return player.seekTo(value, false);
+    }
   };
   play = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return player.playVideo();
+    if (player) {
+      return player.playVideo();
+    }
   };
   pause = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return player.pauseVideo();
+    if (player) {
+      return player.pauseVideo();
+    }
   };
   hide = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return $(player).parent().hide();
+    if (player) {
+      return $(player).parent().hide();
+    }
   };
   show = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return $(player).parent().show();
+    if (player) {
+      return $(player).parent().show();
+    }
   };
   mute = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return player.mute();
+    if (player) {
+      return player.mute();
+    }
   };
   unmute = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return player.unMute();
+    if (player) {
+      return player.unMute();
+    }
   };
   volume = function(id, value) {
     var player;
     player = document.getElementById("player_o_" + id);
-    return player.setVolume(value);
+    if (player) {
+      return player.setVolume(value);
+    }
   };
   window.onYouTubePlayerReady = function(id) {
     var player, ytid;

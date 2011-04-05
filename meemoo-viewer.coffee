@@ -28,28 +28,34 @@ postMessageToApp = (message) ->
 recieveMessage = (e) ->
   if e.origin isnt window.location.protocol + "//" + window.location.host
     return
-  message = e.data.split(":")
-  action = message[0] # create, destroy, seek, play, pause, mute
-  id = message[1]
-  value = message[2]
-  switch action
-    when "create"  then create  id,value
-    when "remove"  then remove  id
-    when "seek"    then seek    id,value
-    when "play"    then play    id
-    when "pause"   then pause   id
-    when "hide"    then hide    id
-    when "show"    then show    id
-    when "mute"    then mute    id
-    when "unmute"  then unmute  id
-    when "volume"  then volume  id,value
+    
+  messages = e.data.split("|")
+  for item in messages
+    message = item.split(":")
+    action = message[0] # create, destroy, seek, play, pause, mute
+    id = message[1]
+    value = message[2]
+    switch action
+      when "create"  then create  id,value
+      when "remove"  then remove  id
+      when "seek"    then seek    id,value
+      when "play"    then play    id
+      when "pause"   then pause   id
+      when "hide"    then hide    id
+      when "show"    then show    id
+      when "mute"    then mute    id
+      when "unmute"  then unmute  id
+      when "volume"  then volume  id,value
   
 
 window.addEventListener("message", recieveMessage, false)
 
 
 create = (id,value) ->
-  if $("#player_d_"+id).length > 0
+  if $("#player_d_"+id).length > 0 # that id player already exists
+    return
+    
+  if value.length < 3 # no ytid
     return
   
   $('#players').append '<div id="player_d_'+id+'" class="player_d"><div id="player_r_'+id+'"></div></div>'
@@ -68,49 +74,58 @@ create = (id,value) ->
   
 remove = (id) ->
   player = document.getElementById "player_o_#{id}"
-  player.stopVideo()
-  $(player).parent().remove()
-  sizePosition()
+  if player
+    player.stopVideo()
+    $(player).parent().remove()
+    sizePosition()
 
 
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
-  player.seekTo(value, false)
+  if player
+    player.seekTo(value, false)
 
 
 play = (id) ->
   player = document.getElementById "player_o_#{id}"
-  player.playVideo()
+  if player
+    player.playVideo()
 
 
 pause = (id) ->
   player = document.getElementById "player_o_#{id}"
-  player.pauseVideo()
+  if player
+    player.pauseVideo()
 
 
 hide = (id) ->
   player = document.getElementById "player_o_#{id}"
-  $(player).parent().hide()
+  if player
+    $(player).parent().hide()
 
 
 show = (id) ->
   player = document.getElementById "player_o_#{id}"
-  $(player).parent().show()
+  if player
+    $(player).parent().show()
 
 
 mute = (id) ->
   player = document.getElementById "player_o_#{id}"
-  player.mute()
+  if player
+    player.mute()
 
 
 unmute = (id) ->
   player = document.getElementById "player_o_#{id}"
-  player.unMute()
+  if player
+    player.unMute()
 
 
 volume = (id,value) ->
   player = document.getElementById "player_o_#{id}"
-  player.setVolume(value)
+  if player
+    player.setVolume(value)
 
 
 
