@@ -33,8 +33,11 @@
           primary: "ui-icon-document"
         }
       }).click(function() {
+        var newComp;
         if (confirm("Are you sure you want to start with a new blank composition?")) {
-          return App.loadComposition(App.Compositions.create());
+          newComp = new Composition();
+          App.Compositions.add(newComp);
+          return App.loadComposition(newComp);
         }
       });
       $('#loadcomposition').button({
