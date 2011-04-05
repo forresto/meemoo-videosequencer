@@ -83,6 +83,7 @@ this.Composition = Backbone.Model.extend
     this.ListView = new CompositionListView {model:this}
     
   setBpm: (bpm) ->
+    this.set {bpm:bpm}
     this.bpm = bpm
     this.bpm_ms = Math.round 1000 / this.bpm * 60
     

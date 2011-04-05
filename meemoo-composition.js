@@ -93,6 +93,9 @@
       });
     },
     setBpm: function(bpm) {
+      this.set({
+        bpm: bpm
+      });
       this.bpm = bpm;
       return this.bpm_ms = Math.round(1000 / this.bpm * 60);
     },
