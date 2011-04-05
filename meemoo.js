@@ -50,7 +50,7 @@
           width: 400
         });
       });
-      $('#comp_import_button').button({
+      return $('#comp_import_button').button({
         icons: {
           primary: "ui-icon-arrowthickstop-1-s"
         }
@@ -60,14 +60,6 @@
         return App.Composition = App.Compositions.create({
           loadJSON: pastedJSON
         });
-      });
-      return $('#addplayer').button({
-        icons: {
-          primary: "ui-icon-plus"
-        }
-      }).click(function() {
-        App.addPlayer($('#addplayerid').val());
-        return false;
       });
     },
     initializeCompositions: function() {
@@ -88,12 +80,6 @@
       } catch (_e) {}
       this.Composition = comp;
       return this.Composition.initializeView();
-    },
-    addPlayer: function(ytid) {
-      if (this.Composition === void 0) {
-        this.Composition = this.Compositions.create();
-      }
-      return this.Composition.addPlayer(ytid);
     },
     popoutViewer: function() {
       this.viewer = window.open("viewer.html", "popoutviewer");

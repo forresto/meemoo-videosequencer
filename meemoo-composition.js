@@ -260,7 +260,8 @@
       "mouseover .navigable": "mouseoverNavigable",
       "keydown .automulti": "automulti",
       "keydown .automulti2": "automulti2",
-      "click .pattern-add-link": "addPattern"
+      "click .pattern-add-link": "addPattern",
+      "click .comp-add-player": "addPlayer"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -284,6 +285,11 @@
           primary: "ui-icon-battery-3"
         }
       });
+      this.$('.comp-add-player').button({
+        icons: {
+          primary: "ui-icon-plus"
+        }
+      });
       return this.$(".patterns-tabs").tabs();
     },
     initialize: function() {
@@ -303,6 +309,13 @@
       });
       this.model.Patterns.add(newPattern);
       return newPattern.initializeView();
+    },
+    addPlayer: function() {
+      var ytid;
+      ytid = this.$(".addplayerid").val();
+      if (ytid !== "") {
+        return this.model.addPlayer(ytid);
+      }
     },
     automulti: function(e) {
       var player, triggerid;

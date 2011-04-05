@@ -137,8 +137,6 @@ this.Composition = Backbone.Model.extend
       Composition:this
       ytid:ytid
     this.Players.add newPlayer
-    # for pattern in this.Patterns
-    #   pattern.addTrack newPlayer.cid
     newPlayer
     
   toJSON: ->
@@ -231,6 +229,7 @@ this.CompositionView = Backbone.View.extend
     "keydown .automulti" : "automulti"
     "keydown .automulti2" : "automulti2"
     "click .pattern-add-link" : "addPattern"
+    "click .comp-add-player" : "addPlayer"
     
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -251,6 +250,10 @@ this.CompositionView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-battery-3" }
         
+    this.$('.comp-add-player')
+      .button
+        icons: { primary: "ui-icon-plus" }
+        
     this.$(".patterns-tabs").tabs()
     
   initialize: ->
@@ -268,6 +271,11 @@ this.CompositionView = Backbone.View.extend
       beats: 16
     this.model.Patterns.add newPattern
     newPattern.initializeView()
+
+  addPlayer: ->
+    ytid = this.$(".addplayerid").val()
+    if ytid isnt ""
+      this.model.addPlayer ytid
     
   # triggers 0-9 in videos 0-3
   automulti: (e) -> 

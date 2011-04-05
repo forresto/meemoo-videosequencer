@@ -74,12 +74,6 @@ AppView = Backbone.View.extend
         pastedJSON = $("comp_import_text").text()
         App.Composition = App.Compositions.create({loadJSON:pastedJSON})
     
-    $('#addplayer')
-      .button
-        icons: { primary: "ui-icon-plus" }
-      .click ->
-        App.addPlayer $('#addplayerid').val()
-        return false
         
   initializeCompositions: ->
     this.Compositions = new CompositionList()
@@ -99,10 +93,10 @@ AppView = Backbone.View.extend
     this.Composition = comp
     this.Composition.initializeView()
       
-  addPlayer: (ytid) ->
-    if this.Composition is undefined
-      this.Composition = this.Compositions.create()
-    this.Composition.addPlayer ytid
+  # addPlayer: (ytid) ->
+  #   if this.Composition is undefined
+  #     this.Composition = this.Compositions.create()
+  #   this.Composition.addPlayer ytid
     
   popoutViewer: ->
     this.viewer = window.open("viewer.html", "popoutviewer")
