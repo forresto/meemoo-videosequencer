@@ -46,7 +46,6 @@
         }
       }
       this.Patterns = new PatternList();
-      this.Sequences = new SequenceList();
       if (this.attributes.patterns) {
         _ref3 = this.attributes.patterns;
         for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
@@ -93,11 +92,13 @@
       });
     },
     setBpm: function(bpm) {
-      this.set({
-        bpm: bpm
-      });
-      this.bpm = bpm;
-      return this.bpm_ms = Math.round(1000 / this.bpm * 60);
+      if ((0 < bpm && bpm < 500)) {
+        this.set({
+          bpm: bpm
+        });
+        this.bpm = bpm;
+        return this.bpm_ms = Math.round(1000 / this.bpm * 60);
+      }
     },
     play: function() {
       clearTimeout(App.timer);
@@ -109,8 +110,10 @@
       return this.playing = false;
     },
     step: function() {
-      this.Pattern.step();
-      return this.play();
+      try {
+        this.Pattern.step();
+        return this.play();
+      } catch (_e) {}
     },
     cuePattern: function(pattern) {
       this.nextPattern = pattern;
@@ -139,7 +142,7 @@
       }
     },
     initializeView: function() {
-      var pattern, player, sequence, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
+      var pattern, player, video, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       this.View = new CompositionView({
         model: this
       });
@@ -157,11 +160,6 @@
       for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
         pattern = _ref3[_k];
         pattern.initializeView();
-      }
-      _ref4 = this.Sequences.models;
-      for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-        sequence = _ref4[_l];
-        sequence.initializeView();
       }
       return App.reloadVideos();
     },
@@ -184,8 +182,7 @@
         bpm: this.get("bpm"),
         videos: this.Videos,
         players: this.Players,
-        patterns: this.Patterns,
-        sequences: this.Sequences
+        patterns: this.Patterns
       };
     },
     "delete": function() {
@@ -355,7 +352,7 @@
         description: $.trim(this.$(".comp_info_description").text()),
         bpm: parseInt(this.$(".comp_info_bpm").val())
       });
-      this.model.setBpm(parseInt($("#bpm").val()));
+      this.model.setBpm(parseInt(this.$(".comp_info_bpm").val()));
       return this.model.ListView.render();
     },
     "export": function() {
@@ -368,12 +365,13 @@
     },
     remove: function() {
       var player, _i, _len, _ref;
+      this.model.stop();
       _ref = this.model.Players.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         player = _ref[_i];
         App.postMessageToViewer("remove", player.cid);
       }
-      return $(this.el).remove();
+      return $(this.el).empty().remove();
     }
   });
 }).call(this);

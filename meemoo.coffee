@@ -87,8 +87,8 @@ AppView = Backbone.View.extend
     
       
   loadComposition: (comp) ->
-    try 
-      this.Composition.View.remove() # remove old view
+    try
+      this.Composition.View.remove() # remove last comp view
     
     this.Composition = comp
     this.Composition.initializeView()

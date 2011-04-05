@@ -45,7 +45,7 @@ this.Composition = Backbone.Model.extend
               
     # Repopulate patterns and sequences
     this.Patterns = new PatternList()
-    this.Sequences = new SequenceList()
+    # this.Sequences = new SequenceList()
     
     if this.attributes.patterns
       for pattern in this.attributes.patterns
@@ -83,9 +83,10 @@ this.Composition = Backbone.Model.extend
     this.ListView = new CompositionListView {model:this}
     
   setBpm: (bpm) ->
-    this.set {bpm:bpm}
-    this.bpm = bpm
-    this.bpm_ms = Math.round 1000 / this.bpm * 60
+    if 0 < bpm < 500
+      this.set {bpm:bpm}
+      this.bpm = bpm
+      this.bpm_ms = Math.round 1000 / this.bpm * 60
     
   play: ->
     clearTimeout App.timer
@@ -97,8 +98,9 @@ this.Composition = Backbone.Model.extend
     this.playing = false
     
   step: ->
-    this.Pattern.step()
-    this.play()
+    try
+      this.Pattern.step()
+      this.play()
     
   cuePattern: (pattern) ->
     this.nextPattern = pattern
@@ -129,8 +131,8 @@ this.Composition = Backbone.Model.extend
       video.initializeView()
     for pattern in this.Patterns.models
       pattern.initializeView()
-    for sequence in this.Sequences.models
-      sequence.initializeView()
+    # for sequence in this.Sequences.models
+    #   sequence.initializeView()
     App.reloadVideos()
       
   addPlayer: (ytid) ->
@@ -150,7 +152,7 @@ this.Composition = Backbone.Model.extend
       videos: this.Videos
       players: this.Players
       patterns: this.Patterns
-      sequences: this.Sequences
+      # sequences: this.Sequences
       
   delete: ->
     this.destroy()
@@ -310,7 +312,7 @@ this.CompositionView = Backbone.View.extend
       mixer : $.trim this.$(".comp_info_mixer").text()
       description : $.trim this.$(".comp_info_description").text()
       bpm : parseInt this.$(".comp_info_bpm").val()
-    this.model.setBpm parseInt $("#bpm").val()
+    this.model.setBpm parseInt this.$(".comp_info_bpm").val()
     this.model.ListView.render()
     
   export: ->
@@ -321,6 +323,7 @@ this.CompositionView = Backbone.View.extend
       this.model.delete()
       
   remove: ->
+    this.model.stop() # stop patterns
     for player in this.model.Players.models
       App.postMessageToViewer("remove", player.cid)
-    $(this.el).remove()
+    $(this.el).empty().remove()
