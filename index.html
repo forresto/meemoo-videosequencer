@@ -7,11 +7,47 @@
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   
 </head>
-<body>
+<body style="font-size:2em;">
 
   <div id="intro">
-    Do you have what it takes? Chrome 10 and Firefox 4 are probably your best bets.
+    Do you have what it takes? Chrome 10 or Firefox 4 is probably your best bet.
   </div>
+  <ul>
+    <li>JavaScript: <span id="js">no</span></li>
+    <li>Local storage: <span id="localstorage">?</span></li>
+    <li>Video: <span id="video">?</span>
+      <ul style="font-size:.5em;">
+        <li>h264: <span id="h264">?</span></li>
+        <li>ogg: <span id="ogg">?</span></li>
+        <li>webm: <span id="webm">?</span></li>
+      </ul>
+    </li>
+    <li>Audio: <span id="audio">?</span>
+      <ul style="font-size:.5em;">
+        <li>m4a: <span id="m4a">?</span></li>
+        <li>mp3: <span id="mp3">?</span></li>
+        <li>ogg: <span id="ogga">?</span></li>
+      </ul>
+    </li>
+  </ul>
+
+<script type="text/javascript">
+  document.getElementById("js").innerHTML = "yes"
+  document.getElementById("localstorage").innerHTML = Modernizr.localstorage ? "yes" : "no"
+  document.getElementById("video").innerHTML = Modernizr.video ? "yes" : "no"
+  if (Modernizr.video) {
+    document.getElementById("h264").innerHTML = Modernizr.video.h264
+    document.getElementById("ogg").innerHTML = Modernizr.video.ogg
+    document.getElementById("webm").innerHTML = Modernizr.video.webm
+  }
+  document.getElementById("audio").innerHTML = Modernizr.audio ? "yes" : "no"
+  if (Modernizr.audio) {
+    document.getElementById("m4a").innerHTML = Modernizr.audio.m4a
+    document.getElementById("mp3").innerHTML = Modernizr.audio.mp3
+    document.getElementById("ogga").innerHTML = Modernizr.audio.ogg
+  }
+</script>
+
   
 <script type="text/javascript">
   var _gaq = _gaq || [];
