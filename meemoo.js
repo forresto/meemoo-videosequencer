@@ -9,8 +9,8 @@
 
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
-  */  var AppView, recieveMessage;
-  AppView = Backbone.View.extend({
+  */  var recieveMessage;
+  this.AppView = Backbone.View.extend({
     template: _.template($('#application-template').html()),
     triggers_us: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/"],
     keycodes_us: [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191],
@@ -158,10 +158,6 @@
         return _results;
       }
     }
-  });
-  $(function() {
-    window.App = new AppView();
-    return App.initializeCompositions();
   });
   recieveMessage = function(e) {
     if (e.origin !== window.location.protocol + "//" + window.location.host) {

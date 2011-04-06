@@ -3,23 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <title>Meemoo AV Sequencer by Sembiki Interactive</title>
-
-  <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css" />
-  <link rel="stylesheet" type="text/css" href="meemoo.css" /> 
+  
+  <script type="text/javascript" src="lib/modernizr.custom.js"></script>
+  <script type="text/javascript">
+  
+    var hasFeatures = Modernizr.localstorage && Modernizr.video && Modernizr.audio;
+    
+    yepnope({
+      test : hasFeatures,
+      yep  : [
+        'meemoo.css',
+        'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
+        'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js',
+        'lib/underscore.js',
+        'lib/backbone.js',
+        'lib/backbone-localstorage.js',
+        'meemoo-composition.js',
+        'meemoo-video.js',
+        'meemoo-player.js',
+        'meemoo-pattern.js',
+        // 'meemoo-sequence.js',
+        'meemoo.js'
+      ],
+      complete : function(){
+        if (hasFeatures) {
+          yepnope('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css');
+          window.App = new AppView();
+          App.initializeCompositions();
+        }
+      }
+    });
+    
+  </script>
   
   <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>  -->
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script> 
+  <!--
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> 
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script> 
-  <!-- <script type="text/javascript" src="lib/modernizr-1.6.min.js"></script> -->
-  <script type="text/javascript" src="lib/json2-min.js"></script>
   <script type="text/javascript" src="lib/underscore.js"></script>
   <script type="text/javascript" src="lib/backbone.js"></script>
   <script type="text/javascript" src="lib/backbone-localstorage.js"></script>
+  -->
 </head>
 <body>
 
   <div id="intro">
-    You need JavaScript and a modern web broswer to load this application.
+    You need JavaScript and a modern web broswer to load this application. Chrome 10+ or Firefox 4+ is probably your best bet.
   </div>
   <div id="application">
   </div>
@@ -203,12 +232,14 @@
 
 <!-- Application --> 
 
+<!--
 <script type="text/javascript" src="meemoo-composition.js"></script>
 <script type="text/javascript" src="meemoo-video.js"></script>
 <script type="text/javascript" src="meemoo-player.js"></script>
 <script type="text/javascript" src="meemoo-pattern.js"></script>
-<!-- <script type="text/javascript" src="meemoo-sequence.js"></script> -->
+<script type="text/javascript" src="meemoo-sequence.js"></script>
 <script type="text/javascript" src="meemoo.js"></script>
+-->
 
 <!-- Analytics --> 
 

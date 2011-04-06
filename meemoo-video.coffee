@@ -61,7 +61,7 @@ this.VideoView = Backbone.View.extend
   updateTriggers: ->
     triggershtml = ""
     for trigger in this.model.Triggers
-      if trigger isnt null and trigger >= 0 
+      if trigger isnt null and trigger >= 0 and this.model.get("totaltime") > 0
         left = trigger / this.model.get("totaltime") * 100
         triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
     $(".showtriggers_#{this.model.cid}").html(triggershtml)

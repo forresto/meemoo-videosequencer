@@ -11,7 +11,7 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 ### 
 
 
-AppView = Backbone.View.extend
+this.AppView = Backbone.View.extend
 
   template: _.template $('#application-template').html()
   
@@ -152,9 +152,9 @@ AppView = Backbone.View.extend
             
 
 # Initialize app
-$ ->
-  window.App = new AppView()
-  App.initializeCompositions()
+# $ ->
+#   window.App = new AppView()
+#   App.initializeCompositions()
   
   
 # Util
