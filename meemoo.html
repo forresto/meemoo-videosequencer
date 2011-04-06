@@ -12,7 +12,6 @@
     yepnope({
       test : hasFeatures,
       yep  : [
-        'meemoo.css',
         'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
         'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js',
         'lib/underscore.js',
@@ -22,28 +21,26 @@
         'meemoo-video.js',
         'meemoo-player.js',
         'meemoo-pattern.js',
-        // 'meemoo-sequence.js',
-        'meemoo.js'
+        'meemoo-patterntrack.js',
+        'meemoo-sequence.js',
+        'meemoo.js',
+        'meemoo.css'
       ],
       complete : function(){
         if (hasFeatures) {
+          // load skin
           yepnope('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css');
-          window.App = new AppView();
-          App.initializeCompositions();
+          // load application
+          $(document).ready(function() {
+            window.App = new AppView();
+            App.initializeCompositions();
+          });
         }
       }
     });
     
   </script>
   
-  <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>  -->
-  <!--
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> 
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script> 
-  <script type="text/javascript" src="lib/underscore.js"></script>
-  <script type="text/javascript" src="lib/backbone.js"></script>
-  <script type="text/javascript" src="lib/backbone-localstorage.js"></script>
-  -->
 </head>
 <body>
 
@@ -52,6 +49,12 @@
   </div>
   <div id="application">
   </div>
+
+
+
+
+
+<!-- Application templates --> 
 
 
 <script type="text/template" id="application-template">
@@ -69,7 +72,7 @@
           <button id="loadcomposition" type="button">Open...</button>
         </div>
         <div id="comp_dialog" class="dialog" title="Load">
-          <div style="display:none">
+          <div>
             <h2>Import from text</h2>
             <textarea id="comp_import_text"></textarea>
             <button id="comp_import_button" type="button">Import</button>
@@ -129,6 +132,12 @@
       </div>
     </div>
   </section>
+  <section style="display:none">
+    <h1>Sequencers</h1>
+    <div class="sequencers">
+      <button class="sequencer-add" type="button">Add Sequencer</button>
+    </div>
+  </section>
   <!--
   <section>
     <h1>Videos</h1>
@@ -143,14 +152,6 @@
         <ul id="multitriggers-tabs-nav">
           <li id="addmultili"><a id="addmultitrigger" class="addlink">+ Add Set</a></li>
         </ul>
-      </div>
-    </div>
-  </section>
-  <section>
-    <h1>Sequencer</h1>
-    <div id="sequencer">
-      <div class="additem">
-        <button id="addsequencer" type="button">Add Sequencer</button>
       </div>
     </div>
   </section>
@@ -191,8 +192,8 @@
     </div>
   </div>
   <div class="showtriggers showtriggers_<%= video_id %>"></div>
-  <div id="playprogress_<%= this.model.cid %>" class="playprogress navigable" tabindex="0"></div>
-  <div id="loadprogress_<%= this.model.cid %>" class="loadprogress"></div>
+  <div id="playprogress_<%= this.model.cid %>" class="playprogress navigable" tabindex="0" style="height:18px;"></div>
+  <div id="loadprogress_<%= this.model.cid %>" class="loadprogress" style="height:7px;"></div>
 
 </script>
 
@@ -210,11 +211,13 @@
 
 <script type="text/template" id="pattern-template"> 
   <div>
-    Pattern <%= this.model.cid %> 
-    <button class="pattern_play_button" type="button">Play</button>
+    Pattern <div class="pattern_trigger beat navigable"><%= App.triggers[this.model.get("trigger_id")] %></div>
+    <button class="pattern_play_button" type="button">Play/Cue</button>
     <button class="pattern_stop_button" type="button">Stop</button>
-    <input class="pattern_beats navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="1" max="64" step="1" value="<%= this.model.beats %>"></input> beats
+    <input class="pattern_chance navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="0" max="100" step="1" value="<%= this.model.get('chance') %>"></input> chance
+    <input class="pattern_beats navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="1" max="64" step="1" value="<%= this.model.get('beats') %>"></input> beats
     <button class="pattern_addtrack_button" type="button">Add Track</button>
+    Next <div class="pattern_next beat navigable"><%= App.triggers[this.model.get("next")] %></div>
   </div>
   <div id="pattern_<%= this.model.cid %>_newtrack_dialog" class="pattern_newtrack_dialog dialog" title="Choose a player:">
   </div>
@@ -227,19 +230,20 @@
 </script>
 
 <script type="text/template" id="sequence-template"> 
+  <div>
+    Sequence <%= this.model.cid %> 
+    <button class="sequence_play_button" type="button">Play</button>
+    <button class="sequence_stop_button" type="button">Stop</button>
+    <input class="sequence_length navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="1" max="64" step="1" value="<%= this.model.get('length') %>"></input> beats
+  </div>
+  <div class="sequence_track">
+  </div>
 </script>
 
 
-<!-- Application --> 
 
-<!--
-<script type="text/javascript" src="meemoo-composition.js"></script>
-<script type="text/javascript" src="meemoo-video.js"></script>
-<script type="text/javascript" src="meemoo-player.js"></script>
-<script type="text/javascript" src="meemoo-pattern.js"></script>
-<script type="text/javascript" src="meemoo-sequence.js"></script>
-<script type="text/javascript" src="meemoo.js"></script>
--->
+
+
 
 <!-- Analytics --> 
 

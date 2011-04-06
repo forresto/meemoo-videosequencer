@@ -20,13 +20,30 @@ this.Composition = Backbone.Model.extend
   #   "change": this.View.render()
     
   initialize: ->
+    
     if this.get("loadJSON") isnt undefined
-      #TODO
+      
       pastedJSON = this.get("loadJSON")
       if pastedJSON isnt ""
         loadComp = JSON.parse(pastedJSON);
-        console.log loadComp
-        
+        if loadComp.bpm
+          this.attributes.bpm = loadComp.bpm
+        if loadComp.description
+          this.attributes.description = loadComp.description
+        if loadComp.mixer
+          this.attributes.mixer = loadComp.mixer
+        if loadComp.patterns
+          this.attributes.patterns = loadComp.patterns
+        if loadComp.players
+          this.attributes.players = loadComp.players
+        if loadComp.title
+          this.attributes.title = loadComp.title
+        if loadComp.sequences
+          this.attributes.sequences = loadComp.sequences
+        if loadComp.videos
+          this.attributes.videos = loadComp.videos
+          
+    console.log this.attributes
     
     # Repopulate players and videos
     this.Videos = new VideoList()
@@ -43,14 +60,16 @@ this.Composition = Backbone.Model.extend
               player.newcid = newPlayer.cid
             break
               
-    # Repopulate patterns and sequences
+    # Repopulate patterns
     this.Patterns = new PatternList()
-    # this.Sequences = new SequenceList()
     
     if this.attributes.patterns
       for pattern in this.attributes.patterns
         newPattern = new Pattern
           Composition: this
+          trigger_id: pattern.trigger_id
+          next: pattern.next
+          chance: pattern.chance
           beats: pattern.beats
         this.Patterns.add newPattern
         pattern.newcid = newPattern.cid
@@ -71,6 +90,9 @@ this.Composition = Backbone.Model.extend
     this.Pattern = null
     this.nextPattern = null
     this.playing = false
+    
+    # Repopulate sequences
+    this.Sequences = new SequenceList()
     
     # if this.attributes.sequences
     
@@ -156,8 +178,9 @@ this.Composition = Backbone.Model.extend
       
   delete: ->
     this.destroy()
-    this.View.remove()
     this.ListView.remove()
+    try
+      this.View.remove()
     
     
 this.CompositionList = Backbone.Collection.extend
@@ -204,6 +227,7 @@ this.CompositionListView = Backbone.View.extend
     
   load: ->
     App.loadComposition this.model
+    $("comp_dialog").dialog("close")
     
   export: ->
     $("#comp_export_dialog textarea").text(JSON.stringify this.model)
@@ -270,7 +294,9 @@ this.CompositionView = Backbone.View.extend
     trigger_id = this.model.Patterns.models.length
     newPattern = new Pattern
       Composition: App.Composition
-      trigger: trigger_id
+      trigger_id: trigger_id
+      chance: 1.0
+      next: trigger_id
       beats: 16
     this.model.Patterns.add newPattern
     newPattern.initializeView()

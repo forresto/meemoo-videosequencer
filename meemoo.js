@@ -56,10 +56,10 @@
         }
       }).click(function() {
         var pastedJSON;
-        pastedJSON = $("comp_import_text").text();
-        return App.Composition = App.Compositions.create({
+        pastedJSON = $("#comp_import_text").val();
+        return App.loadComposition(App.Compositions.create({
           loadJSON: pastedJSON
-        });
+        }));
       });
     },
     initializeCompositions: function() {

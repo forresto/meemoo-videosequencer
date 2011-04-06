@@ -21,9 +21,33 @@
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
           loadComp = JSON.parse(pastedJSON);
-          console.log(loadComp);
+          if (loadComp.bpm) {
+            this.attributes.bpm = loadComp.bpm;
+          }
+          if (loadComp.description) {
+            this.attributes.description = loadComp.description;
+          }
+          if (loadComp.mixer) {
+            this.attributes.mixer = loadComp.mixer;
+          }
+          if (loadComp.patterns) {
+            this.attributes.patterns = loadComp.patterns;
+          }
+          if (loadComp.players) {
+            this.attributes.players = loadComp.players;
+          }
+          if (loadComp.title) {
+            this.attributes.title = loadComp.title;
+          }
+          if (loadComp.sequences) {
+            this.attributes.sequences = loadComp.sequences;
+          }
+          if (loadComp.videos) {
+            this.attributes.videos = loadComp.videos;
+          }
         }
       }
+      console.log(this.attributes);
       this.Videos = new VideoList();
       this.Players = new PlayerList();
       if (this.attributes.players) {
@@ -52,6 +76,9 @@
           pattern = _ref3[_k];
           newPattern = new Pattern({
             Composition: this,
+            trigger_id: pattern.trigger_id,
+            next: pattern.next,
+            chance: pattern.chance,
             beats: pattern.beats
           });
           this.Patterns.add(newPattern);
@@ -82,6 +109,7 @@
       this.Pattern = null;
       this.nextPattern = null;
       this.playing = false;
+      this.Sequences = new SequenceList();
       if (this.attributes.bpm) {
         this.setBpm(this.attributes.bpm);
       } else {
@@ -187,8 +215,10 @@
     },
     "delete": function() {
       this.destroy();
-      this.View.remove();
-      return this.ListView.remove();
+      this.ListView.remove();
+      try {
+        return this.View.remove();
+      } catch (_e) {}
     }
   });
   this.CompositionList = Backbone.Collection.extend({
@@ -231,7 +261,8 @@
       return this.render();
     },
     load: function() {
-      return App.loadComposition(this.model);
+      App.loadComposition(this.model);
+      return $("comp_dialog").dialog("close");
     },
     "export": function() {
       $("#comp_export_dialog textarea").text(JSON.stringify(this.model));
@@ -304,7 +335,9 @@
       trigger_id = this.model.Patterns.models.length;
       newPattern = new Pattern({
         Composition: App.Composition,
-        trigger: trigger_id,
+        trigger_id: trigger_id,
+        chance: 1.0,
+        next: trigger_id,
         beats: 16
       });
       this.model.Patterns.add(newPattern);

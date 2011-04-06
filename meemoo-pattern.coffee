@@ -10,14 +10,8 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
 ### 
 
-### 
-# Patterns
-### 
-
 this.Pattern = Backbone.Model.extend
   initialize: ->
-    this.beat = 0
-    this.beats = if this.get("beats") <= 0 then 16 else this.get("beats")
     this.Tracks = new TrackList()
     
   initializeView: ->
@@ -29,9 +23,6 @@ this.Pattern = Backbone.Model.extend
   #   for player in this.get("Composition").Players.models
   #     this.addTrack player
   
-  setBeats: (beats) ->
-    this.beats = beats
-    
   addTrack: (player) ->
     newTrack = new Track({Pattern:this, Player:player})
     this.Tracks.add newTrack
@@ -40,17 +31,26 @@ this.Pattern = Backbone.Model.extend
   toJSON: ->
     jsonobject =
       id: this.cid
-      beats: parseInt(this.beats)
+      trigger_id: parseInt this.get("trigger_id")
+      chance: parseInt this.get("chance")
+      next: parseInt this.get("next")
+      beats: parseInt this.get("beats")
       tracks: this.Tracks
 
   play: ->
     this.get("Composition").cuePattern(this)
+    this.beat = 0
     
   stop: ->
     this.get("Composition").stop()
     this.beat = 0
       
   step: ->
+    if this.beat is 0
+      this.View.$(".beat").removeClass("cue")
+      this.View.$(".beat").removeClass("active")
+      this.View.$(".pattern_trigger").addClass("active")
+      
     triggers = []
     
     for track in this.Tracks.models
@@ -67,9 +67,10 @@ this.Pattern = Backbone.Model.extend
     this.View.step()
     
     this.beat++
-    if this.beat >= this.beats
+    if this.beat >= this.get("beats")
       this.beat = 0
       this.get("Composition").loop()
+      
       
   delete: ->
     this.destroy()
@@ -87,11 +88,15 @@ this.PatternView = Backbone.View.extend
   
   events:
     "click .pattern_addtrack_button" : "chooseTrack"
-    "mouseover .navigable" : "mouseoverNavigable"
-    "change .pattern_beats" : "setBeats"
-    "blur .pattern_beats" : "setBeats"
+    "mouseover .navigable"       : "mouseoverNavigable"
+    "change .pattern_beats"      : "setBeats"
+    "blur .pattern_beats"        : "setBeats"
+    "change .pattern_chance"     : "setChance"
+    "blur .pattern_chance"       : "setChance"
     "click .pattern_play_button" : "play"
     "click .pattern_stop_button" : "stop"
+    "keydown .pattern_trigger"   : "setTrigger"
+    "keydown .pattern_next"      : "setNext"
     
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -99,6 +104,24 @@ this.PatternView = Backbone.View.extend
     
   mouseoverNavigable: (e) ->
     $(e.currentTarget).focus()
+    
+  setChance: (e) ->
+    this.model.set
+      chance: parseInt $(e.currentTarget).val()
+    
+  setTrigger: (e) ->
+    triggerid = App.keycodes.indexOf(e.keyCode)
+    if triggerid isnt -1
+      this.model.set
+        trigger_id: triggerid
+      $(e.currentTarget).text App.triggers[triggerid]
+      
+  setNext: (e) ->
+    triggerid = App.keycodes.indexOf(e.keyCode)
+    if triggerid isnt -1
+      this.model.set
+        next: triggerid
+      $(e.currentTarget).text App.triggers[triggerid]
     
   initialize: ->
     this.render()
@@ -117,6 +140,8 @@ this.PatternView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-plus" }
         
+    this.$('.navigable').attr("tabindex", 0)
+        
     # for track in this.model.Tracks.models
     #   track.initializeView()
     
@@ -126,6 +151,7 @@ this.PatternView = Backbone.View.extend
       
   play: ->
     this.model.play()
+    this.$(".pattern_trigger").addClass("cue")
     
   stop: ->
     this.model.stop()
@@ -162,7 +188,7 @@ this.PatternView = Backbone.View.extend
     
   setBeats: ->
     beats = this.$(".pattern_beats").val()
-    this.model.setBeats beats
+    this.model.set {beats:beats}
     for track in this.model.Tracks.models
       track.View.initialize()
       
@@ -173,137 +199,3 @@ this.PatternView = Backbone.View.extend
   remove: ->
     $(this.el).remove()
 
-
-### 
-# Pattern tracks
-### 
-
-
-this.Track = Backbone.Model.extend
-  
-  initialize: ->
-    this.Line = []
-    this.pattern_id = this.get("Pattern").cid
-    this.beats = this.get("Pattern").beats
-    
-  initializeView: ->
-    this.View = new TrackView {model:this, Pattern:this.get("Pattern")}
-    
-  setLine: (line) ->
-    this.Line = line
-    
-  addTrigger: (position, trigger) ->
-    this.Line[position] = trigger
-    
-  setBeat: (beat, triggerid) ->
-    this.Line[beat] = triggerid
-    if this.View
-      this.View.setBeat(beat, triggerid)
-  
-  toJSON: ->
-    jsonobject =
-      player_id: this.get("Player").cid
-      line: this.Line
-      
-  delete: ->
-    this.destroy()
-    this.View.remove()
-    
-    
-this.TrackList = Backbone.Collection.extend
-  model: Track
-
-this.TrackView = Backbone.View.extend
-  tagName: "div"
-  className: "track"
-  template: _.template $('#track-template').html()
-  
-  events:
-    "mouseover .beat" : "beatOver"
-    "keydown .beat"   : "beatKeydown"
-    
-  
-  render: ->
-    $(this.el).html this.template this.model.toJSON()
-    return this
-    
-  initialize: ->
-    $(this.el).empty()
-    this.Beats = []
-    this.render()
-    beats = this.model.get("Pattern").beats
-    for i in [0..beats-1]
-      html = App.triggers[this.model.Line[i]]
-      if html is null or html is undefined
-        html = "&nbsp;"
-      beat = $("<span class='beat beat_#{i} navigable' id='pattern_#{this.model.pattern_id}_track_#{this.model.cid}_beat_#{i}' tabindex='0'>#{html}</span>")
-      beat.data("beat", i)
-      $(this.el).append(beat)
-      this.Beats[i] = beat
-      
-    this.model.get("Pattern").View.$(".pattern_tracks").append $(this.el)
-    
-  beatOver: (e) ->
-    $(e.currentTarget).focus()
-
-  beatKeydown: (e) ->
-    beat = $(e.currentTarget).data("beat")
-    # console.log e.keyCode
-    switch e.keyCode
-      when 9 then return true # tab
-      when 8 then this.focusPrev(beat) # delete
-      when 46 then this.focusPrev(beat) # esc
-      when 38 then this.focusPrevTrack(beat) # up
-      when 40 then this.focusNextTrack(beat) # down
-      when 37 then this.focusPrev(beat) # left
-      when 39 then this.focusNext(beat) # right
-      else this.setBeatKeycode(beat, e.keyCode); return false # trigger keys
-    
-  setBeatKeycode: (beat, keyCode) ->
-    triggerid = App.keycodes.indexOf(keyCode)
-    if triggerid is -1
-      if keyCode is 32 or keyCode is 8 or keyCode is 46 or keyCode is 27 # space, bksp, del, esc
-        triggerid = null
-      else
-        return
-        
-    newText = if triggerid is null then "&nbsp;" else App.triggers[triggerid]
-    this.Beats[beat].html(newText);
-    
-    this.model.setBeat(beat, triggerid)
-    
-    if keyCode isnt 32 and triggerid is null # not space
-      this.focusPrev(beat)
-    else
-      this.focusNext(beat)
-    
-  focusPrev: (beat) ->
-    if beatel = this.Beats[beat-1]
-      beatel.focus()
-    false
-      
-  focusNext: (beat) ->
-    if beatel = this.Beats[beat+1]
-      beatel.focus()
-    false
-      
-  focusPrevTrack: (beat) ->
-    if beatel = this.Beats[beat].parent().prev().children(".beat_#{beat}")
-      beatel.focus()
-    false
-      
-  focusNextTrack: (beat) ->
-    if beatel = this.Beats[beat].parent().next().children(".beat_#{beat}")
-      beatel.focus()
-    false
-    
-  setBeat: (beat, triggerid) ->
-    newText = if triggerid is null then "&nbsp;" else App.triggers[triggerid]
-    this.Beats[beat].html(newText);
-    
-  delete: ->
-    if confirm "Are you sure you want to remove this pattern (#{this.model.get('title')})?"
-      this.model.delete()
-      
-  remove: ->
-    $(this.el).remove()

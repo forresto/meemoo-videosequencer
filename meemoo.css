@@ -44,13 +44,13 @@ object {
 }
 
 .playprogress {
-  height: 18px;
+  height: 18px !important;
   cursor: pointer;
 }
 .loadprogress {
   margin-top: -1px;
   margin-bottom: 10px;
-  height: 7px;
+  height: 7px !important;
 }
 
 #container {
@@ -197,9 +197,10 @@ input.setuptrack {
   white-space: nowrap;
 }
   .beat {
+    font-family: monospace;
+    font-size: 12px;
     display: inline-block;
     text-align: center;
-    font-size: 12px;
     width: 16px;
     height: 16px;
     margin: 0 2px 0 0;
@@ -212,14 +213,32 @@ input.setuptrack {
     background-color: #DDD;
     color: black;
   }
+  .beat.pattern_trigger,
+  .beat.pattern_next {
+    background-color: white;
+    color: black;
+    font-size: 14px;
+    width: 18px;
+    height: 18px;
+  }
   .beat.active {
     background-color: black;
     color: white;
   }
+  .beat.cue {
+    background-color: #BBB;
+    color: black;
+  }
   
 input.comp_info_bpm,
+input.pattern_chance,
 input.pattern_beats {
   width: 3em;
+}
+
+input.pattern_chance,
+input.pattern_beats {
+  margin-left: 1em;
 }
 
 
