@@ -138,10 +138,33 @@ this.Composition = Backbone.Model.extend
     this.nextPattern = pattern
     if this.playing is false
       this.Pattern = pattern
+      this.nextPattern = null
       this.play()
       
   loop: ->
-    this.Pattern = this.nextPattern
+    if this.nextPattern isnt null
+      this.Pattern = this.nextPattern
+      this.nextPattern = null
+      return
+    
+    # weighted random, with help from http://stackoverflow.com/questions/1761626/weighted-random-numbers
+    sum_of_chance = 0
+    choices = []
+    for pattern in this.Patterns.models
+      if pattern.get("trigger_id") is this.Pattern.get("next")
+        sum_of_chance += pattern.get("chance")
+        choices.push(pattern)
+    console.log choices
+    if choices.length is 1
+      this.Pattern = choices[0]
+    else if choices.length > 1
+      rnd = Math.random()*sum_of_chance
+      for choice in choices
+        if(rnd < choice.get("chance"))
+          this.Pattern = choice
+          return
+        rnd -= choice.get("chance");
+      
     
   multitrigger: (triggers) ->
     message = ""

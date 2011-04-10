@@ -13,6 +13,7 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 this.Pattern = Backbone.Model.extend
   initialize: ->
     this.Tracks = new TrackList()
+    this.beat = 0
     
   initializeView: ->
     this.View = new PatternView {model:this, id:"pattern_#{this.cid}"}
@@ -47,9 +48,7 @@ this.Pattern = Backbone.Model.extend
       
   step: ->
     if this.beat is 0
-      this.View.$(".beat").removeClass("cue")
-      this.View.$(".beat").removeClass("active")
-      this.View.$(".pattern_trigger").addClass("active")
+      this.View.startPlaying()
       
     triggers = []
     
@@ -122,6 +121,11 @@ this.PatternView = Backbone.View.extend
       this.model.set
         next: triggerid
       $(e.currentTarget).text App.triggers[triggerid]
+      
+  startPlaying: ->
+    this.$(".beat").removeClass("cue")
+    this.$(".beat").removeClass("active")
+    this.$(".pattern_trigger").addClass("active")
     
   initialize: ->
     this.render()

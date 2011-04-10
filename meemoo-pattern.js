@@ -11,7 +11,8 @@
 
   */  this.Pattern = Backbone.Model.extend({
     initialize: function() {
-      return this.Tracks = new TrackList();
+      this.Tracks = new TrackList();
+      return this.beat = 0;
     },
     initializeView: function() {
       var track, _i, _len, _ref, _results;
@@ -58,9 +59,7 @@
     step: function() {
       var thistrigger, track, trigger, triggers, _i, _len, _ref;
       if (this.beat === 0) {
-        this.View.$(".beat").removeClass("cue");
-        this.View.$(".beat").removeClass("active");
-        this.View.$(".pattern_trigger").addClass("active");
+        this.View.startPlaying();
       }
       triggers = [];
       _ref = this.Tracks.models;
@@ -137,6 +136,11 @@
         });
         return $(e.currentTarget).text(App.triggers[triggerid]);
       }
+    },
+    startPlaying: function() {
+      this.$(".beat").removeClass("cue");
+      this.$(".beat").removeClass("active");
+      return this.$(".pattern_trigger").addClass("active");
     },
     initialize: function() {
       this.render();

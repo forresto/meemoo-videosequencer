@@ -7,25 +7,25 @@
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   <script type="text/javascript">
   
-    var hasFeatures = Modernizr.localstorage && Modernizr.video && Modernizr.audio;
+    var hasFeatures = Modernizr.localstorage && Array.prototype.indexOf;
     
     yepnope({
       test : hasFeatures,
       yep  : [
         'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
         'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js',
-        'lib/underscore.js',
-        'lib/backbone.js',
-        'lib/backbone-localstorage.js',
-        'meemoo-composition.js',
-        'meemoo-video.js',
-        'meemoo-player.js',
-        'meemoo-pattern.js',
-        'meemoo-patterntrack.js',
-        'meemoo-sequence.js',
-        'meemoo-sequencetrack.js',
-        'meemoo.js',
-        // 'min-meemoo.js',
+        // 'lib/underscore.js',
+        // 'lib/backbone.js',
+        // 'lib/backbone-localstorage.js',
+        // 'meemoo-composition.js',
+        // 'meemoo-video.js',
+        // 'meemoo-player.js',
+        // 'meemoo-pattern.js',
+        // 'meemoo-patterntrack.js',
+        // 'meemoo-sequence.js',
+        // 'meemoo-sequencetrack.js',
+        // 'meemoo.js',
+        'meemoo.min.js',
         'meemoo.css'
       ],
       complete : function(){
@@ -134,30 +134,12 @@
       </div>
     </div>
   </section>
-  <section>
+  <section style="display:none">
     <h1>Sequences</h1>
     <div class="sequences">
       <button class="add-sequence" type="button">Add Sequence</button>
     </div>
   </section>
-  <!--
-  <section>
-    <h1>Videos</h1>
-    <div id="videos">
-      <ul id="videos-nav"></ul>
-    </div>
-  </section>
-  <section>
-    <h1>Multitriggers</h1>
-    <div id="multitriggers">
-      <div id="multitriggers-tabs">
-        <ul id="multitriggers-tabs-nav">
-          <li id="addmultili"><a id="addmultitrigger" class="addlink">+ Add Set</a></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-  -->
   
 </script>
 

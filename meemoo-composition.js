@@ -165,11 +165,43 @@
       this.nextPattern = pattern;
       if (this.playing === false) {
         this.Pattern = pattern;
+        this.nextPattern = null;
         return this.play();
       }
     },
     loop: function() {
-      return this.Pattern = this.nextPattern;
+      var choice, choices, pattern, rnd, sum_of_chance, _i, _j, _len, _len2, _ref, _results;
+      if (this.nextPattern !== null) {
+        this.Pattern = this.nextPattern;
+        this.nextPattern = null;
+        return;
+      }
+      sum_of_chance = 0;
+      choices = [];
+      _ref = this.Patterns.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        pattern = _ref[_i];
+        if (pattern.get("trigger_id") === this.Pattern.get("next")) {
+          sum_of_chance += pattern.get("chance");
+          choices.push(pattern);
+        }
+      }
+      console.log(choices);
+      if (choices.length === 1) {
+        return this.Pattern = choices[0];
+      } else if (choices.length > 1) {
+        rnd = Math.random() * sum_of_chance;
+        _results = [];
+        for (_j = 0, _len2 = choices.length; _j < _len2; _j++) {
+          choice = choices[_j];
+          if (rnd < choice.get("chance")) {
+            this.Pattern = choice;
+            return;
+          }
+          _results.push(rnd -= choice.get("chance"));
+        }
+        return _results;
+      }
     },
     multitrigger: function(triggers) {
       var item, message, seconds, _i, _len;
