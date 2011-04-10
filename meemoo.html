@@ -23,7 +23,9 @@
         'meemoo-pattern.js',
         'meemoo-patterntrack.js',
         'meemoo-sequence.js',
+        'meemoo-sequencetrack.js',
         'meemoo.js',
+        // 'min-meemoo.js',
         'meemoo.css'
       ],
       complete : function(){
@@ -106,7 +108,7 @@
     <div class="players">
       <div class="additem">
         <form onSubmit="return false;">
-          <input type="text" class="addplayerid" value="" /><button class="comp-add-player">Add Player</button>
+          <input type="text" class="addplayerid" value="" /><button class="add-player">Add Player</button>
         </form>
       </div>
     </div>
@@ -127,15 +129,15 @@
     <div class="patterns">
       <div class="patterns-tabs">
         <ul class="patterns-tabs-nav">
-          <li class="addpatternli"><a class="pattern-add-link addlink">+ Add Pattern</a></li>
+          <li class="addpatternli"><a class="add-pattern addlink">+ Add Pattern</a></li>
         </ul>
       </div>
     </div>
   </section>
-  <section style="display:none">
-    <h1>Sequencers</h1>
-    <div class="sequencers">
-      <button class="sequencer-add" type="button">Add Sequencer</button>
+  <section>
+    <h1>Sequences</h1>
+    <div class="sequences">
+      <button class="add-sequence" type="button">Add Sequence</button>
     </div>
   </section>
   <!--
@@ -226,7 +228,7 @@
 </script>
 
 <script type="text/template" id="track-template">
-  Player <%= this.model.get("Player").cid %>
+  Player <%= this.model.get("Player").cid %> 
 </script>
 
 <script type="text/template" id="sequence-template"> 
@@ -240,6 +242,9 @@
   </div>
 </script>
 
+<script type="text/template" id="sequencetrack-template">
+  <%= this.model.cid %> 
+</script>
 
 
 

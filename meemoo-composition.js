@@ -16,7 +16,7 @@
       "mixer": "me!"
     },
     initialize: function() {
-      var addID, loadComp, newPattern, newPlayer, newTrack, old_player_id, pastedJSON, pattern, player, track, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
+      var addID, loadComp, newPattern, newPlayer, newSeq, newTrack, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -47,7 +47,6 @@
           }
         }
       }
-      console.log(this.attributes);
       this.Videos = new VideoList();
       this.Players = new PlayerList();
       if (this.attributes.players) {
@@ -110,6 +109,25 @@
       this.nextPattern = null;
       this.playing = false;
       this.Sequences = new SequenceList();
+      if (this.attributes.sequences) {
+        _ref6 = this.attributes.sequences;
+        for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
+          sequence = _ref6[_n];
+          newSeq = new Sequence({
+            Composition: this
+          });
+          this.Sequences.add(newSeq);
+          if (sequence.tracks) {
+            _ref7 = sequence.tracks;
+            for (_o = 0, _len7 = _ref7.length; _o < _len7; _o++) {
+              track = _ref7[_o];
+              newTrack = newSeq.addTrack;
+              newTrack.setLine(track.line);
+              break;
+            }
+          }
+        }
+      }
       if (this.attributes.bpm) {
         this.setBpm(this.attributes.bpm);
       } else {
@@ -170,7 +188,7 @@
       }
     },
     initializeView: function() {
-      var pattern, player, video, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var pattern, player, sequence, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
       this.View = new CompositionView({
         model: this
       });
@@ -188,6 +206,11 @@
       for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
         pattern = _ref3[_k];
         pattern.initializeView();
+      }
+      _ref4 = this.Sequences.models;
+      for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+        sequence = _ref4[_l];
+        sequence.initializeView();
       }
       return App.reloadVideos();
     },
@@ -291,8 +314,9 @@
       "mouseover .navigable": "mouseoverNavigable",
       "keydown .automulti": "automulti",
       "keydown .automulti2": "automulti2",
-      "click .pattern-add-link": "addPattern",
-      "click .comp-add-player": "addPlayer"
+      "click .add-pattern": "addPattern",
+      "click .add-player": "addPlayer",
+      "click .add-sequence": "addSequence"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -316,7 +340,12 @@
           primary: "ui-icon-battery-3"
         }
       });
-      this.$('.comp-add-player').button({
+      this.$('.add-player').button({
+        icons: {
+          primary: "ui-icon-plus"
+        }
+      });
+      this.$('.add-sequence').button({
         icons: {
           primary: "ui-icon-plus"
         }
@@ -349,6 +378,9 @@
       if (ytid !== "") {
         return this.model.addPlayer(ytid);
       }
+    },
+    addSequence: function() {
+      return this.model.addSequence;
     },
     automulti: function(e) {
       var player, triggerid;

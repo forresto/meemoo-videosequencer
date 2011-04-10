@@ -7,13 +7,13 @@
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   
 </head>
-<body style="font-size:2em;">
+<body style="font-size:2.5em;">
 
   <div id="intro">
     Do you have what it takes? Chrome 10 or Firefox 4 is probably your best bet.
   </div>
   <ul>
-    <li>JavaScript: <span id="js">no</span></li>
+    <li>Modern JavaScript with JSON: <span id="js">?</span></li>
     <li>Local storage: <span id="localstorage">?</span></li>
     <li>Video: <span id="video">?</span>
       <ul style="font-size:.5em;">
@@ -32,19 +32,19 @@
   </ul>
 
 <script type="text/javascript">
-  document.getElementById("js").innerHTML = "yes"
+  document.getElementById("js").innerHTML = Array.prototype.indexOf && JSON.parse && JSON.stringify ? "yes" : "no"
   document.getElementById("localstorage").innerHTML = Modernizr.localstorage ? "yes" : "no"
   document.getElementById("video").innerHTML = Modernizr.video ? "yes" : "no"
   if (Modernizr.video) {
-    document.getElementById("h264").innerHTML = Modernizr.video.h264
-    document.getElementById("ogg").innerHTML = Modernizr.video.ogg
-    document.getElementById("webm").innerHTML = Modernizr.video.webm
+    document.getElementById("h264").innerHTML = !Modernizr.video.h264 ? "no" : Modernizr.video.h264
+    document.getElementById("ogg").innerHTML = !Modernizr.video.ogg ? "no" : Modernizr.video.ogg
+    document.getElementById("webm").innerHTML = !Modernizr.video.webm ? "no" : Modernizr.video.webm
   }
   document.getElementById("audio").innerHTML = Modernizr.audio ? "yes" : "no"
   if (Modernizr.audio) {
-    document.getElementById("m4a").innerHTML = Modernizr.audio.m4a
-    document.getElementById("mp3").innerHTML = Modernizr.audio.mp3
-    document.getElementById("ogga").innerHTML = Modernizr.audio.ogg
+    document.getElementById("m4a").innerHTML = !Modernizr.audio.m4a ? "no" : Modernizr.audio.m4a
+    document.getElementById("mp3").innerHTML = !Modernizr.audio.mp3 ? "no" : Modernizr.audio.mp3
+    document.getElementById("ogga").innerHTML = !Modernizr.audio.ogg ? "no" : Modernizr.audio.ogg
   }
 </script>
 

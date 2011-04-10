@@ -13,9 +13,13 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 this.Sequence = Backbone.Model.extend
   # defaults:
   #   
-  # initialize: ->
-  #   
-  # initializeView: ->
+  initialize: ->
+    this.Tracks = new SequenceTrackList()
+    
+  initializeView: ->
+    this.View = new SequenceView {model:this}
+    for track in this.Tracks.models
+      track.initializeView()
     
   toJSON: ->
     jsonobject =

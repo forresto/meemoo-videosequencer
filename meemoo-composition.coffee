@@ -43,7 +43,7 @@ this.Composition = Backbone.Model.extend
         if loadComp.videos
           this.attributes.videos = loadComp.videos
           
-    console.log this.attributes
+    # console.log this.attributes
     
     # Repopulate players and videos
     this.Videos = new VideoList()
@@ -91,10 +91,20 @@ this.Composition = Backbone.Model.extend
     this.nextPattern = null
     this.playing = false
     
+    
     # Repopulate sequences
     this.Sequences = new SequenceList()
     
-    # if this.attributes.sequences
+    if this.attributes.sequences
+      for sequence in this.attributes.sequences
+        newSeq = new Sequence
+          Composition: this
+        this.Sequences.add newSeq
+        if sequence.tracks
+          for track in sequence.tracks
+            newTrack = newSeq.addTrack
+            newTrack.setLine track.line
+            break
     
     # timer loop
     if this.attributes.bpm
@@ -153,8 +163,8 @@ this.Composition = Backbone.Model.extend
       video.initializeView()
     for pattern in this.Patterns.models
       pattern.initializeView()
-    # for sequence in this.Sequences.models
-    #   sequence.initializeView()
+    for sequence in this.Sequences.models
+      sequence.initializeView()
     App.reloadVideos()
       
   addPlayer: (ytid) ->
@@ -217,11 +227,6 @@ this.CompositionListView = Backbone.View.extend
     this.render()
     $("#comp_dialog").append $(this.el)
     
-    # $("#comp_info_title").text this.model.get("title")
-    # $("#comp_info_mixer").text this.model.get("mixer")
-    # $("#comp_info_description").text this.model.get("description")
-    # $("#bpm").val this.model.get("bpm")
-    
   save: ->
     this.render()
     
@@ -255,8 +260,9 @@ this.CompositionView = Backbone.View.extend
     "mouseover .navigable" : "mouseoverNavigable"
     "keydown .automulti" : "automulti"
     "keydown .automulti2" : "automulti2"
-    "click .pattern-add-link" : "addPattern"
-    "click .comp-add-player" : "addPlayer"
+    "click .add-pattern" : "addPattern"
+    "click .add-player" : "addPlayer"
+    "click .add-sequence" : "addSequence"
     
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -277,10 +283,14 @@ this.CompositionView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-battery-3" }
         
-    this.$('.comp-add-player')
+    this.$('.add-player')
       .button
         icons: { primary: "ui-icon-plus" }
         
+    this.$('.add-sequence')
+      .button
+        icons: { primary: "ui-icon-plus" }
+    
     this.$(".patterns-tabs").tabs()
     
   initialize: ->
@@ -305,6 +315,9 @@ this.CompositionView = Backbone.View.extend
     ytid = this.$(".addplayerid").val()
     if ytid isnt ""
       this.model.addPlayer ytid
+      
+  addSequence: ->
+    this.model.addSequence
     
   # triggers 0-9 in videos 0-3
   automulti: (e) -> 

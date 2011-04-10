@@ -10,6 +10,22 @@
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
   */  this.Sequence = Backbone.Model.extend({
+    initialize: function() {
+      return this.Tracks = new SequenceTrackList();
+    },
+    initializeView: function() {
+      var track, _i, _len, _ref, _results;
+      this.View = new SequenceView({
+        model: this
+      });
+      _ref = this.Tracks.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        track = _ref[_i];
+        _results.push(track.initializeView());
+      }
+      return _results;
+    },
     toJSON: function() {
       var jsonobject;
       return jsonobject = {
