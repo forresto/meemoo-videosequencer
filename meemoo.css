@@ -1,6 +1,6 @@
 body {
   font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-  font-size: 10px;
+  font-size: 11px;
   padding: 0;
   margin: 0;
 
@@ -11,15 +11,16 @@ body {
   height: 100%;
 }
 h1 {
-  font-size: 1.6em;
-}
-
-h2 {
   font-size: 1.4em;
 }
 
-h2 .ui-button-text {
-  font-size: .7em;
+h2 {
+  font-size: 1.2em;
+}
+
+h2 .ui-button-text,
+.ui-button-text {
+  font-size: 10px;
 }
 
 object {
@@ -159,6 +160,7 @@ input.setuptrack {
 
 .control div.controlitemcell {
   display: table-cell;
+  vertical-align: middle;
   padding: 0 5px 0 0;
   margin: 0;
 }

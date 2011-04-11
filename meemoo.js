@@ -56,7 +56,7 @@
         }
       }).click(function() {
         var pastedJSON;
-        pastedJSON = $("#comp_import_text").val();
+        pastedJSON = $("#comp_import_text").val().replace(/(\r\n|\n|\r)/gm, " ");
         return App.loadComposition(App.Compositions.create({
           loadJSON: pastedJSON
         }));

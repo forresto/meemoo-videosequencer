@@ -26,10 +26,12 @@ this.Composition = Backbone.Model.extend
       pastedJSON = this.get("loadJSON")
       if pastedJSON isnt ""
         loadComp = JSON.parse(pastedJSON);
+        if loadComp.id
+          this.attributes.parent_id = loadComp.id
         if loadComp.bpm
           this.attributes.bpm = loadComp.bpm
         if loadComp.description
-          this.attributes.description = loadComp.description
+          this.attributes.description = "Forked from " + loadComp.title + " by " + loadComp.mixer + " --- " + loadComp.description
         if loadComp.mixer
           this.attributes.mixer = loadComp.mixer
         if loadComp.patterns
@@ -37,7 +39,7 @@ this.Composition = Backbone.Model.extend
         if loadComp.players
           this.attributes.players = loadComp.players
         if loadComp.title
-          this.attributes.title = loadComp.title
+          this.attributes.title = "Re: " + loadComp.title
         if loadComp.sequences
           this.attributes.sequences = loadComp.sequences
         if loadComp.videos
@@ -154,7 +156,6 @@ this.Composition = Backbone.Model.extend
       if pattern.get("trigger_id") is this.Pattern.get("next")
         sum_of_chance += pattern.get("chance")
         choices.push(pattern)
-    console.log choices
     if choices.length is 1
       this.Pattern = choices[0]
     else if choices.length > 1
@@ -163,7 +164,7 @@ this.Composition = Backbone.Model.extend
         if(rnd < choice.get("chance"))
           this.Pattern = choice
           return
-        rnd -= choice.get("chance");
+        rnd -= choice.get("chance")
       
     
   multitrigger: (triggers) ->
@@ -208,6 +209,7 @@ this.Composition = Backbone.Model.extend
       players: this.Players
       patterns: this.Patterns
       # sequences: this.Sequences
+      parent_id: this.get("parent_id")
       
   delete: ->
     this.destroy()
@@ -286,6 +288,8 @@ this.CompositionView = Backbone.View.extend
     "click .add-pattern" : "addPattern"
     "click .add-player" : "addPlayer"
     "click .add-sequence" : "addSequence"
+    "click .play-all-button" : "playAll"
+    "click .pause-all-button" : "pauseAll"
     
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -309,10 +313,22 @@ this.CompositionView = Backbone.View.extend
     this.$('.add-player')
       .button
         icons: { primary: "ui-icon-plus" }
+
+    this.$('.add-pattern')
+      .button
+        icons: { primary: "ui-icon-plus" }
         
     this.$('.add-sequence')
       .button
         icons: { primary: "ui-icon-plus" }
+        
+    this.$('.play-all-button')
+      .button
+        icons: { primary: "ui-icon-play" }
+        
+    this.$('.pause-all-button')
+      .button
+        icons: { primary: "ui-icon-pause" }
     
     this.$(".patterns-tabs").tabs()
     
@@ -332,6 +348,7 @@ this.CompositionView = Backbone.View.extend
       next: trigger_id
       beats: 16
     this.model.Patterns.add newPattern
+    newPattern.addTracks()
     newPattern.initializeView()
 
   addPlayer: ->
@@ -367,6 +384,14 @@ this.CompositionView = Backbone.View.extend
       triggers.push trigger
       
     this.model.multitrigger triggers
+    
+  playAll: ->
+    for player in this.model.Players.models
+      player.View.play()
+    
+  pauseAll: ->
+    for player in this.model.Players.models
+      player.View.pause()
     
   save: ->
     this.model.save

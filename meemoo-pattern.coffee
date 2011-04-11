@@ -20,9 +20,9 @@ this.Pattern = Backbone.Model.extend
     for track in this.Tracks.models
       track.initializeView()
       
-  # addTracks: ->
-  #   for player in this.get("Composition").Players.models
-  #     this.addTrack player
+  addTracks: ->
+    for player in this.get("Composition").Players.models
+      this.addTrack player
   
   addTrack: (player) ->
     newTrack = new Track({Pattern:this, Player:player})
@@ -129,8 +129,7 @@ this.PatternView = Backbone.View.extend
     
   initialize: ->
     this.render()
-    this.model.get("Composition").View.$(".patterns-tabs").append $(this.el)
-    this.model.get("Composition").View.$(".patterns-tabs").tabs()
+    this.model.get("Composition").View.$(".patterns").append $(this.el)
     
     this.$('.pattern_play_button')
       .button

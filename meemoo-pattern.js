@@ -28,6 +28,16 @@
       }
       return _results;
     },
+    addTracks: function() {
+      var player, _i, _len, _ref, _results;
+      _ref = this.get("Composition").Players.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        _results.push(this.addTrack(player));
+      }
+      return _results;
+    },
     addTrack: function(player) {
       var newTrack;
       newTrack = new Track({
@@ -144,8 +154,7 @@
     },
     initialize: function() {
       this.render();
-      this.model.get("Composition").View.$(".patterns-tabs").append($(this.el));
-      this.model.get("Composition").View.$(".patterns-tabs").tabs();
+      this.model.get("Composition").View.$(".patterns").append($(this.el));
       this.$('.pattern_play_button').button({
         icons: {
           primary: "ui-icon-play"

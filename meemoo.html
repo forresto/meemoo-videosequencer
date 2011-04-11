@@ -7,7 +7,7 @@
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   <script type="text/javascript">
   
-    var hasFeatures = Modernizr.localstorage && Array.prototype.indexOf;
+    var hasFeatures = Modernizr.localstorage && Array.prototype.indexOf && JSON.parse && JSON.stringify;
     
     yepnope({
       test : hasFeatures,
@@ -109,6 +109,8 @@
       <div class="additem">
         <form onSubmit="return false;">
           <input type="text" class="addplayerid" value="" /><button class="add-player">Add Player</button>
+          <button class="play-all-button" type="button">Play All</button>
+          <button class="pause-all-button" type="button">Pause All</button>
         </form>
       </div>
     </div>
@@ -127,11 +129,7 @@
   <section>
     <h1>Patterns</h1>
     <div class="patterns">
-      <div class="patterns-tabs">
-        <ul class="patterns-tabs-nav">
-          <li class="addpatternli"><a class="add-pattern addlink">+ Add Pattern</a></li>
-        </ul>
-      </div>
+      <button class="add-pattern" type="button">Add Pattern</button>
     </div>
   </section>
   <section style="display:none">
@@ -148,7 +146,7 @@
 
   <div id="control_<%= id %>" class="controls video_<%= video_id %>">
     <div class="controlitemcell">
-      <h2 class="title" title="Video <%= this.model.Video.cid %>"><%= id %></h2>
+      <h2 class="title" title="Video <%= this.model.Video.cid %>, ID <%= this.model.Video.get("ytid") %>"><%= id %></h2>
     </div>
     <div class="controlitemcell">
       <button class="playbutton" type="button">Play</button>

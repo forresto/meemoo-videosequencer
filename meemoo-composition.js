@@ -21,11 +21,14 @@
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
           loadComp = JSON.parse(pastedJSON);
+          if (loadComp.id) {
+            this.attributes.parent_id = loadComp.id;
+          }
           if (loadComp.bpm) {
             this.attributes.bpm = loadComp.bpm;
           }
           if (loadComp.description) {
-            this.attributes.description = loadComp.description;
+            this.attributes.description = "Forked from " + loadComp.title + " by " + loadComp.mixer + " --- " + loadComp.description;
           }
           if (loadComp.mixer) {
             this.attributes.mixer = loadComp.mixer;
@@ -37,7 +40,7 @@
             this.attributes.players = loadComp.players;
           }
           if (loadComp.title) {
-            this.attributes.title = loadComp.title;
+            this.attributes.title = "Re: " + loadComp.title;
           }
           if (loadComp.sequences) {
             this.attributes.sequences = loadComp.sequences;
@@ -186,7 +189,6 @@
           choices.push(pattern);
         }
       }
-      console.log(choices);
       if (choices.length === 1) {
         return this.Pattern = choices[0];
       } else if (choices.length > 1) {
@@ -265,7 +267,8 @@
         bpm: this.get("bpm"),
         videos: this.Videos,
         players: this.Players,
-        patterns: this.Patterns
+        patterns: this.Patterns,
+        parent_id: this.get("parent_id")
       };
     },
     "delete": function() {
@@ -348,7 +351,9 @@
       "keydown .automulti2": "automulti2",
       "click .add-pattern": "addPattern",
       "click .add-player": "addPlayer",
-      "click .add-sequence": "addSequence"
+      "click .add-sequence": "addSequence",
+      "click .play-all-button": "playAll",
+      "click .pause-all-button": "pauseAll"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -377,9 +382,24 @@
           primary: "ui-icon-plus"
         }
       });
+      this.$('.add-pattern').button({
+        icons: {
+          primary: "ui-icon-plus"
+        }
+      });
       this.$('.add-sequence').button({
         icons: {
           primary: "ui-icon-plus"
+        }
+      });
+      this.$('.play-all-button').button({
+        icons: {
+          primary: "ui-icon-play"
+        }
+      });
+      this.$('.pause-all-button').button({
+        icons: {
+          primary: "ui-icon-pause"
         }
       });
       return this.$(".patterns-tabs").tabs();
@@ -402,6 +422,7 @@
         beats: 16
       });
       this.model.Patterns.add(newPattern);
+      newPattern.addTracks();
       return newPattern.initializeView();
     },
     addPlayer: function() {
@@ -441,6 +462,26 @@
         triggers.push(trigger);
       }
       return this.model.multitrigger(triggers);
+    },
+    playAll: function() {
+      var player, _i, _len, _ref, _results;
+      _ref = this.model.Players.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        _results.push(player.View.play());
+      }
+      return _results;
+    },
+    pauseAll: function() {
+      var player, _i, _len, _ref, _results;
+      _ref = this.model.Players.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        _results.push(player.View.pause());
+      }
+      return _results;
     },
     save: function() {
       this.model.save({

@@ -71,7 +71,7 @@ this.AppView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-arrowthickstop-1-s" }
       .click ->
-        pastedJSON = $("#comp_import_text").val()
+        pastedJSON = $("#comp_import_text").val().replace(/(\r\n|\n|\r)/gm," ")
         # console.log pastedJSON
         App.loadComposition App.Compositions.create({loadJSON:pastedJSON})
     
