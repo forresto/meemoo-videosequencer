@@ -11,6 +11,12 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 ### 
 
 this.Pattern = Backbone.Model.extend
+  defaults:
+    trigger_id: 0
+    chance: 1
+    beats: 16
+    next: 0
+    
   initialize: ->
     this.Tracks = new TrackList()
     this.beat = 0
@@ -124,8 +130,8 @@ this.PatternView = Backbone.View.extend
       
   startPlaying: ->
     this.$(".beat").removeClass("cue")
-    this.$(".beat").removeClass("active")
-    this.$(".pattern_trigger").addClass("active")
+    $(".patterns .beat").removeClass("active")
+    this.$(".pattern_trigger").addClass("active") #FIXME?
     
   initialize: ->
     this.render()
@@ -144,16 +150,14 @@ this.PatternView = Backbone.View.extend
         icons: { primary: "ui-icon-plus" }
         
     this.$('.navigable').attr("tabindex", 0)
-        
-    # for track in this.model.Tracks.models
-    #   track.initializeView()
-    
+      
   delete: ->
     if confirm "Are you sure you want to remove this pattern (#{this.model.get('title')})?"
       this.model.delete()
       
   play: ->
     this.model.play()
+    $(".pattern_trigger").removeClass("cue")
     this.$(".pattern_trigger").addClass("cue")
     
   stop: ->

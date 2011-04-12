@@ -90,7 +90,9 @@
     var player;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      return player.seekTo(value, false);
+      if (player.getVideoBytesLoaded() === player.getVideoBytesTotal() || (value + 15) / player.getDuration() < player.getVideoBytesLoaded() / player.getVideoBytesTotal()) {
+        return player.seekTo(value, false);
+      }
     }
   };
   play = function(id) {

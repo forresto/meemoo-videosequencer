@@ -82,9 +82,16 @@ this.PlayerView = Backbone.View.extend
       $(this.el).remove()
       this.model.remove()
       
+  # add 10 triggers
   addtrigger: ->
     if this.model.get('totaltime') > 0
-      this.model.Video.addTrigger this.model.Video.Triggers.length, this.model.get('time')
+      lastTriggerTime = 0
+      for trigger in this.model.Video.Triggers
+        if trigger > lastTriggerTime
+          lastTriggerTime = Math.ceil trigger
+      freeTrigger = this.model.Video.Triggers.length
+      for i in [0..8]
+        this.model.Video.addTrigger freeTrigger+i, lastTriggerTime + ((i + 1) * 2)
       
   playprogressOver: (e) ->
     $(e.currentTarget).focus()
@@ -94,10 +101,8 @@ this.PlayerView = Backbone.View.extend
     this.seek seekpercent * this.model.get('totaltime')
     
   seek: (seconds) ->
-    # don't seek over the buffer, safety of 10 seconds
-    if this.model.get('loaded') is this.model.get('totalsize') or (seconds + 10) / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')
-      this.$('.playprogress').progressbar "value", seconds/this.model.get('totaltime')*100
-      window.App.postMessageToViewer "seek", this.model.cid, seconds
+    # this.$('.playprogress').progressbar "value", seconds/this.model.get('totaltime')*100
+    window.App.postMessageToViewer "seek", this.model.cid, seconds
       
   focusPrev: () ->
     this.$('.playprogress').parent().prev().children('.playprogress').focus()

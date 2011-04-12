@@ -11,8 +11,9 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 ### 
 
 this.Sequence = Backbone.Model.extend
-  # defaults:
-  #   
+  defaults:
+    length: 16
+    
   initialize: ->
     this.Tracks = new SequenceTrackList()
     
@@ -23,11 +24,18 @@ this.Sequence = Backbone.Model.extend
     
   toJSON: ->
     jsonobject =
-      id: this.id
+      id: this.cid
+      length: parseInt this.get("length")
+      tracks: this.Tracks
       
   delete: ->
     this.destroy()
     this.View.remove()
+    
+  addTrack: ->
+    newTrack = new SequenceTrack {Sequence:this}
+    this.Tracks.add newTrack
+    newTrack
     
 
 this.SequenceList = Backbone.Collection.extend
@@ -39,7 +47,10 @@ this.SequenceView = Backbone.View.extend
   className: "sequence"
   template: _.template $('#sequence-template').html()
   
-  # events:
+  events:
+    "mouseover .navigable" : "mouseoverNavigable"
+    "change .sequence_length"      : "setLength"
+    "blur .sequence_length"        : "setLength"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -47,11 +58,30 @@ this.SequenceView = Backbone.View.extend
     
   initialize: ->
     this.render()
-    $("#patterns").append $(this.el)
+    this.model.get("Composition").View.$(".sequences").append $(this.el)
+    
+    this.$('.sequence_play_button')
+      .button
+        icons: { primary: "ui-icon-play" }
+        text: false
+    this.$('.sequence_stop_button')
+      .button
+        icons: { primary: "ui-icon-stop" }
+        text: false
+    
+    
+  mouseoverNavigable: (e) ->
+    $(e.currentTarget).focus()
     
   delete: ->
     if confirm "Are you sure you want to remove this composition (#{this.model.get('title')})?"
       this.model.delete()
+      
+  setLength: ->
+    length = this.$(".sequence_length").val()
+    this.model.set {length:length}
+    for track in this.model.Tracks.models
+      track.View.initialize()
       
   remove: ->
     $(this.el).remove()

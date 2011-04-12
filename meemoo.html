@@ -164,7 +164,7 @@
       <div class="volumeslider" title="Volume slider"></div>
     </div>
     <div class="controlitemcell">
-      <button class="addtriggerbutton" type="button">Add trigger at current playhead location.</button>
+      <button class="addtriggerbutton" type="button">Add nine triggers from last.</button>
     </div>
     <div class="controlitemcell">
       <p id="statusmessage_<%= id %>" class="statusmessage">Loading...</p>
@@ -193,7 +193,7 @@
 
 <script type="text/template" id="pattern-template"> 
   <div>
-    Pattern <div class="pattern_trigger beat navigable"><%= App.triggers[this.model.get("trigger_id")] %></div>
+    Pattern <%= this.model.cid %> <div class="pattern_trigger beat navigable"><%= App.triggers[this.model.get("trigger_id")] %></div>
     <button class="pattern_play_button" type="button">Play/Cue</button>
     <button class="pattern_stop_button" type="button">Stop</button>
     <input class="pattern_chance navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="0" max="100" step="1" value="<%= this.model.get('chance') %>"></input> chance
@@ -216,9 +216,9 @@
     Sequence <%= this.model.cid %> 
     <button class="sequence_play_button" type="button">Play</button>
     <button class="sequence_stop_button" type="button">Stop</button>
-    <input class="sequence_length navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="1" max="64" step="1" value="<%= this.model.get('length') %>"></input> beats
+    <input class="sequence_length navigable" type="number" min="1" max="5000" step="1" value="<%= this.model.get('length') %>"></input> length
   </div>
-  <div class="sequence_track">
+  <div class="sequence_tracks">
   </div>
 </script>
 

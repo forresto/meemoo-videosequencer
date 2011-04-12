@@ -83,10 +83,6 @@ this.Composition = Backbone.Model.extend
                 newTrack = newPattern.addTrack this.Players.getByCid player.newcid
                 newTrack.setLine track.line
                 break
-    else
-      this.Patterns.add new Pattern
-        Composition:this
-        beats: 16
       
     # last pattern active
     this.Pattern = null
@@ -101,12 +97,13 @@ this.Composition = Backbone.Model.extend
       for sequence in this.attributes.sequences
         newSeq = new Sequence
           Composition: this
+          length: sequence.length
         this.Sequences.add newSeq
         if sequence.tracks
           for track in sequence.tracks
-            newTrack = newSeq.addTrack
-            newTrack.setLine track.line
-            break
+            if track.line.length > 0
+              newSeqTrack = newSeq.addTrack()
+              newSeqTrack.setLine track.line
     
     # timer loop
     if this.attributes.bpm
@@ -165,7 +162,6 @@ this.Composition = Backbone.Model.extend
           this.Pattern = choice
           return
         rnd -= choice.get("chance")
-      
     
   multitrigger: (triggers) ->
     message = ""
@@ -198,6 +194,23 @@ this.Composition = Backbone.Model.extend
     this.Players.add newPlayer
     newPlayer
     
+  addPattern: ->
+    trigger_id = this.Patterns.models.length
+    newPattern = new Pattern
+      Composition: this
+      trigger_id: trigger_id
+      next: trigger_id
+    this.Patterns.add newPattern
+    newPattern.addTracks()
+    newPattern
+    
+  addSequence: ->
+    newSequence = new Sequence
+      Composition: this
+    this.Sequences.add newSequence
+    newSequence.addTrack()
+    newSequence
+    
   toJSON: ->
     jsonobject =
       id: this.id
@@ -208,7 +221,7 @@ this.Composition = Backbone.Model.extend
       videos: this.Videos
       players: this.Players
       patterns: this.Patterns
-      # sequences: this.Sequences
+      sequences: this.Sequences
       parent_id: this.get("parent_id")
       
   delete: ->
@@ -339,25 +352,18 @@ this.CompositionView = Backbone.View.extend
   mouseoverNavigable: (e) ->
     $(e.currentTarget).focus()
     
-  addPattern: ->
-    trigger_id = this.model.Patterns.models.length
-    newPattern = new Pattern
-      Composition: App.Composition
-      trigger_id: trigger_id
-      chance: 1.0
-      next: trigger_id
-      beats: 16
-    this.model.Patterns.add newPattern
-    newPattern.addTracks()
-    newPattern.initializeView()
-
   addPlayer: ->
     ytid = this.$(".addplayerid").val()
     if ytid isnt ""
       this.model.addPlayer ytid
       
+  addPattern: ->
+    newPattern = this.model.addPattern()
+    newPattern.initializeView()
+      
   addSequence: ->
-    this.model.addSequence
+    newSequence = this.model.addSequence()
+    newSequence.initializeView()
     
   # triggers 0-9 in videos 0-3
   automulti: (e) -> 

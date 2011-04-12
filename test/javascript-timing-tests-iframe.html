@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Javascript timing tests by Sembiki Interactive</title>
+</head>
+<body>
+
+<pre id="output"></pre>
+
+<script type="text/javascript">
+
+  var thisTime = 0;
+  var lastTime = 0;
+  
+  var recieveMessage;
+  recieveMessage = function(e) {
+    var action, id, item, message, messages, value;
+    if (e.origin !== window.location.protocol + "//" + window.location.host) {
+      return;
+    }
+    message = e.data.split(":");
+    action = message[0];
+    id = message[1];
+    time = message[2];
+    
+    thisTime = new Date().getTime()
+    document.getElementById("output").innerHTML += (thisTime - time) + ":";
+    document.getElementById("output").innerHTML += (thisTime-lastTime) + "\n";
+    lastTime = thisTime;
+  }
+  
+  window.addEventListener("message", recieveMessage, false)
+  
+</script>
+
+</body>
+</html>

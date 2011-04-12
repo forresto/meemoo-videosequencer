@@ -83,7 +83,9 @@ remove = (id) ->
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    player.seekTo(value, false)
+    # don't seek over the buffer, safety of 15 seconds
+    if player.getVideoBytesLoaded() is player.getVideoBytesTotal() or (value + 15) / player.getDuration() < player.getVideoBytesLoaded() / player.getVideoBytesTotal()
+      player.seekTo(value, false)
 
 
 play = (id) ->

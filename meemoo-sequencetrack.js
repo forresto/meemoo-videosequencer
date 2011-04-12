@@ -33,7 +33,6 @@
     toJSON: function() {
       var jsonobject;
       return jsonobject = {
-        player_id: this.get("Player").cid,
         line: this.Line
       };
     },
@@ -50,7 +49,6 @@
     className: "sequencetrack",
     template: _.template($('#sequencetrack-template').html()),
     events: {
-      "mouseover .beat": "beatOver",
       "keydown .beat": "beatKeydown"
     },
     render: function() {
@@ -58,25 +56,22 @@
       return this;
     },
     initialize: function() {
-      var beat, beats, html, i, _ref;
+      var beat, html, i, length, _ref;
       $(this.el).empty();
       this.Beats = [];
       this.render();
-      beats = this.model.get("Sequence").get("length");
-      for (i = 0, _ref = beats - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+      length = this.model.get("Sequence").get("length");
+      for (i = 0, _ref = length - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
         html = App.triggers[this.model.Line[i]];
         if (html === null || html === void 0) {
           html = "&nbsp;";
         }
-        beat = $("<span class='sequencebeat beat beat_" + i + " navigable' id='pattern_" + this.model.pattern_id + "_track_" + this.model.cid + "_beat_" + i + "' tabindex='0'>" + html + "</span>");
+        beat = $("<span class='sequencebeat beat beat_" + i + " navigable' tabindex='0'>" + html + "</span>");
         beat.data("beat", i);
         $(this.el).append(beat);
         this.Beats[i] = beat;
       }
-      return this.model.get("Pattern").View.$(".pattern_tracks").append($(this.el));
-    },
-    beatOver: function(e) {
-      return $(e.currentTarget).focus();
+      return this.model.get("Sequence").View.$(".sequence_tracks").append($(this.el));
     },
     beatKeydown: function(e) {
       var beat;

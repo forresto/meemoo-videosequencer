@@ -211,7 +211,7 @@ input.setuptrack {
   }
   .beat:focus {
   }
-  .beat:nth-child(4n+1) {
+  .track .beat:nth-child(4n+1) {
     background-color: #DDD;
     color: black;
   }
@@ -223,17 +223,19 @@ input.setuptrack {
     width: 18px;
     height: 18px;
   }
+  .track .beat.active,
   .beat.active {
-    background-color: black;
+    background-color: red;
     color: white;
   }
   .beat.cue {
-    background-color: #BBB;
+    background-color: gray;
     color: black;
   }
   
 input.comp_info_bpm,
 input.pattern_chance,
+input.sequence_length,
 input.pattern_beats {
   width: 3em;
 }

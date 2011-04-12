@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Simple HTML &lt;video&gt; scriptable player by Sembiki Interactive</title>
+</head>
+<body style="overflow:hidden;margin:0;padding:0;background-color:#000;color:#FFF">
+
+<div id="container">
+<pre>
+javascript:videoLoad(url)
+javascript:videoSeek(time)
+</pre>
+</div>
+
+<script type="text/javascript">
+
+  window.videoLoad = function (url) {
+    document.getElementById("container").innerHTML = '<video id="play" src="'+url+'" autoplay loop></video>'
+  }
+  window.videoSeek = function (time) {
+    if ( v = document.getElementById("play") && v.duration >= time)
+      v.currentTime = time;
+  }
+  
+</script>
+
+</body>
+</html>

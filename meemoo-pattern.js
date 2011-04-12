@@ -10,6 +10,12 @@
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
   */  this.Pattern = Backbone.Model.extend({
+    defaults: {
+      trigger_id: 0,
+      chance: 1,
+      beats: 16,
+      next: 0
+    },
     initialize: function() {
       this.Tracks = new TrackList();
       return this.beat = 0;
@@ -149,7 +155,7 @@
     },
     startPlaying: function() {
       this.$(".beat").removeClass("cue");
-      this.$(".beat").removeClass("active");
+      $(".patterns .beat").removeClass("active");
       return this.$(".pattern_trigger").addClass("active");
     },
     initialize: function() {
@@ -181,6 +187,7 @@
     },
     play: function() {
       this.model.play();
+      $(".pattern_trigger").removeClass("cue");
       return this.$(".pattern_trigger").addClass("cue");
     },
     stop: function() {

@@ -16,7 +16,7 @@
       "mixer": "me!"
     },
     initialize: function() {
-      var addID, loadComp, newPattern, newPlayer, newSeq, newTrack, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      var addID, loadComp, newPattern, newPlayer, newSeq, newSeqTrack, newTrack, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -102,11 +102,6 @@
             }
           }
         }
-      } else {
-        this.Patterns.add(new Pattern({
-          Composition: this,
-          beats: 16
-        }));
       }
       this.Pattern = null;
       this.nextPattern = null;
@@ -117,16 +112,18 @@
         for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
           sequence = _ref6[_n];
           newSeq = new Sequence({
-            Composition: this
+            Composition: this,
+            length: sequence.length
           });
           this.Sequences.add(newSeq);
           if (sequence.tracks) {
             _ref7 = sequence.tracks;
             for (_o = 0, _len7 = _ref7.length; _o < _len7; _o++) {
               track = _ref7[_o];
-              newTrack = newSeq.addTrack;
-              newTrack.setLine(track.line);
-              break;
+              if (track.line.length > 0) {
+                newSeqTrack = newSeq.addTrack();
+                newSeqTrack.setLine(track.line);
+              }
             }
           }
         }
@@ -257,6 +254,27 @@
       this.Players.add(newPlayer);
       return newPlayer;
     },
+    addPattern: function() {
+      var newPattern, trigger_id;
+      trigger_id = this.Patterns.models.length;
+      newPattern = new Pattern({
+        Composition: this,
+        trigger_id: trigger_id,
+        next: trigger_id
+      });
+      this.Patterns.add(newPattern);
+      newPattern.addTracks();
+      return newPattern;
+    },
+    addSequence: function() {
+      var newSequence;
+      newSequence = new Sequence({
+        Composition: this
+      });
+      this.Sequences.add(newSequence);
+      newSequence.addTrack();
+      return newSequence;
+    },
     toJSON: function() {
       var jsonobject;
       return jsonobject = {
@@ -268,6 +286,7 @@
         videos: this.Videos,
         players: this.Players,
         patterns: this.Patterns,
+        sequences: this.Sequences,
         parent_id: this.get("parent_id")
       };
     },
@@ -411,20 +430,6 @@
     mouseoverNavigable: function(e) {
       return $(e.currentTarget).focus();
     },
-    addPattern: function() {
-      var newPattern, trigger_id;
-      trigger_id = this.model.Patterns.models.length;
-      newPattern = new Pattern({
-        Composition: App.Composition,
-        trigger_id: trigger_id,
-        chance: 1.0,
-        next: trigger_id,
-        beats: 16
-      });
-      this.model.Patterns.add(newPattern);
-      newPattern.addTracks();
-      return newPattern.initializeView();
-    },
     addPlayer: function() {
       var ytid;
       ytid = this.$(".addplayerid").val();
@@ -432,8 +437,15 @@
         return this.model.addPlayer(ytid);
       }
     },
+    addPattern: function() {
+      var newPattern;
+      newPattern = this.model.addPattern();
+      return newPattern.initializeView();
+    },
     addSequence: function() {
-      return this.model.addSequence;
+      var newSequence;
+      newSequence = this.model.addSequence();
+      return newSequence.initializeView();
     },
     automulti: function(e) {
       var player, triggerid;

@@ -31,7 +31,6 @@ this.SequenceTrack = Backbone.Model.extend
   
   toJSON: ->
     jsonobject =
-      player_id: this.get("Player").cid
       line: this.Line
       
   delete: ->
@@ -48,7 +47,7 @@ this.SequenceTrackView = Backbone.View.extend
   template: _.template $('#sequencetrack-template').html()
   
   events:
-    "mouseover .beat" : "beatOver"
+    # "mouseover .beat" : "beatOver"
     "keydown .beat"   : "beatKeydown"
   
   render: ->
@@ -59,20 +58,20 @@ this.SequenceTrackView = Backbone.View.extend
     $(this.el).empty()
     this.Beats = []
     this.render()
-    beats = this.model.get("Sequence").get("length")
-    for i in [0..beats-1]
+    length = this.model.get("Sequence").get("length")
+    for i in [0..length-1]
       html = App.triggers[this.model.Line[i]]
       if html is null or html is undefined
         html = "&nbsp;"
-      beat = $("<span class='sequencebeat beat beat_#{i} navigable' id='pattern_#{this.model.pattern_id}_track_#{this.model.cid}_beat_#{i}' tabindex='0'>#{html}</span>")
+      beat = $("<span class='sequencebeat beat beat_#{i} navigable' tabindex='0'>#{html}</span>")
       beat.data("beat", i)
       $(this.el).append(beat)
       this.Beats[i] = beat
       
-    this.model.get("Pattern").View.$(".pattern_tracks").append $(this.el)
+    this.model.get("Sequence").View.$(".sequence_tracks").append $(this.el)
     
-  beatOver: (e) ->
-    $(e.currentTarget).focus()
+  # beatOver: (e) ->
+  #   $(e.currentTarget).focus()
 
   beatKeydown: (e) ->
     beat = $(e.currentTarget).data("beat")

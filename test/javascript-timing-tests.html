@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Javascript timing tests by Sembiki Interactive</title>
+</head>
+<body>
+
+<button onclick="startTest(120)">Start 120bpm Test</button>
+<button onclick="startTest(240)">Start 240bpm Test</button>
+<button onclick="startTest(480)">Start 480bpm Test</button>
+
+
+<pre id="output" style="display:inline-block;width:300px;height:500px;overflow:scroll"></pre>
+<iframe style="display:inline-block;width:300px;height:500px" 
+  src="javascript-timing-tests-iframe.html" id="viewer" name="inviewer"></iframe>
+
+
+<script type="text/javascript">
+  
+  var count = 0
+  var ms = 1000
+  var timer = null
+  var output = ""
+  var beats = 50
+  var times = new Array(beats)
+  
+  var viewer = document.getElementById("viewer").contentWindow
+  var origin = window.location.protocol + "//" + window.location.host
+  var output = document.getElementById("output")
+  
+  var thisTime = 0
+  var lastTime = 0
+  
+  startTest = function (bpm) {
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+    count = 0
+    ms = Math.round(1000 / bpm * 60)
+    timer = setTimeout("step()", ms)
+    output = document.getElementById("output")
+  }
+  
+  step = function () {
+    var thisTime = new Date().getTime()
+    times[count] = thisTime
+    count++
+    output.innerHTML += (thisTime - lastTime) + "\n";
+    if (count < beats) {
+      timer = setTimeout("step()", ms)
+    } else {
+      calculateResults()
+    }
+    viewer.postMessage("a:b:"+thisTime, origin);
+    
+    lastTime = thisTime
+  }
+  
+  calculateResults = function () {
+    sum = 0
+    for (i=0; i<beats-1; i++) {
+      diff = times[i+1] - times[i]
+      sum += diff
+    }
+    
+    output.innerHTML += "Average: " + (sum/(beats-1));
+  }
+  
+</script>
+
+</body>
+</html>

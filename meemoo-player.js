@@ -99,8 +99,22 @@
       }
     },
     addtrigger: function() {
+      var freeTrigger, i, lastTriggerTime, trigger, _i, _len, _ref, _results;
       if (this.model.get('totaltime') > 0) {
-        return this.model.Video.addTrigger(this.model.Video.Triggers.length, this.model.get('time'));
+        lastTriggerTime = 0;
+        _ref = this.model.Video.Triggers;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          trigger = _ref[_i];
+          if (trigger > lastTriggerTime) {
+            lastTriggerTime = Math.ceil(trigger);
+          }
+        }
+        freeTrigger = this.model.Video.Triggers.length;
+        _results = [];
+        for (i = 0; i <= 8; i++) {
+          _results.push(this.model.Video.addTrigger(freeTrigger + i, lastTriggerTime + ((i + 1) * 2)));
+        }
+        return _results;
       }
     },
     playprogressOver: function(e) {
@@ -112,10 +126,7 @@
       return this.seek(seekpercent * this.model.get('totaltime'));
     },
     seek: function(seconds) {
-      if (this.model.get('loaded') === this.model.get('totalsize') || (seconds + 10) / this.model.get('totaltime') < this.model.get('loaded') / this.model.get('totalsize')) {
-        this.$('.playprogress').progressbar("value", seconds / this.model.get('totaltime') * 100);
-        return window.App.postMessageToViewer("seek", this.model.cid, seconds);
-      }
+      return window.App.postMessageToViewer("seek", this.model.cid, seconds);
     },
     focusPrev: function() {
       this.$('.playprogress').parent().prev().children('.playprogress').focus();
