@@ -128,6 +128,8 @@
           }
         }
       }
+      this.Sequence = null;
+      this.nextSequence = null;
       if (this.attributes.bpm) {
         this.setBpm(this.attributes.bpm);
       } else {

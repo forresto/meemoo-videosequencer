@@ -84,11 +84,10 @@ this.Composition = Backbone.Model.extend
                 newTrack.setLine track.line
                 break
       
-    # last pattern active
+    # no pattern active
     this.Pattern = null
     this.nextPattern = null
     this.playing = false
-    
     
     # Repopulate sequences
     this.Sequences = new SequenceList()
@@ -104,6 +103,10 @@ this.Composition = Backbone.Model.extend
             if track.line.length > 0
               newSeqTrack = newSeq.addTrack()
               newSeqTrack.setLine track.line
+              
+    # no pattern active
+    this.Sequence = null
+    this.nextSequence = null
     
     # timer loop
     if this.attributes.bpm
