@@ -55,7 +55,7 @@
       return this.get("Composition").playSequence(this);
     },
     stop: function() {
-      return this.get("Composition").stopSequence();
+      return this.get("Composition").stopSequence(this);
     },
     step: function() {
       var next_id;
@@ -135,7 +135,8 @@
       return this.model.play();
     },
     stop: function() {
-      return this.model.stop();
+      this.model.stop();
+      return this.$(".beat").removeClass("active");
     },
     step: function() {
       this.$(".beat").removeClass("active");

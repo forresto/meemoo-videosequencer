@@ -175,8 +175,10 @@
       this.loop();
       return this.play();
     },
-    stopSequence: function() {
-      return this.Sequence = null;
+    stopSequence: function(sequence) {
+      if (this.Sequence === sequence) {
+        return this.Sequence = null;
+      }
     },
     loop: function() {
       var choice, choices, next_id, pattern, rnd, sum_of_chance, _i, _j, _len, _len2, _ref, _results;

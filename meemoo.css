@@ -209,7 +209,7 @@ input.setuptrack {
   }
   .beat:focus {
   }
-  .track .beat:nth-child(4n+1) {
+  .track .beat:nth-child(4n+2) {
     background-color: #DDD;
     color: black;
   }

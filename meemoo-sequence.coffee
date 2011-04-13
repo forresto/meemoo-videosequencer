@@ -43,7 +43,7 @@ this.Sequence = Backbone.Model.extend
     this.get("Composition").playSequence(this)
     
   stop: ->
-    this.get("Composition").stopSequence()
+    this.get("Composition").stopSequence(this)
     
   step: ->
     this.beat++
@@ -114,6 +114,7 @@ this.SequenceView = Backbone.View.extend
     
   stop: ->
     this.model.stop()
+    this.$(".beat").removeClass("active")
     
   step: ->
     this.$(".beat").removeClass("active")

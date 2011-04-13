@@ -146,8 +146,9 @@ this.Composition = Backbone.Model.extend
     this.loop()
     this.play()
       
-  stopSequence: ->
-    this.Sequence = null
+  stopSequence: (sequence) ->
+    if this.Sequence is sequence
+      this.Sequence = null
       
   loop: ->
     if this.nextPattern isnt null
