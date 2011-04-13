@@ -132,7 +132,7 @@
       <button class="add-pattern" type="button">Add Pattern</button>
     </div>
   </section>
-  <section style="display:none">
+  <section>
     <h1>Sequences</h1>
     <div class="sequences">
       <button class="add-sequence" type="button">Add Sequence</button>
@@ -194,8 +194,8 @@
 <script type="text/template" id="pattern-template"> 
   <div>
     Pattern <%= this.model.cid %> <div class="pattern_trigger beat navigable"><%= App.triggers[this.model.get("trigger_id")] %></div>
-    <button class="pattern_play_button" type="button">Play/Cue</button>
-    <button class="pattern_stop_button" type="button">Stop</button>
+    <button class="pattern_play_button navigable" type="button">Play/Cue</button>
+    <button class="pattern_stop_button navigable" type="button">Stop</button>
     <input class="pattern_chance navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="0" max="100" step="1" value="<%= this.model.get('chance') %>"></input> chance
     <input class="pattern_beats navigable" id="pattern_<%= this.model.cid %>_beats" type="number" min="1" max="64" step="1" value="<%= this.model.get('beats') %>"></input> beats
     <button class="pattern_addtrack_button" type="button">Add Track</button>
@@ -208,14 +208,14 @@
 </script>
 
 <script type="text/template" id="track-template">
-  Player <%= this.model.get("Player").cid %> 
+  <div class="patterntrack_title">Player <%= this.model.get("Player").cid %></div>
 </script>
 
 <script type="text/template" id="sequence-template"> 
   <div>
     Sequence <%= this.model.cid %> 
-    <button class="sequence_play_button" type="button">Play</button>
-    <button class="sequence_stop_button" type="button">Stop</button>
+    <button class="sequence_play_button navigable" type="button">Play</button>
+    <button class="sequence_stop_button navigable" type="button">Stop</button>
     <input class="sequence_length navigable" type="number" min="1" max="5000" step="1" value="<%= this.model.get('length') %>"></input> length
   </div>
   <div class="sequence_tracks">
@@ -223,7 +223,7 @@
 </script>
 
 <script type="text/template" id="sequencetrack-template">
-  <%= this.model.cid %> 
+  <div class="sequencetrack_title"><%= this.model.cid %></div>
 </script>
 
 

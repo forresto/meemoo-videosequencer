@@ -16,6 +16,7 @@ this.Sequence = Backbone.Model.extend
     
   initialize: ->
     this.Tracks = new SequenceTrackList()
+    this.beat = -1
     
   initializeView: ->
     this.View = new SequenceView {model:this}
@@ -37,6 +38,23 @@ this.Sequence = Backbone.Model.extend
     this.Tracks.add newTrack
     newTrack
     
+  play: ->
+    this.beat = -1 # since loop is called to get first pattern
+    this.get("Composition").playSequence(this)
+    
+  stop: ->
+    this.get("Composition").stopSequence()
+    
+  step: ->
+    this.beat++
+    if this.beat >= this.get("length") 
+      this.beat = 0
+    # highlight
+    this.View.step()
+    next_id = this.Tracks.models[0].Line[this.beat]
+    if next_id is undefined
+      next_id = null
+    return next_id
 
 this.SequenceList = Backbone.Collection.extend
   model: Sequence
@@ -48,9 +66,11 @@ this.SequenceView = Backbone.View.extend
   template: _.template $('#sequence-template').html()
   
   events:
-    "mouseover .navigable" : "mouseoverNavigable"
+    "mouseover .navigable"         : "mouseoverNavigable"
     "change .sequence_length"      : "setLength"
     "blur .sequence_length"        : "setLength"
+    "click .sequence_play_button"  : "play"
+    "click .sequence_stop_button"  : "stop"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -58,7 +78,6 @@ this.SequenceView = Backbone.View.extend
     
   initialize: ->
     this.render()
-    this.model.get("Composition").View.$(".sequences").append $(this.el)
     
     this.$('.sequence_play_button')
       .button
@@ -68,6 +87,10 @@ this.SequenceView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-stop" }
         text: false
+    this.$('.navigable')
+      .attr("tabindex", 0)
+    
+    this.model.get("Composition").View.$(".sequences").append $(this.el)
     
     
   mouseoverNavigable: (e) ->
@@ -85,3 +108,13 @@ this.SequenceView = Backbone.View.extend
       
   remove: ->
     $(this.el).remove()
+    
+  play: ->
+    this.model.play()
+    
+  stop: ->
+    this.model.stop()
+    
+  step: ->
+    this.$(".beat").removeClass("active")
+    this.$(".beat_#{this.model.beat}").addClass("active")

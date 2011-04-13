@@ -14,7 +14,8 @@
       length: 16
     },
     initialize: function() {
-      return this.Tracks = new SequenceTrackList();
+      this.Tracks = new SequenceTrackList();
+      return this.beat = -1;
     },
     initializeView: function() {
       var track, _i, _len, _ref, _results;
@@ -48,6 +49,26 @@
       });
       this.Tracks.add(newTrack);
       return newTrack;
+    },
+    play: function() {
+      this.beat = -1;
+      return this.get("Composition").playSequence(this);
+    },
+    stop: function() {
+      return this.get("Composition").stopSequence();
+    },
+    step: function() {
+      var next_id;
+      this.beat++;
+      if (this.beat >= this.get("length")) {
+        this.beat = 0;
+      }
+      this.View.step();
+      next_id = this.Tracks.models[0].Line[this.beat];
+      if (next_id === void 0) {
+        next_id = null;
+      }
+      return next_id;
     }
   });
   this.SequenceList = Backbone.Collection.extend({
@@ -60,7 +81,9 @@
     events: {
       "mouseover .navigable": "mouseoverNavigable",
       "change .sequence_length": "setLength",
-      "blur .sequence_length": "setLength"
+      "blur .sequence_length": "setLength",
+      "click .sequence_play_button": "play",
+      "click .sequence_stop_button": "stop"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -68,19 +91,20 @@
     },
     initialize: function() {
       this.render();
-      this.model.get("Composition").View.$(".sequences").append($(this.el));
       this.$('.sequence_play_button').button({
         icons: {
           primary: "ui-icon-play"
         },
         text: false
       });
-      return this.$('.sequence_stop_button').button({
+      this.$('.sequence_stop_button').button({
         icons: {
           primary: "ui-icon-stop"
         },
         text: false
       });
+      this.$('.navigable').attr("tabindex", 0);
+      return this.model.get("Composition").View.$(".sequences").append($(this.el));
     },
     mouseoverNavigable: function(e) {
       return $(e.currentTarget).focus();
@@ -106,6 +130,16 @@
     },
     remove: function() {
       return $(this.el).remove();
+    },
+    play: function() {
+      return this.model.play();
+    },
+    stop: function() {
+      return this.model.stop();
+    },
+    step: function() {
+      this.$(".beat").removeClass("active");
+      return this.$(".beat_" + this.model.beat).addClass("active");
     }
   });
 }).call(this);

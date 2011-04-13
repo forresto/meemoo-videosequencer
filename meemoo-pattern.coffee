@@ -135,7 +135,6 @@ this.PatternView = Backbone.View.extend
     
   initialize: ->
     this.render()
-    this.model.get("Composition").View.$(".patterns").append $(this.el)
     
     this.$('.pattern_play_button')
       .button
@@ -148,8 +147,10 @@ this.PatternView = Backbone.View.extend
     this.$('.pattern_addtrack_button')
       .button
         icons: { primary: "ui-icon-plus" }
-        
-    this.$('.navigable').attr("tabindex", 0)
+    this.$('.navigable')
+      .attr("tabindex", 0)
+    
+    this.model.get("Composition").View.$(".patterns").append $(this.el)
       
   delete: ->
     if confirm "Are you sure you want to remove this pattern (#{this.model.get('title')})?"

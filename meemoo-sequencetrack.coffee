@@ -63,11 +63,12 @@ this.SequenceTrackView = Backbone.View.extend
       html = App.triggers[this.model.Line[i]]
       if html is null or html is undefined
         html = "&nbsp;"
-      beat = $("<span class='sequencebeat beat beat_#{i} navigable' tabindex='0'>#{html}</span>")
+      beat = $("<span class='sequencebeat beat beat_#{i} navigable'>#{html}</span>")
       beat.data("beat", i)
       $(this.el).append(beat)
       this.Beats[i] = beat
       
+    this.$('.navigable').attr("tabindex", 0)
     this.model.get("Sequence").View.$(".sequence_tracks").append $(this.el)
     
   # beatOver: (e) ->
@@ -107,10 +108,14 @@ this.SequenceTrackView = Backbone.View.extend
   focusPrev: (beat) ->
     if beatel = this.Beats[beat-1]
       beatel.focus()
+    else if beatel = this.Beats[this.Beats.length-1] # wrap around to end
+      beatel.focus()
     false
       
   focusNext: (beat) ->
     if beatel = this.Beats[beat+1]
+      beatel.focus()
+    else if beatel = this.Beats[0] # wrap around to start
       beatel.focus()
     false
       

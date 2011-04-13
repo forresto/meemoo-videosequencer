@@ -15,7 +15,6 @@ this.Track = Backbone.Model.extend
   initialize: ->
     this.Line = []
     this.pattern_id = this.get("Pattern").cid
-    # this.beats = this.get("Pattern").get("beats")
     
   initializeView: ->
     this.View = new TrackView {model:this, Pattern:this.get("Pattern")}
@@ -50,8 +49,7 @@ this.TrackView = Backbone.View.extend
   template: _.template $('#track-template').html()
   
   events:
-    "mouseover .beat" : "beatOver"
-    "keydown .beat"   : "beatKeydown"
+    "keydown .beat"        : "beatKeydown"
     
   
   render: ->
@@ -67,16 +65,14 @@ this.TrackView = Backbone.View.extend
       html = App.triggers[this.model.Line[i]]
       if html is null or html is undefined
         html = "&nbsp;"
-      beat = $("<span class='beat beat_#{i} navigable' id='pattern_#{this.model.pattern_id}_track_#{this.model.cid}_beat_#{i}' tabindex='0'>#{html}</span>")
+      beat = $("<span class='beat beat_#{i} navigable'>#{html}</span>")
       beat.data("beat", i)
       $(this.el).append(beat)
       this.Beats[i] = beat
       
+    this.$('.navigable').attr("tabindex", 0)
     this.model.get("Pattern").View.$(".pattern_tracks").append $(this.el)
     
-  beatOver: (e) ->
-    $(e.currentTarget).focus()
-
   beatKeydown: (e) ->
     beat = $(e.currentTarget).data("beat")
     # console.log e.keyCode
@@ -111,10 +107,14 @@ this.TrackView = Backbone.View.extend
   focusPrev: (beat) ->
     if beatel = this.Beats[beat-1]
       beatel.focus()
+    else if beatel = this.Beats[this.Beats.length-1] # wrap around to end
+      beatel.focus()
     false
       
   focusNext: (beat) ->
     if beatel = this.Beats[beat+1]
+      beatel.focus()
+    else if beatel = this.Beats[0] # wrap around to start
       beatel.focus()
     false
       

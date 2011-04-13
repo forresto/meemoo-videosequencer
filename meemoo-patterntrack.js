@@ -52,7 +52,6 @@
     className: "track",
     template: _.template($('#track-template').html()),
     events: {
-      "mouseover .beat": "beatOver",
       "keydown .beat": "beatKeydown"
     },
     render: function() {
@@ -70,15 +69,13 @@
         if (html === null || html === void 0) {
           html = "&nbsp;";
         }
-        beat = $("<span class='beat beat_" + i + " navigable' id='pattern_" + this.model.pattern_id + "_track_" + this.model.cid + "_beat_" + i + "' tabindex='0'>" + html + "</span>");
+        beat = $("<span class='beat beat_" + i + " navigable'>" + html + "</span>");
         beat.data("beat", i);
         $(this.el).append(beat);
         this.Beats[i] = beat;
       }
+      this.$('.navigable').attr("tabindex", 0);
       return this.model.get("Pattern").View.$(".pattern_tracks").append($(this.el));
-    },
-    beatOver: function(e) {
-      return $(e.currentTarget).focus();
     },
     beatKeydown: function(e) {
       var beat;
@@ -126,12 +123,16 @@
       var beatel;
       if (beatel = this.Beats[beat - 1]) {
         beatel.focus();
+      } else if (beatel = this.Beats[this.Beats.length - 1]) {
+        beatel.focus();
       }
       return false;
     },
     focusNext: function(beat) {
       var beatel;
       if (beatel = this.Beats[beat + 1]) {
+        beatel.focus();
+      } else if (beatel = this.Beats[0]) {
         beatel.focus();
       }
       return false;

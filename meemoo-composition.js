@@ -169,19 +169,37 @@
         return this.play();
       }
     },
+    playSequence: function(sequence) {
+      this.Sequence = sequence;
+      this.nextPattern = null;
+      this.loop();
+      return this.play();
+    },
+    stopSequence: function() {
+      return this.Sequence = null;
+    },
     loop: function() {
-      var choice, choices, pattern, rnd, sum_of_chance, _i, _j, _len, _len2, _ref, _results;
+      var choice, choices, next_id, pattern, rnd, sum_of_chance, _i, _j, _len, _len2, _ref, _results;
       if (this.nextPattern !== null) {
         this.Pattern = this.nextPattern;
         this.nextPattern = null;
+        this.Sequence = null;
         return;
+      }
+      next_id = null;
+      if (this.Sequence !== null) {
+        next_id = this.Sequence.step();
+        console.log(next_id);
+      }
+      if (next_id === null && this.Pattern !== null) {
+        next_id = this.Pattern.get("next");
       }
       sum_of_chance = 0;
       choices = [];
       _ref = this.Patterns.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         pattern = _ref[_i];
-        if (pattern.get("trigger_id") === this.Pattern.get("next")) {
+        if (pattern.get("trigger_id") === next_id) {
           sum_of_chance += pattern.get("chance");
           choices.push(pattern);
         }

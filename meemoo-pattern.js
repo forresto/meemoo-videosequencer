@@ -160,7 +160,6 @@
     },
     initialize: function() {
       this.render();
-      this.model.get("Composition").View.$(".patterns").append($(this.el));
       this.$('.pattern_play_button').button({
         icons: {
           primary: "ui-icon-play"
@@ -178,7 +177,8 @@
           primary: "ui-icon-plus"
         }
       });
-      return this.$('.navigable').attr("tabindex", 0);
+      this.$('.navigable').attr("tabindex", 0);
+      return this.model.get("Composition").View.$(".patterns").append($(this.el));
     },
     "delete": function() {
       if (confirm("Are you sure you want to remove this pattern (" + (this.model.get('title')) + ")?")) {

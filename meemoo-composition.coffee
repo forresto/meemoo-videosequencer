@@ -140,17 +140,36 @@ this.Composition = Backbone.Model.extend
       this.nextPattern = null
       this.play()
       
+  playSequence: (sequence) ->
+    this.Sequence = sequence
+    this.nextPattern = null
+    this.loop()
+    this.play()
+      
+  stopSequence: ->
+    this.Sequence = null
+      
   loop: ->
     if this.nextPattern isnt null
       this.Pattern = this.nextPattern
       this.nextPattern = null
+      this.Sequence = null
       return
     
+    next_id = null
+    if this.Sequence isnt null
+      # next by sequence
+      next_id = this.Sequence.step()
+      console.log next_id
+    if next_id is null and this.Pattern isnt null
+      # next by pattern next
+      next_id = this.Pattern.get("next")
+      
     # weighted random, with help from http://stackoverflow.com/questions/1761626/weighted-random-numbers
     sum_of_chance = 0
     choices = []
     for pattern in this.Patterns.models
-      if pattern.get("trigger_id") is this.Pattern.get("next")
+      if pattern.get("trigger_id") is next_id
         sum_of_chance += pattern.get("chance")
         choices.push(pattern)
     if choices.length is 1
