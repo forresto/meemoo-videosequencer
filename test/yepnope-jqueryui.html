@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Meemoo AV Sequencer by Sembiki Interactive</title>
+  
+  <script type="text/javascript" src="../lib/modernizr.custom.js"></script>
+  <script type="text/javascript">
+  
+    yepnope({
+      test : true,
+      yep  : [
+        'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
+        'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js',
+        'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css'
+      ],
+      complete : function(){
+        $(document).ready(function() {
+          document.getElementById("status").innerHTML += "Done.";
+        });
+      }
+    });
+    
+  </script>
+  
+</head>
+<body>
+
+<pre id="status">
+Loading:
+  'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
+  'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js',
+  'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css'
+
+</pre>
+
+</body>
+</html>
