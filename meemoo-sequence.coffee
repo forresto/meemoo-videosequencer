@@ -38,11 +38,15 @@ this.Sequence = Backbone.Model.extend
     this.Tracks.add newTrack
     newTrack
     
+  cue: (beat) ->
+    this.beat = beat-1
+    
   play: ->
-    this.beat = -1 # since loop is called to get first pattern
-    this.get("Composition").playSequence(this)
+    # this.beat = -1 # since loop is called to get first pattern
+    this.get("Composition").cueSequence(this)
     
   stop: ->
+    this.beat = -1
     this.get("Composition").stopSequence(this)
     
   step: ->
@@ -102,14 +106,16 @@ this.SequenceView = Backbone.View.extend
       
   setLength: ->
     length = this.$(".sequence_length").val()
-    this.model.set {length:length}
-    for track in this.model.Tracks.models
-      track.View.initialize()
+    if 0 < length < 1000
+      this.model.set {length:length}
+      for track in this.model.Tracks.models
+        track.View.initialize()
       
   remove: ->
     $(this.el).remove()
     
   play: ->
+    # $(".sequencetrack .beat").removeClass("active")
     this.model.play()
     
   stop: ->
@@ -117,5 +123,6 @@ this.SequenceView = Backbone.View.extend
     this.$(".beat").removeClass("active")
     
   step: ->
-    this.$(".beat").removeClass("active")
+    this.$(".beat").removeClass("cue")
+    $(".sequencetrack .beat").removeClass("active")
     this.$(".beat_#{this.model.beat}").addClass("active")

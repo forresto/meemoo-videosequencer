@@ -140,6 +140,14 @@ this.Composition = Backbone.Model.extend
       this.nextPattern = null
       this.play()
       
+  cueSequence: (sequence) ->
+    this.nextSequence = sequence
+    if this.playing is false
+      this.Sequence = sequence
+      this.nextSequence = null
+      this.loop()
+      this.play()
+      
   playSequence: (sequence) ->
     this.Sequence = sequence
     this.nextPattern = null
@@ -156,15 +164,19 @@ this.Composition = Backbone.Model.extend
       this.nextPattern = null
       this.Sequence = null
       return
+      
+    if this.nextSequence isnt null
+      this.Sequence = this.nextSequence
+      this.nextSequence = null
     
     next_id = null
     if this.Sequence isnt null
       # next by sequence
       next_id = this.Sequence.step()
-      console.log next_id
-    if next_id is null and this.Pattern isnt null
-      # next by pattern next
-      next_id = this.Pattern.get("next")
+    if next_id is null 
+      if this.Pattern isnt null
+        # next by pattern next
+        next_id = this.Pattern.get("next")
       
     # weighted random, with help from http://stackoverflow.com/questions/1761626/weighted-random-numbers
     sum_of_chance = 0

@@ -50,11 +50,14 @@
       this.Tracks.add(newTrack);
       return newTrack;
     },
+    cue: function(beat) {
+      return this.beat = beat - 1;
+    },
     play: function() {
-      this.beat = -1;
-      return this.get("Composition").playSequence(this);
+      return this.get("Composition").cueSequence(this);
     },
     stop: function() {
+      this.beat = -1;
       return this.get("Composition").stopSequence(this);
     },
     step: function() {
@@ -117,16 +120,18 @@
     setLength: function() {
       var length, track, _i, _len, _ref, _results;
       length = this.$(".sequence_length").val();
-      this.model.set({
-        length: length
-      });
-      _ref = this.model.Tracks.models;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        track = _ref[_i];
-        _results.push(track.View.initialize());
+      if ((0 < length && length < 1000)) {
+        this.model.set({
+          length: length
+        });
+        _ref = this.model.Tracks.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          track = _ref[_i];
+          _results.push(track.View.initialize());
+        }
+        return _results;
       }
-      return _results;
     },
     remove: function() {
       return $(this.el).remove();
@@ -139,7 +144,8 @@
       return this.$(".beat").removeClass("active");
     },
     step: function() {
-      this.$(".beat").removeClass("active");
+      this.$(".beat").removeClass("cue");
+      $(".sequencetrack .beat").removeClass("active");
       return this.$(".beat_" + this.model.beat).addClass("active");
     }
   });

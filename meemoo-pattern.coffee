@@ -131,7 +131,8 @@ this.PatternView = Backbone.View.extend
   startPlaying: ->
     this.$(".beat").removeClass("cue")
     $(".patterns .beat").removeClass("active")
-    this.$(".pattern_trigger").addClass("active") #FIXME?
+    #FIXME?
+    # this.$(".pattern_trigger").addClass("active") 
     
   initialize: ->
     this.render()

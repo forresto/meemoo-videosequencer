@@ -169,6 +169,15 @@
         return this.play();
       }
     },
+    cueSequence: function(sequence) {
+      this.nextSequence = sequence;
+      if (this.playing === false) {
+        this.Sequence = sequence;
+        this.nextSequence = null;
+        this.loop();
+        return this.play();
+      }
+    },
     playSequence: function(sequence) {
       this.Sequence = sequence;
       this.nextPattern = null;
@@ -188,13 +197,18 @@
         this.Sequence = null;
         return;
       }
+      if (this.nextSequence !== null) {
+        this.Sequence = this.nextSequence;
+        this.nextSequence = null;
+      }
       next_id = null;
       if (this.Sequence !== null) {
         next_id = this.Sequence.step();
-        console.log(next_id);
       }
-      if (next_id === null && this.Pattern !== null) {
-        next_id = this.Pattern.get("next");
+      if (next_id === null) {
+        if (this.Pattern !== null) {
+          next_id = this.Pattern.get("next");
+        }
       }
       sum_of_chance = 0;
       choices = [];

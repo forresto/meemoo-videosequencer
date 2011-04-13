@@ -155,8 +155,7 @@
     },
     startPlaying: function() {
       this.$(".beat").removeClass("cue");
-      $(".patterns .beat").removeClass("active");
-      return this.$(".pattern_trigger").addClass("active");
+      return $(".patterns .beat").removeClass("active");
     },
     initialize: function() {
       this.render();

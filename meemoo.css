@@ -222,6 +222,7 @@ input.setuptrack {
     height: 18px;
   }
   .track .beat.active,
+  .sequencetrack .beat.active,
   .beat.active {
     background-color: red;
     color: white;
@@ -246,7 +247,8 @@ input.pattern_beats {
 }
 
 input.pattern_chance,
-input.pattern_beats {
+input.pattern_beats,
+input.sequence_length {
   margin-left: 1em;
 }
 

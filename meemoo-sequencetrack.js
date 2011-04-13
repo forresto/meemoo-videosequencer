@@ -49,7 +49,8 @@
     className: "sequencetrack",
     template: _.template($('#sequencetrack-template').html()),
     events: {
-      "keydown .beat": "beatKeydown"
+      "keydown .beat": "beatKeydown",
+      "click .beat": "cueBeat"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -73,6 +74,14 @@
       }
       this.$('.navigable').attr("tabindex", 0);
       return this.model.get("Sequence").View.$(".sequence_tracks").append($(this.el));
+    },
+    cueBeat: function(e) {
+      var beat, beatel;
+      this.$(".beat").removeClass("cue");
+      beat = $(e.currentTarget).data("beat");
+      beatel = this.Beats[beat];
+      beatel.addClass("cue");
+      return this.model.get("Sequence").cue(beat);
     },
     beatKeydown: function(e) {
       var beat;

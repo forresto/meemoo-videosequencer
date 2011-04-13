@@ -47,8 +47,8 @@ this.SequenceTrackView = Backbone.View.extend
   template: _.template $('#sequencetrack-template').html()
   
   events:
-    # "mouseover .beat" : "beatOver"
-    "keydown .beat"   : "beatKeydown"
+    "keydown .beat" : "beatKeydown"
+    "click .beat"   : "cueBeat"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -71,9 +71,13 @@ this.SequenceTrackView = Backbone.View.extend
     this.$('.navigable').attr("tabindex", 0)
     this.model.get("Sequence").View.$(".sequence_tracks").append $(this.el)
     
-  # beatOver: (e) ->
-  #   $(e.currentTarget).focus()
-
+  cueBeat: (e) ->
+    this.$(".beat").removeClass("cue")
+    beat = $(e.currentTarget).data("beat")
+    beatel = this.Beats[beat]
+    beatel.addClass("cue")
+    this.model.get("Sequence").cue(beat)
+    
   beatKeydown: (e) ->
     beat = $(e.currentTarget).data("beat")
     # console.log e.keyCode
