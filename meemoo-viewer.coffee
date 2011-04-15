@@ -83,8 +83,10 @@ remove = (id) ->
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    # don't seek over the buffer, safety of 15 seconds
-    if player.getVideoBytesLoaded() is player.getVideoBytesTotal() or (value + 15) / player.getDuration() < player.getVideoBytesLoaded() / player.getVideoBytesTotal()
+    # don't seek over the buffer, safety of 20 seconds
+    loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal()
+    seekPercent = (parseFloat(value) + 20) / player.getDuration()
+    if loadedPercent is 1 or seekPercent < loadedPercent
       player.seekTo(value, false)
 
 

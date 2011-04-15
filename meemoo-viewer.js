@@ -87,10 +87,12 @@
     }
   };
   seek = function(id, value) {
-    var player;
+    var loadedPercent, player, seekPercent;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      if (player.getVideoBytesLoaded() === player.getVideoBytesTotal() || (value + 15) / player.getDuration() < player.getVideoBytesLoaded() / player.getVideoBytesTotal()) {
+      loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal();
+      seekPercent = (parseFloat(value) + 20) / player.getDuration();
+      if (loadedPercent === 1 || seekPercent < loadedPercent) {
         return player.seekTo(value, false);
       }
     }
