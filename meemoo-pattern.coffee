@@ -120,6 +120,7 @@ this.PatternView = Backbone.View.extend
       this.model.set
         trigger_id: triggerid
       $(e.currentTarget).text App.triggers[triggerid]
+    false
       
   setNext: (e) ->
     triggerid = App.keycodes.indexOf(e.keyCode)
@@ -127,6 +128,7 @@ this.PatternView = Backbone.View.extend
       this.model.set
         next: triggerid
       $(e.currentTarget).text App.triggers[triggerid]
+    false
       
   startPlaying: ->
     this.$(".beat").removeClass("cue")

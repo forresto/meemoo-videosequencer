@@ -139,18 +139,24 @@
     playprogressKey: function(e) {
       switch (e.keyCode) {
         case 32:
-          return this.playpause();
+          this.playpause();
+          break;
         case 38:
-          return this.focusPrev();
+          this.focusPrev();
+          break;
         case 40:
-          return this.focusNext();
+          this.focusNext();
+          break;
         case 37:
-          return this.triggerArp(true);
+          this.triggerArp(true);
+          break;
         case 39:
-          return this.triggerArp(false);
+          this.triggerArp(false);
+          break;
         default:
-          return this.triggerCode(e.keyCode);
+          this.triggerCode(e.keyCode);
       }
+      return false;
     },
     triggerCode: function(keyCode) {
       var triggerid;

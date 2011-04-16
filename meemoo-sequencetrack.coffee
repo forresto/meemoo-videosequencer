@@ -90,6 +90,7 @@ this.SequenceTrackView = Backbone.View.extend
       when 37 then this.focusPrev(beat) # left
       when 39 then this.focusNext(beat) # right
       else this.setBeatKeycode(beat, e.keyCode); return false # trigger keys
+    false
     
   setBeatKeycode: (beat, keyCode) ->
     triggerid = App.keycodes.indexOf(keyCode)

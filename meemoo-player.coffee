@@ -121,6 +121,7 @@ this.PlayerView = Backbone.View.extend
       when 37 then this.triggerArp(true) # left
       when 39 then this.triggerArp(false) # right
       else this.triggerCode e.keyCode # trigger keys
+    false
       
   triggerCode: (keyCode) ->
     triggerid = App.keycodes.indexOf(keyCode)

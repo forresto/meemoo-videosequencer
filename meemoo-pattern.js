@@ -140,8 +140,9 @@
         this.model.set({
           trigger_id: triggerid
         });
-        return $(e.currentTarget).text(App.triggers[triggerid]);
+        $(e.currentTarget).text(App.triggers[triggerid]);
       }
+      return false;
     },
     setNext: function(e) {
       var triggerid;
@@ -150,8 +151,9 @@
         this.model.set({
           next: triggerid
         });
-        return $(e.currentTarget).text(App.triggers[triggerid]);
+        $(e.currentTarget).text(App.triggers[triggerid]);
       }
+      return false;
     },
     startPlaying: function() {
       this.$(".beat").removeClass("cue");

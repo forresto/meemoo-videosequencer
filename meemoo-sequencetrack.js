@@ -90,21 +90,28 @@
         case 9:
           return true;
         case 8:
-          return this.focusPrev(beat);
+          this.focusPrev(beat);
+          break;
         case 46:
-          return this.focusPrev(beat);
+          this.focusPrev(beat);
+          break;
         case 38:
-          return this.focusPrevTrack(beat);
+          this.focusPrevTrack(beat);
+          break;
         case 40:
-          return this.focusNextTrack(beat);
+          this.focusNextTrack(beat);
+          break;
         case 37:
-          return this.focusPrev(beat);
+          this.focusPrev(beat);
+          break;
         case 39:
-          return this.focusNext(beat);
+          this.focusNext(beat);
+          break;
         default:
           this.setBeatKeycode(beat, e.keyCode);
           return false;
       }
+      return false;
     },
     setBeatKeycode: function(beat, keyCode) {
       var newText, triggerid;
