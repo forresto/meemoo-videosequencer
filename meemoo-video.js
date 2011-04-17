@@ -76,7 +76,9 @@
         trigger = _ref[_i];
         if (trigger !== null && trigger >= 0 && this.model.get("totaltime") > 0) {
           left = trigger / this.model.get("totaltime") * 100;
-          triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+          if (left < 100) {
+            triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+          }
         }
       }
       return $(".showtriggers_" + this.model.cid).html(triggershtml);
