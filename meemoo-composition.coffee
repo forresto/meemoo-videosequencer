@@ -388,9 +388,14 @@ this.CompositionView = Backbone.View.extend
     $(e.currentTarget).focus()
     
   addPlayer: ->
-    ytid = this.$(".addplayerid").val()
-    if ytid isnt ""
-      this.model.addPlayer ytid
+    input = this.$(".addplayerid").val()
+    if input is ""
+      return
+    # Full yt url
+    if (input.indexOf("v=") isnt -1)
+      input = input.split("v=")[1].split("&")[0]
+    console.log input
+    this.model.addPlayer input
       
   addPattern: ->
     newPattern = this.model.addPattern()

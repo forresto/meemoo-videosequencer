@@ -198,7 +198,6 @@
     chooseTrack: function() {
       var dialog, disabled, player, playerel, track, _i, _j, _len, _len2, _ref, _ref2;
       dialog = $("<div></div>");
-      $(this.el).append(dialog);
       _ref = App.Composition.Players.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         player = _ref[_i];
@@ -225,6 +224,7 @@
         });
         dialog.append(playerel);
       }
+      $(this.el).append(dialog);
       return dialog.dialog();
     },
     addTrack: function(player_id) {

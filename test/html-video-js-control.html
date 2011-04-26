@@ -19,7 +19,8 @@ javascript:videoSeek(time)
     document.getElementById("container").innerHTML = '<video id="play" src="'+url+'" autoplay loop></video>'
   }
   window.videoSeek = function (time) {
-    if ( v = document.getElementById("play") && v.duration >= time)
+    var v = document.getElementById("play")
+    if ( v && v.duration >= time)
       v.currentTime = time;
   }
   

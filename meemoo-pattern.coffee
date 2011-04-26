@@ -121,7 +121,7 @@ this.PatternView = Backbone.View.extend
         trigger_id: triggerid
       $(e.currentTarget).text App.triggers[triggerid]
     false
-      
+    
   setNext: (e) ->
     triggerid = App.keycodes.indexOf(e.keyCode)
     if triggerid isnt -1
@@ -170,7 +170,6 @@ this.PatternView = Backbone.View.extend
     
   chooseTrack: ->
     dialog = $("<div></div>")
-    $(this.el).append dialog
     for player in App.Composition.Players.models
       disabled = false
       # disable button if used already
@@ -191,6 +190,7 @@ this.PatternView = Backbone.View.extend
           $(dialog).dialog("close")
       dialog.append(playerel);
       
+    $(this.el).append dialog
     dialog.dialog();
       
   addTrack: (player_id) ->

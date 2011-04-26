@@ -467,11 +467,16 @@
       return $(e.currentTarget).focus();
     },
     addPlayer: function() {
-      var ytid;
-      ytid = this.$(".addplayerid").val();
-      if (ytid !== "") {
-        return this.model.addPlayer(ytid);
+      var input;
+      input = this.$(".addplayerid").val();
+      if (input === "") {
+        return;
       }
+      if (input.indexOf("v=") !== -1) {
+        input = input.split("v=")[1].split("&")[0];
+      }
+      console.log(input);
+      return this.model.addPlayer(input);
     },
     addPattern: function() {
       var newPattern;
