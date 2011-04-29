@@ -23,6 +23,9 @@
           loadComp = JSON.parse(pastedJSON);
           if (loadComp.id) {
             this.attributes.parent_id = loadComp.id;
+            if (loadComp.parent_id) {
+              this.attributes.parent_id += "," + loadComp.parent_id;
+            }
           }
           if (loadComp.bpm) {
             this.attributes.bpm = loadComp.bpm;
@@ -64,6 +67,11 @@
               if (addID !== "") {
                 newPlayer = this.addPlayer(addID);
                 newPlayer.Video.Triggers = video.triggers;
+                if (video.title) {
+                  newPlayer.Video.set({
+                    "title": video.title
+                  });
+                }
                 player.newcid = newPlayer.cid;
               }
               break;
@@ -106,6 +114,7 @@
       this.Pattern = null;
       this.nextPattern = null;
       this.playing = false;
+      this.queuedMessages = "";
       this.Sequences = new SequenceList();
       if (this.attributes.sequences) {
         _ref6 = this.attributes.sequences;
@@ -254,6 +263,15 @@
         return App.postRawMessageToViewer(message);
       }
     },
+    queueMessage: function(message) {
+      return this.queuedMessages += message + "|";
+    },
+    sendQueuedMessages: function() {
+      if (this.queuedMessages !== "") {
+        App.postRawMessageToViewer(this.queuedMessages);
+        return this.queuedMessages = "";
+      }
+    },
     initializeView: function() {
       var pattern, player, sequence, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
       this.View = new CompositionView({
@@ -279,6 +297,7 @@
         sequence = _ref4[_l];
         sequence.initializeView();
       }
+      this.saveLastSaved();
       return App.reloadVideos();
     },
     addPlayer: function(ytid) {
@@ -332,6 +351,19 @@
       try {
         return this.View.remove();
       } catch (_e) {}
+    },
+    saveLastSaved: function() {
+      return this.lastsaved = JSON.stringify(this);
+    },
+    changesMade: function() {
+      var unsaved;
+      unsaved = this.lastsaved !== JSON.stringify(this);
+      if (this.View && unsaved) {
+        this.View.$(".composition-save-button").button({
+          label: "Save!"
+        });
+      }
+      return unsaved;
     }
   });
   this.CompositionList = Backbone.Collection.extend({
@@ -370,12 +402,14 @@
       this.render();
       return $("#comp_dialog").append($(this.el));
     },
-    save: function() {
-      return this.render();
-    },
     load: function() {
+      if (App.Composition.changesMade()) {
+        if (!confirm("You have unsaved changes in the current composition. Discard unsaved changes?")) {
+          return;
+        }
+      }
       App.loadComposition(this.model);
-      return $("comp_dialog").dialog("close");
+      return $("#comp_dialog").dialog("close");
     },
     "export": function() {
       $("#comp_export_dialog textarea").text(JSON.stringify(this.model));
@@ -408,7 +442,9 @@
       "click .add-player": "addPlayer",
       "click .add-sequence": "addSequence",
       "click .play-all-button": "playAll",
-      "click .pause-all-button": "pauseAll"
+      "click .pause-all-button": "pauseAll",
+      "blur .editable": "setInfo",
+      "blur .comp_info_bpm": "setBpm"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -472,10 +508,12 @@
       if (input === "") {
         return;
       }
-      if (input.indexOf("v=") !== -1) {
+      if (input.indexOf("youtube.com") !== -1) {
         input = input.split("v=")[1].split("&")[0];
       }
-      console.log(input);
+      if (input.indexOf("http://") !== -1) {
+        input = input.split("v=")[1].split("&")[0];
+      }
       return this.model.addPlayer(input);
     },
     addPattern: function() {
@@ -537,14 +575,22 @@
       return _results;
     },
     save: function() {
-      this.model.save({
+      this.model.save();
+      this.model.saveLastSaved();
+      this.model.ListView.render();
+      return this.$(".composition-save-button").button({
+        label: "Save"
+      });
+    },
+    setInfo: function() {
+      return this.model.set({
         title: $.trim(this.$(".comp_info_title").text()),
         mixer: $.trim(this.$(".comp_info_mixer").text()),
-        description: $.trim(this.$(".comp_info_description").text()),
-        bpm: parseInt(this.$(".comp_info_bpm").val())
+        description: $.trim(this.$(".comp_info_description").text())
       });
-      this.model.setBpm(parseInt(this.$(".comp_info_bpm").val()));
-      return this.model.ListView.render();
+    },
+    setBpm: function() {
+      return this.model.setBpm(parseInt(this.$(".comp_info_bpm").val()));
     },
     "export": function() {
       return this.model.ListView["export"]();

@@ -6,7 +6,7 @@
   
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   <script type="text/javascript">
-  
+    
     var hasFeatures = Modernizr.localstorage && Array.prototype.indexOf && JSON.parse && JSON.stringify;
     
     yepnope({
@@ -103,6 +103,11 @@
     <button class="composition-save-button" type="button">Save</button>
     <button class="composition-export-button" type="button">Export as text...</button>
   </section>
+  <section style="display:none;">
+    <h1>Videos</h1>
+    <div class="videos">
+    </div>
+  </section>
   <section>
     <h1>Players</h1>
     <div class="players">
@@ -142,6 +147,19 @@
 </script>
 
 
+<script type="text/template" id="video-template"> 
+
+  <div class="video">
+    <span class="video-cid"><%= this.model.cid %></span>
+    <span class="video-title editable" contenteditable="true" title="Click to edit title"><%= this.model.get("title") %></span>
+    <button class="video-edittriggers" type="button">Edit triggers</button>
+    <button class="video-addplayer" type="button">Add player</button>
+    <button class="video-delete" type="button">Delete video (and all players)</button>
+  </div>
+
+</script>
+
+
 <script type="text/template" id="control-template"> 
 
   <div id="control_<%= id %>" class="controls video_<%= video_id %>">
@@ -170,7 +188,7 @@
       <p id="statusmessage_<%= id %>" class="statusmessage">Loading...</p>
     </div>
     <div class="controlitemcell">
-      <button class="removebutton" type="button">Remove this video.</button>
+      <button class="removebutton" type="button">Remove this player.</button>
     </div>
   </div>
   <div class="showtriggers showtriggers_<%= video_id %>"></div>

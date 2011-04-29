@@ -5,7 +5,7 @@ body {
   margin: 0;
 
   background: black;
-  color: white;
+  color: #EEE;
 
   width: 100%;
   height: 100%;
@@ -27,6 +27,16 @@ object {
   padding: 0;
   margin: 0;
 }
+
+
+.editable {
+  border: 1px black solid;
+  padding: 2px;
+}
+  .editable:hover {
+    border: 1px white dotted;
+  }
+
 
 .showtriggers {
   font-family: monospace;
@@ -251,6 +261,24 @@ input.pattern_beats,
 input.sequence_length {
   margin-left: 1em;
 }
+
+.video {
+}
+
+  .video-cid {
+    display: inline-block;
+    width: 3em;
+    overflow: hidden;
+  }
+
+  .video-title {
+    display: inline-block;
+    width: 12em;
+  }
+
+  .video-delete {
+    margin-left: 12em;
+  }
 
 
 

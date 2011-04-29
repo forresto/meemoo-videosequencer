@@ -73,23 +73,22 @@
       return this.beat = 0;
     },
     step: function() {
-      var thistrigger, track, trigger, triggers, _i, _len, _ref;
+      var seconds, track, trigger, _i, _len, _ref;
       if (this.beat === 0) {
         this.View.startPlaying();
       }
-      triggers = [];
       _ref = this.Tracks.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         track = _ref[_i];
         trigger = track.Line[this.beat];
         if (trigger !== null && trigger !== void 0) {
-          thistrigger = {};
-          thistrigger.player = track.get("Player");
-          thistrigger.trigger = trigger;
-          triggers.push(thistrigger);
+          seconds = track.get("Player").Video.Triggers[trigger];
+          if (seconds !== null && seconds !== void 0) {
+            this.get("Composition").queueMessage("seek:" + track.get("Player").cid + ":" + seconds);
+          }
         }
       }
-      this.get("Composition").multitrigger(triggers);
+      this.get("Composition").sendQueuedMessages();
       this.View.step();
       this.beat++;
       if (this.beat >= this.get("beats")) {

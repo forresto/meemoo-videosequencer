@@ -112,18 +112,10 @@
     }
   };
   hide = function(id) {
-    var player;
-    player = document.getElementById("player_o_" + id);
-    if (player) {
-      return $(player).parent().hide();
-    }
+    return $("player_d_" + id).hide();
   };
   show = function(id) {
-    var player;
-    player = document.getElementById("player_o_" + id);
-    if (player) {
-      return $(player).parent().show();
-    }
+    return $("player_d_" + id).show();
   };
   mute = function(id) {
     var player;

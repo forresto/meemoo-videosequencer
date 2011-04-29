@@ -11,13 +11,16 @@ Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 ###
 
 this.Player = Backbone.Model.extend
+  defaults:
+    "volume": 100
+
   # loaded, totalsize, time, totaltime
   initialize: ->
     if this.get("ytid")
-      this.Video = this.get("Composition").Videos.getOrAddVideo this.get "ytid"
+      this.Video = this.get("Composition").Videos.getOrAddVideo(this.get("Composition"), this.get("ytid"))
     if this.get("Composition") is App.Composition
       this.initializeView()
-      this.Video.initializeView()
+      # this.Video.initializeView()
   initializeView: ->
     this.View = new PlayerView {model:this}
     this.set({playing:true})
@@ -30,7 +33,8 @@ this.Player = Backbone.Model.extend
     jsonobject =
       id: this.cid
       video_id: this.Video.cid
-
+      # volume: parseInt this.get("volume")
+      
 this.PlayerList = Backbone.Collection.extend
   model: Player
 
@@ -74,6 +78,7 @@ this.PlayerView = Backbone.View.extend
     window.App.postMessageToViewer("unmute", this.model.cid)
     
   volume: (e, ui) ->
+    this.model.set({volume:ui.value})
     window.App.postMessageToViewer("volume", this.model.cid, ui.value)
     
   remove: ->

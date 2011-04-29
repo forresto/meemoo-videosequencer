@@ -11,9 +11,17 @@
 <button onclick="startTest(480)">Start 480bpm Test</button>
 
 
-<pre id="output" style="display:inline-block;width:300px;height:500px;overflow:scroll"></pre>
-<iframe style="display:inline-block;width:300px;height:500px" 
+<pre id="output" style="display:inline-block;width:300px;height:300px;overflow:scroll"></pre>
+<iframe style="display:inline-block;width:300px;height:300px" 
   src="javascript-timing-tests-iframe.html" id="viewer" name="inviewer"></iframe>
+
+<br />
+
+<button onclick="startStringTest(10000)">Start string concat/split test</button>
+<button onclick="startJSONTest(10000)">Start JSON stringify/parse test</button>
+
+<pre id="outputString" style="display:inline-block;width:300px;height:200px;overflow:scroll"></pre>
+
 
 
 <script type="text/javascript">
@@ -67,6 +75,62 @@
     
     output.innerHTML += "Average: " + (sum/(beats-1));
   }
+  
+  startStringTest = function (count) {
+    var startTime = Date.now();
+    
+    for (i=0; i<count; i++) {
+      var arr = [];
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      
+      var string = ""
+      
+      for (j=0; j<arr.length; j++) {
+        string += arr[j]["one"] + ":" + arr[j]["two"] + ":" + arr[j]["three"] + "|";
+      }
+      
+      var items = string.split("|");
+      for (j=0; j<items.length; j++) {
+        var item = items[j].split(":");
+        var one = item[0];
+        var two = item[1];
+        var three = item[2];
+        var sum = one+two+three
+      }
+    }
+    
+    document.getElementById("outputString").innerHTML += count + " strings " + (Date.now()-startTime) + "\n";
+    document.getElementById("outputString").innerHTML += string + "\n";
+  }
+
+  startJSONTest = function (count) {
+    var startTime = Date.now();
+    
+    for (i=0; i<count; i++) {
+      var arr = [];
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      arr.push({one:Math.floor(Math.random()*100), two:Math.floor(Math.random()*100), three:Math.floor(Math.random()*100)})
+      
+      var string = JSON.stringify(arr)
+      var items = JSON.parse(string)
+      
+      for (j=0; j<items.length; j++) {
+        var one = items[j]["one"];
+        var two = items[j]["two"];
+        var three = items[j]["three"];
+        var sum = one+two+three
+      }
+    }
+    
+    document.getElementById("outputString").innerHTML += count + " objects " + (Date.now()-startTime) + "\n";
+    document.getElementById("outputString").innerHTML += string + "\n";
+  }
+
   
 </script>
 

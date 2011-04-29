@@ -46,7 +46,8 @@ recieveMessage = (e) ->
       when "mute"    then mute    id
       when "unmute"  then unmute  id
       when "volume"  then volume  id,value
-  
+      # when "bpm"     then bpm     id,value
+      
 
 window.addEventListener("message", recieveMessage, false)
 
@@ -95,42 +96,31 @@ play = (id) ->
   if player
     player.playVideo()
 
-
 pause = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
     player.pauseVideo()
 
-
 hide = (id) ->
-  player = document.getElementById "player_o_#{id}"
-  if player
-    $(player).parent().hide()
-
+  $("player_d_#{id}").hide()
 
 show = (id) ->
-  player = document.getElementById "player_o_#{id}"
-  if player
-    $(player).parent().show()
-
+  $("player_d_#{id}").show()
 
 mute = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
     player.mute()
 
-
 unmute = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
     player.unMute()
 
-
 volume = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
     player.setVolume(value)
-
 
 
 window.onYouTubePlayerReady = (id) ->

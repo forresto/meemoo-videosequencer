@@ -59,7 +59,7 @@ this.Sequence = Backbone.Model.extend
     if next_id is undefined
       next_id = null
     return next_id
-
+    
 this.SequenceList = Backbone.Collection.extend
   model: Sequence
   

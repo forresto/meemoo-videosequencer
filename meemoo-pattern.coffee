@@ -56,18 +56,15 @@ this.Pattern = Backbone.Model.extend
     if this.beat is 0
       this.View.startPlaying()
       
-    triggers = []
-    
     for track in this.Tracks.models
       trigger = track.Line[this.beat]
       if trigger isnt null and trigger isnt undefined
-        thistrigger = {}
-        thistrigger.player = track.get("Player")
-        thistrigger.trigger = trigger
-        triggers.push thistrigger
+        seconds = track.get("Player").Video.Triggers[trigger]
+        if seconds isnt null and seconds isnt undefined
+          this.get("Composition").queueMessage "seek:"+track.get("Player").cid+":"+seconds
         
-    this.get("Composition").multitrigger triggers
-      
+    this.get("Composition").sendQueuedMessages()
+    
     # highlight
     this.View.step()
     

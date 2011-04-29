@@ -10,13 +10,15 @@
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
   */  this.Player = Backbone.Model.extend({
+    defaults: {
+      "volume": 100
+    },
     initialize: function() {
       if (this.get("ytid")) {
-        this.Video = this.get("Composition").Videos.getOrAddVideo(this.get("ytid"));
+        this.Video = this.get("Composition").Videos.getOrAddVideo(this.get("Composition"), this.get("ytid"));
       }
       if (this.get("Composition") === App.Composition) {
-        this.initializeView();
-        return this.Video.initializeView();
+        return this.initializeView();
       }
     },
     initializeView: function() {
@@ -89,6 +91,9 @@
       return window.App.postMessageToViewer("unmute", this.model.cid);
     },
     volume: function(e, ui) {
+      this.model.set({
+        volume: ui.value
+      });
       return window.App.postMessageToViewer("volume", this.model.cid, ui.value);
     },
     remove: function() {

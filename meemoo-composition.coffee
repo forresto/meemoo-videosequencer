@@ -28,6 +28,8 @@ this.Composition = Backbone.Model.extend
         loadComp = JSON.parse(pastedJSON);
         if loadComp.id
           this.attributes.parent_id = loadComp.id
+          if loadComp.parent_id
+            this.attributes.parent_id += "," + loadComp.parent_id
         if loadComp.bpm
           this.attributes.bpm = loadComp.bpm
         if loadComp.description
@@ -59,6 +61,11 @@ this.Composition = Backbone.Model.extend
             if addID isnt ""
               newPlayer = this.addPlayer addID
               newPlayer.Video.Triggers = video.triggers
+              if video.title
+                newPlayer.Video.set
+                  "title": video.title
+              # if parseInt(player.volume) isnt NaN
+              #   newPlayer.set({"volume":parseInt(player.volume)})
               player.newcid = newPlayer.cid
             break
               
@@ -88,6 +95,7 @@ this.Composition = Backbone.Model.extend
     this.Pattern = null
     this.nextPattern = null
     this.playing = false
+    this.queuedMessages = ""
     
     # Repopulate sequences
     this.Sequences = new SequenceList()
@@ -209,6 +217,14 @@ this.Composition = Backbone.Model.extend
 
     if message isnt ""
       App.postRawMessageToViewer message
+      
+  queueMessage: (message) ->
+    this.queuedMessages += message+"|"
+        
+  sendQueuedMessages: ->
+    if this.queuedMessages isnt ""
+      App.postRawMessageToViewer this.queuedMessages
+      this.queuedMessages = ""
     
   initializeView: ->
     this.View = new CompositionView {model:this}
@@ -220,6 +236,7 @@ this.Composition = Backbone.Model.extend
       pattern.initializeView()
     for sequence in this.Sequences.models
       sequence.initializeView()
+    this.saveLastSaved()
     App.reloadVideos()
       
   addPlayer: (ytid) ->
@@ -264,7 +281,15 @@ this.Composition = Backbone.Model.extend
     this.ListView.remove()
     try
       this.View.remove()
-    
+  
+  saveLastSaved: ->
+    this.lastsaved = JSON.stringify(this)
+  
+  changesMade: ->
+    unsaved = this.lastsaved isnt JSON.stringify(this)
+    if this.View and unsaved
+      this.View.$(".composition-save-button").button({label:"Save!"})
+    return unsaved
     
 this.CompositionList = Backbone.Collection.extend
   model: Composition
@@ -300,12 +325,12 @@ this.CompositionListView = Backbone.View.extend
     this.render()
     $("#comp_dialog").append $(this.el)
     
-  save: ->
-    this.render()
-    
   load: ->
+    if App.Composition.changesMade()
+      if !confirm "You have unsaved changes in the current composition. Discard unsaved changes?"
+        return
     App.loadComposition this.model
-    $("comp_dialog").dialog("close")
+    $("#comp_dialog").dialog("close")
     
   export: ->
     $("#comp_export_dialog textarea").text(JSON.stringify this.model)
@@ -338,6 +363,11 @@ this.CompositionView = Backbone.View.extend
     "click .add-sequence" : "addSequence"
     "click .play-all-button" : "playAll"
     "click .pause-all-button" : "pauseAll"
+    
+    "blur .editable" : "setInfo"
+    "blur .comp_info_bpm" : "setBpm"
+    # "change .comp_info_bpm" : "setBpm" # Doesn't seem to fire
+    
     
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -392,9 +422,11 @@ this.CompositionView = Backbone.View.extend
     if input is ""
       return
     # Full yt url
-    if (input.indexOf("v=") isnt -1)
+    if (input.indexOf("youtube.com") isnt -1)
       input = input.split("v=")[1].split("&")[0]
-    console.log input
+    # Full src for <video>
+    if (input.indexOf("http://") isnt -1)
+      input = input.split("v=")[1].split("&")[0]
     this.model.addPlayer input
       
   addPattern: ->
@@ -440,13 +472,21 @@ this.CompositionView = Backbone.View.extend
       player.View.pause()
     
   save: ->
-    this.model.save
+    this.model.save()
+    this.model.saveLastSaved()
+    this.model.ListView.render()
+    this.$(".composition-save-button").button({label:"Save"})
+    
+  setInfo: ->
+    this.model.set
       title : $.trim this.$(".comp_info_title").text()
       mixer : $.trim this.$(".comp_info_mixer").text()
       description : $.trim this.$(".comp_info_description").text()
-      bpm : parseInt this.$(".comp_info_bpm").val()
+    # this.model.unsavedChanges()
+    
+  setBpm: ->
     this.model.setBpm parseInt this.$(".comp_info_bpm").val()
-    this.model.ListView.render()
+    # this.model.unsavedChanges()
     
   export: ->
     this.model.ListView.export()

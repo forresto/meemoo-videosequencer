@@ -168,3 +168,8 @@ recieveMessage = (e) ->
   e.data
 
 window.addEventListener "message", recieveMessage, false
+
+window.onbeforeunload = (e) ->
+  if App.Composition.changesMade()
+    return "You are closing with unsaved changes. Discard unsaved changes?"
+
