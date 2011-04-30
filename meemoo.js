@@ -46,8 +46,8 @@
         }
       }).click(function() {
         return $("#comp_dialog").dialog({
-          modal: true,
-          width: 400
+          width: 400,
+          position: "right top"
         });
       });
       return $('#comp_import_button').button({
@@ -97,16 +97,25 @@
     },
     reloadVideos: function() {
       this.reload = function() {
-        var player, _i, _len, _ref, _results;
-        _ref = App.Composition.Players.models;
+        var player, video, _i, _len, _ref, _results;
+        _ref = App.Composition.Videos.models;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          player = _ref[_i];
-          player.set({
-            loaded: 0,
-            time: 0
-          });
-          _results.push(App.postMessageToViewer("create", player.cid, player.Video.get("ytid")));
+          video = _ref[_i];
+          _results.push((function() {
+            var _i, _len, _ref, _results;
+            _ref = video.Players.models;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              player = _ref[_i];
+              player.set({
+                loaded: 0,
+                time: 0
+              });
+              _results.push(App.postMessageToViewer("create", player.cid, video.get("ytid")));
+            }
+            return _results;
+          })());
         }
         return _results;
       };
@@ -131,6 +140,9 @@
     },
     recieveMessage: function(msg) {
       var id, info, loaded, player, playerinfo, playerinfos, time, totalsize, totaltime, _i, _len, _results;
+      if (!this.Composition) {
+        return;
+      }
       if (msg === "-=POPOUTCLOSED=-") {
         return this.popinViewer();
       } else if (msg === "-=REFRESH=-") {
@@ -146,14 +158,12 @@
           totalsize = info[2];
           time = info[3];
           totaltime = info[4];
-          _results.push(id !== "" ? (player = this.Composition.Players.getByCid(id), player ? (player.set({
+          _results.push(id !== "" ? (player = this.Composition.getPlayerByCid(id), player ? player.set({
             loaded: loaded,
             totalsize: totalsize,
             time: time,
             totaltime: totaltime
-          }), player.Video.set({
-            totaltime: totaltime
-          })) : void 0) : void 0);
+          }) : void 0) : void 0);
         }
         return _results;
       }
@@ -168,7 +178,7 @@
   };
   window.addEventListener("message", recieveMessage, false);
   window.onbeforeunload = function(e) {
-    if (App.Composition.changesMade()) {
+    if (App.Composition && App.Composition.changesMade()) {
       return "You are closing with unsaved changes. Discard unsaved changes?";
     }
   };

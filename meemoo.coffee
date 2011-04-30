@@ -64,8 +64,9 @@ this.AppView = Backbone.View.extend
         icons: { primary: "ui-icon-folder-open" }
       .click ->
         $("#comp_dialog").dialog
-          modal: true
+          # modal: true
           width: 400
+          position: "right top"
           
     $('#comp_import_button')
       .button
@@ -114,9 +115,10 @@ this.AppView = Backbone.View.extend
       
   reloadVideos: ->
     @reload = ->
-      for player in App.Composition.Players.models
-        player.set({loaded:0,time:0})
-        App.postMessageToViewer "create", player.cid, player.Video.get("ytid") 
+      for video in App.Composition.Videos.models
+        for player in video.Players.models
+          player.set({loaded:0,time:0})
+          App.postMessageToViewer "create", player.cid, video.get("ytid") 
     @reloadTriggers = ->
       for video in App.Composition.Videos.models
         video.View.updateTriggers()
@@ -131,6 +133,8 @@ this.AppView = Backbone.View.extend
     this.viewer.postMessage message, window.location.protocol + "//" + window.location.host
     
   recieveMessage: (msg) ->
+    if !this.Composition
+      return
     # console.log msg
     if msg is "-=POPOUTCLOSED=-"
       this.popinViewer()
@@ -146,10 +150,10 @@ this.AppView = Backbone.View.extend
         time = info[3]
         totaltime = info[4]
         if id isnt ""
-          player = this.Composition.Players.getByCid(id)
+          player = this.Composition.getPlayerByCid(id)
           if player
             player.set({loaded:loaded,totalsize:totalsize,time:time,totaltime:totaltime})
-            player.Video.set({totaltime:totaltime})
+            # player.Video.set({totaltime:totaltime})
             
 
 # Initialize app
@@ -170,6 +174,6 @@ recieveMessage = (e) ->
 window.addEventListener "message", recieveMessage, false
 
 window.onbeforeunload = (e) ->
-  if App.Composition.changesMade()
+  if App.Composition and App.Composition.changesMade()
     return "You are closing with unsaved changes. Discard unsaved changes?"
 

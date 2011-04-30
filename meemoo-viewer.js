@@ -58,7 +58,11 @@
   };
   window.addEventListener("message", recieveMessage, false);
   create = function(id, value) {
-    var atts, params;
+    var atts, mp4, params, sources, webm, ytid;
+    sources = value.split(",");
+    webm = sources[0];
+    mp4 = sources[1];
+    ytid = sources[2];
     if ($("#player_d_" + id).length > 0) {
       return;
     }

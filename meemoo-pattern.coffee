@@ -27,8 +27,9 @@ this.Pattern = Backbone.Model.extend
       track.initializeView()
       
   addTracks: ->
-    for player in this.get("Composition").Players.models
-      this.addTrack player
+    for video in this.get("Composition").Videos
+      for player in video.Players.models
+        this.addTrack player
   
   addTrack: (player) ->
     newTrack = new Track({Pattern:this, Player:player})
@@ -59,10 +60,11 @@ this.Pattern = Backbone.Model.extend
     for track in this.Tracks.models
       trigger = track.Line[this.beat]
       if trigger isnt null and trigger isnt undefined
-        seconds = track.get("Player").Video.Triggers[trigger]
+        seconds = track.get("Player").get("Video").Triggers[trigger]
         if seconds isnt null and seconds isnt undefined
-          this.get("Composition").queueMessage "seek:"+track.get("Player").cid+":"+seconds
+          this.get("Composition").queueMessage "seek:#{track.get('Player').cid}:#{seconds}"
         
+    #TODO change this to get multiple patterns running
     this.get("Composition").sendQueuedMessages()
     
     # highlight
@@ -167,31 +169,32 @@ this.PatternView = Backbone.View.extend
     
   chooseTrack: ->
     dialog = $("<div></div>")
-    for player in App.Composition.Players.models
-      disabled = false
-      # disable button if used already
-      for track in this.model.Tracks.models
-        if track.get("Player").cid is player.cid
-          disabled = true 
-      playerel = $("<div>#{player.cid}</div>")
-      playerel
-        .data
-          pattern_id : this.model.cid
-          player_id : player.cid
-        .button
-          disabled : disabled
-        .click ->
-          pattern_id = $(this).data "pattern_id"
-          player_id = $(this).data "player_id"
-          App.Composition.Patterns.getByCid(pattern_id).View.addTrack player_id
-          $(dialog).dialog("close")
-      dialog.append(playerel);
+    for video in this.model.get("Composition").Videos.models
+      for player in video.Players.models
+        disabled = false
+        # disable button if used already
+        for track in this.model.Tracks.models
+          if track.get("Player").cid is player.cid
+            disabled = true 
+        addplayerbutton = $("<div>#{player.cid}</div>")
+        addplayerbutton
+          .data
+            pattern_id : this.model.cid
+            player_id : player.cid
+          .button
+            disabled : disabled
+          .click ->
+            pattern_id = $(this).data "pattern_id"
+            player_id = $(this).data "player_id"
+            App.Composition.Patterns.getByCid(pattern_id).View.addTrack player_id
+            $(dialog).dialog("close")
+        dialog.append(addplayerbutton);
       
     $(this.el).append dialog
     dialog.dialog();
       
   addTrack: (player_id) ->
-    newTrack = this.model.addTrack App.Composition.Players.getByCid(player_id)
+    newTrack = this.model.addTrack App.Composition.getPlayerByCid(player_id)
     newTrack.initializeView()
     
   setBeats: ->

@@ -14,9 +14,6 @@
       "volume": 100
     },
     initialize: function() {
-      if (this.get("ytid")) {
-        this.Video = this.get("Composition").Videos.getOrAddVideo(this.get("Composition"), this.get("ytid"));
-      }
       if (this.get("Composition") === App.Composition) {
         return this.initializeView();
       }
@@ -39,7 +36,7 @@
       var jsonobject;
       return jsonobject = {
         id: this.cid,
-        video_id: this.Video.cid
+        volume: parseInt(this.get("volume"))
       };
     }
   });
@@ -74,15 +71,13 @@
       this.model.set({
         playing: true
       });
-      window.App.postMessageToViewer("play", this.model.cid);
-      return this.model.Video.View.updateTriggers();
+      return window.App.postMessageToViewer("play", this.model.cid);
     },
     pause: function() {
       this.model.set({
         playing: false
       });
-      window.App.postMessageToViewer("pause", this.model.cid);
-      return this.model.Video.View.updateTriggers();
+      return window.App.postMessageToViewer("pause", this.model.cid);
     },
     mute: function() {
       return window.App.postMessageToViewer("mute", this.model.cid);
@@ -107,17 +102,17 @@
       var freeTrigger, i, lastTriggerTime, trigger, _i, _len, _ref, _results;
       if (this.model.get('totaltime') > 0) {
         lastTriggerTime = 0;
-        _ref = this.model.Video.Triggers;
+        _ref = this.model.get("Video").Triggers;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           trigger = _ref[_i];
           if (trigger > lastTriggerTime) {
             lastTriggerTime = Math.ceil(trigger);
           }
         }
-        freeTrigger = this.model.Video.Triggers.length;
+        freeTrigger = this.model.get("Video").Triggers.length;
         _results = [];
         for (i = 0; i <= 8; i++) {
-          _results.push(this.model.Video.addTrigger(freeTrigger + i, lastTriggerTime + ((i + 1) * 2)));
+          _results.push(this.model.get("Video").addTrigger(freeTrigger + i, lastTriggerTime + ((i + 1) * 2)));
         }
         return _results;
       }
@@ -172,9 +167,9 @@
     },
     triggerOrAdd: function(triggerid) {
       var seconds;
-      seconds = this.model.Video.Triggers[triggerid];
-      if (seconds === void 0 || seconds === null) {
-        return this.model.Video.addTrigger(triggerid, this.model.get('time'));
+      seconds = parseFloat(this.model.get("Video").Triggers[triggerid]);
+      if (seconds !== seconds) {
+        return this.model.get("Video").addTrigger(triggerid, this.model.get('time'));
       } else {
         this.lastTrigger = triggerid;
         return this.seek(seconds);
@@ -182,7 +177,7 @@
     },
     trigger: function(triggerid) {
       var seconds;
-      seconds = this.model.Video.Triggers[triggerid];
+      seconds = this.model.get("Video").Triggers[triggerid];
       if (seconds === void 0 || seconds === null) {
         return;
       }
@@ -196,15 +191,15 @@
       if (prev) {
         while (last > 0 && (seconds === null || seconds === void 0)) {
           last--;
-          seconds = this.model.Video.Triggers[last];
+          seconds = this.model.get("Video").Triggers[last];
         }
         if (last === 0) {
           seconds = 0;
         }
       } else {
-        while (last < this.model.Video.Triggers.length - 1 && (seconds === null || seconds === void 0)) {
+        while (last < this.model.get("Video").Triggers.length - 1 && (seconds === null || seconds === void 0)) {
           last++;
-          seconds = this.model.Video.Triggers[last];
+          seconds = this.model.get("Video").Triggers[last];
         }
       }
       if (seconds !== void 0 && seconds !== null) {
@@ -224,7 +219,7 @@
       }
     },
     initialize: function() {
-      window.App.postMessageToViewer("create", this.model.cid, this.model.get("ytid"));
+      window.App.postMessageToViewer("create", this.model.cid, this.model.get("Video").get("ytid"));
       this.render();
       this.model.get("Composition").View.$(".players").append($(this.el));
       this.$('.playbutton').button({

@@ -16,7 +16,7 @@
       "mixer": "me!"
     },
     initialize: function() {
-      var addID, loadComp, newPattern, newPlayer, newSeq, newSeqTrack, newTrack, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      var loadComp, newPattern, newPlayer, newSeq, newSeqTrack, newTrack, newVideo, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len10, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -39,9 +39,6 @@
           if (loadComp.patterns) {
             this.attributes.patterns = loadComp.patterns;
           }
-          if (loadComp.players) {
-            this.attributes.players = loadComp.players;
-          }
           if (loadComp.title) {
             this.attributes.title = "Re: " + loadComp.title;
           }
@@ -54,26 +51,51 @@
         }
       }
       this.Videos = new VideoList();
-      this.Players = new PlayerList();
-      if (this.attributes.players) {
-        _ref = this.attributes.players;
+      if (this.attributes.videos) {
+        _ref = this.attributes.videos;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          player = _ref[_i];
-          _ref2 = this.attributes.videos;
-          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-            video = _ref2[_j];
+          video = _ref[_i];
+          newVideo = new Video({
+            Composition: this,
+            title: video.title,
+            duration: video.duration,
+            webm: video.webm,
+            mp4: video.mp4,
+            ytid: video.ytid
+          });
+          newVideo.Triggers = video.triggers;
+          video.newcid = newVideo.cid;
+          this.Videos.add(newVideo);
+          if (video.players) {
+            _ref2 = video.players;
+            for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+              player = _ref2[_j];
+              newPlayer = new Player({
+                Composition: this,
+                Video: newVideo
+              });
+              newPlayer.oldcid = player.id;
+              player.newcid = newPlayer.cid;
+              newVideo.Players.add(newPlayer);
+            }
+          }
+        }
+      }
+      if (this.attributes.players) {
+        _ref3 = this.attributes.players;
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          player = _ref3[_k];
+          _ref4 = this.attributes.videos;
+          for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+            video = _ref4[_l];
             if (player.video_id === video.id) {
-              addID = video.ytid;
-              if (addID !== "") {
-                newPlayer = this.addPlayer(addID);
-                newPlayer.Video.Triggers = video.triggers;
-                if (video.title) {
-                  newPlayer.Video.set({
-                    "title": video.title
-                  });
-                }
-                player.newcid = newPlayer.cid;
-              }
+              newVideo = this.Videos.getByCid(video.newcid);
+              newPlayer = new Player({
+                Composition: this,
+                Video: newVideo
+              });
+              player.newcid = newPlayer.cid;
+              newVideo.Players.add(newPlayer);
               break;
             }
           }
@@ -81,9 +103,9 @@
       }
       this.Patterns = new PatternList();
       if (this.attributes.patterns) {
-        _ref3 = this.attributes.patterns;
-        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-          pattern = _ref3[_k];
+        _ref5 = this.attributes.patterns;
+        for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+          pattern = _ref5[_m];
           newPattern = new Pattern({
             Composition: this,
             trigger_id: pattern.trigger_id,
@@ -94,17 +116,21 @@
           this.Patterns.add(newPattern);
           pattern.newcid = newPattern.cid;
           if (pattern.tracks) {
-            _ref4 = pattern.tracks;
-            for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-              track = _ref4[_l];
+            _ref6 = pattern.tracks;
+            for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
+              track = _ref6[_n];
               old_player_id = track.player_id;
-              _ref5 = this.attributes.players;
-              for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
-                player = _ref5[_m];
-                if (old_player_id === player.id) {
-                  newTrack = newPattern.addTrack(this.Players.getByCid(player.newcid));
-                  newTrack.setLine(track.line);
-                  break;
+              _ref7 = this.Videos.models;
+              for (_o = 0, _len7 = _ref7.length; _o < _len7; _o++) {
+                video = _ref7[_o];
+                _ref8 = video.Players.models;
+                for (_p = 0, _len8 = _ref8.length; _p < _len8; _p++) {
+                  player = _ref8[_p];
+                  if (old_player_id === player.oldcid) {
+                    newTrack = newPattern.addTrack(player);
+                    newTrack.setLine(track.line);
+                    break;
+                  }
                 }
               }
             }
@@ -117,18 +143,18 @@
       this.queuedMessages = "";
       this.Sequences = new SequenceList();
       if (this.attributes.sequences) {
-        _ref6 = this.attributes.sequences;
-        for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
-          sequence = _ref6[_n];
+        _ref9 = this.attributes.sequences;
+        for (_q = 0, _len9 = _ref9.length; _q < _len9; _q++) {
+          sequence = _ref9[_q];
           newSeq = new Sequence({
             Composition: this,
             length: sequence.length
           });
           this.Sequences.add(newSeq);
           if (sequence.tracks) {
-            _ref7 = sequence.tracks;
-            for (_o = 0, _len7 = _ref7.length; _o < _len7; _o++) {
-              track = _ref7[_o];
+            _ref10 = sequence.tracks;
+            for (_r = 0, _len10 = _ref10.length; _r < _len10; _r++) {
+              track = _ref10[_r];
               if (track.line.length > 0) {
                 newSeqTrack = newSeq.addTrack();
                 newSeqTrack.setLine(track.line);
@@ -273,41 +299,35 @@
       }
     },
     initializeView: function() {
-      var pattern, player, sequence, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
+      var pattern, sequence, video, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       this.View = new CompositionView({
         model: this
       });
-      _ref = this.Players.models;
+      _ref = this.Videos.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        player.initializeView();
-      }
-      _ref2 = this.Videos.models;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        video = _ref2[_j];
+        video = _ref[_i];
         video.initializeView();
       }
-      _ref3 = this.Patterns.models;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        pattern = _ref3[_k];
+      _ref2 = this.Patterns.models;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        pattern = _ref2[_j];
         pattern.initializeView();
       }
-      _ref4 = this.Sequences.models;
-      for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-        sequence = _ref4[_l];
+      _ref3 = this.Sequences.models;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        sequence = _ref3[_k];
         sequence.initializeView();
       }
       this.saveLastSaved();
       return App.reloadVideos();
     },
-    addPlayer: function(ytid) {
-      var newPlayer;
-      newPlayer = new Player({
-        Composition: this,
-        ytid: ytid
+    addVideo: function() {
+      var newVideo;
+      newVideo = new Video({
+        Composition: this
       });
-      this.Players.add(newPlayer);
-      return newPlayer;
+      this.Videos.add(newVideo);
+      return newVideo;
     },
     addPattern: function() {
       var newPattern, trigger_id;
@@ -339,7 +359,6 @@
         mixer: this.get("mixer"),
         bpm: this.get("bpm"),
         videos: this.Videos,
-        players: this.Players,
         patterns: this.Patterns,
         sequences: this.Sequences,
         parent_id: this.get("parent_id")
@@ -360,10 +379,25 @@
       unsaved = this.lastsaved !== JSON.stringify(this);
       if (this.View && unsaved) {
         this.View.$(".composition-save-button").button({
-          label: "Save!"
+          label: "Save!!!"
         });
       }
       return unsaved;
+    },
+    getPlayerByCid: function(cid) {
+      var player, video, _i, _j, _len, _len2, _ref, _ref2;
+      _ref = this.Videos.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        video = _ref[_i];
+        _ref2 = video.Players.models;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          player = _ref2[_j];
+          if (player.cid === cid) {
+            return player;
+          }
+        }
+      }
+      return null;
     }
   });
   this.CompositionList = Backbone.Collection.extend({
@@ -414,9 +448,9 @@
     "export": function() {
       $("#comp_export_dialog textarea").text(JSON.stringify(this.model));
       return $("#comp_export_dialog").dialog({
-        modal: true,
         width: 400,
-        height: 300
+        height: 300,
+        position: "right top"
       });
     },
     "delete": function() {
@@ -438,8 +472,8 @@
       "mouseover .navigable": "mouseoverNavigable",
       "keydown .automulti": "automulti",
       "keydown .automulti2": "automulti2",
+      "click .add-video": "addVideo",
       "click .add-pattern": "addPattern",
-      "click .add-player": "addPlayer",
       "click .add-sequence": "addSequence",
       "click .play-all-button": "playAll",
       "click .pause-all-button": "pauseAll",
@@ -468,7 +502,7 @@
           primary: "ui-icon-battery-3"
         }
       });
-      this.$('.add-player').button({
+      this.$('.add-video').button({
         icons: {
           primary: "ui-icon-plus"
         }
@@ -488,12 +522,11 @@
           primary: "ui-icon-play"
         }
       });
-      this.$('.pause-all-button').button({
+      return this.$('.pause-all-button').button({
         icons: {
           primary: "ui-icon-pause"
         }
       });
-      return this.$(".patterns-tabs").tabs();
     },
     initialize: function() {
       this.render();
@@ -502,19 +535,11 @@
     mouseoverNavigable: function(e) {
       return $(e.currentTarget).focus();
     },
-    addPlayer: function() {
-      var input;
-      input = this.$(".addplayerid").val();
-      if (input === "") {
-        return;
-      }
-      if (input.indexOf("youtube.com") !== -1) {
-        input = input.split("v=")[1].split("&")[0];
-      }
-      if (input.indexOf("http://") !== -1) {
-        input = input.split("v=")[1].split("&")[0];
-      }
-      return this.model.addPlayer(input);
+    addVideo: function() {
+      var newVideo;
+      newVideo = this.model.addVideo();
+      newVideo.initializeView();
+      return newVideo.View.$(".video-sources").show();
     },
     addPattern: function() {
       var newPattern;
@@ -538,39 +563,66 @@
       }
     },
     automulti2: function(e) {
-      var player, trigger, triggerid, triggers, _i, _len, _ref;
+      var player, seconds, triggerid, triggers, video, _i, _len, _ref, _results;
       triggerid = App.keycodes.indexOf(e.keyCode);
       if (triggerid === -1) {
         return;
       }
-      triggers = [];
-      _ref = this.model.Players.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        trigger = {};
-        trigger.player = player;
-        trigger.trigger = triggerid;
-        triggers.push(trigger);
-      }
-      return this.model.multitrigger(triggers);
-    },
-    playAll: function() {
-      var player, _i, _len, _ref, _results;
-      _ref = this.model.Players.models;
+      triggers = "";
+      _ref = this.Videos.models;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        _results.push(player.View.play());
+        video = _ref[_i];
+        seconds = parseFloat(video.Triggers[trigger]);
+        _results.push((function() {
+          var _i, _len, _ref;
+          if (seconds !== seconds) {
+            _ref = video.Players.models;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              player = _ref[_i];
+              triggers += "seek:" + player.cid + ":" + seconds + "|";
+            }
+            return App.postRawMessageToViewer(triggers);
+          }
+        })());
+      }
+      return _results;
+    },
+    playAll: function() {
+      var player, video, _i, _len, _ref, _results;
+      _ref = this.model.Videos.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        video = _ref[_i];
+        _results.push((function() {
+          var _i, _len, _ref, _results;
+          _ref = video.Players.models;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            player = _ref[_i];
+            _results.push(player.View.play());
+          }
+          return _results;
+        })());
       }
       return _results;
     },
     pauseAll: function() {
-      var player, _i, _len, _ref, _results;
-      _ref = this.model.Players.models;
+      var player, video, _i, _len, _ref, _results;
+      _ref = this.model.Videos.models;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        _results.push(player.View.pause());
+        video = _ref[_i];
+        _results.push((function() {
+          var _i, _len, _ref, _results;
+          _ref = video.Players.models;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            player = _ref[_i];
+            _results.push(player.View.pause());
+          }
+          return _results;
+        })());
       }
       return _results;
     },
@@ -584,9 +636,9 @@
     },
     setInfo: function() {
       return this.model.set({
-        title: $.trim(this.$(".comp_info_title").text()),
-        mixer: $.trim(this.$(".comp_info_mixer").text()),
-        description: $.trim(this.$(".comp_info_description").text())
+        title: this.$(".comp_info_title").text().trim(),
+        mixer: this.$(".comp_info_mixer").text().trim(),
+        description: this.$(".comp_info_description").text().trim()
       });
     },
     setBpm: function() {

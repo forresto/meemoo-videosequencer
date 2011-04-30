@@ -53,9 +53,15 @@ window.addEventListener("message", recieveMessage, false)
 
 
 create = (id,value) ->
+  
+  sources = value.split(",")
+  webm = sources[0]
+  mp4 = sources[1]
+  ytid = sources[2]
+  
   if $("#player_d_"+id).length > 0 # that id player already exists
     return
-    
+  
   if value.length < 3 # no ytid
     return
   

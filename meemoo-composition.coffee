@@ -22,7 +22,6 @@ this.Composition = Backbone.Model.extend
   initialize: ->
     
     if this.get("loadJSON") isnt undefined
-      
       pastedJSON = this.get("loadJSON")
       if pastedJSON isnt ""
         loadComp = JSON.parse(pastedJSON);
@@ -38,8 +37,8 @@ this.Composition = Backbone.Model.extend
           this.attributes.mixer = loadComp.mixer
         if loadComp.patterns
           this.attributes.patterns = loadComp.patterns
-        if loadComp.players
-          this.attributes.players = loadComp.players
+        # if loadComp.players
+        #   this.attributes.players = loadComp.players
         if loadComp.title
           this.attributes.title = "Re: " + loadComp.title
         if loadComp.sequences
@@ -51,22 +50,40 @@ this.Composition = Backbone.Model.extend
     
     # Repopulate players and videos
     this.Videos = new VideoList()
-    this.Players = new PlayerList()
+    # this.Players = new PlayerList()
     
+    if this.attributes.videos
+      for video in this.attributes.videos
+        newVideo = new Video
+          Composition: this
+          title: video.title
+          duration: video.duration
+          webm: video.webm
+          mp4: video.mp4
+          ytid: video.ytid
+        newVideo.Triggers = video.triggers
+        video.newcid = newVideo.cid
+        this.Videos.add newVideo
+        if video.players
+          for player in video.players
+            newPlayer = new Player
+              Composition: this
+              Video: newVideo
+            newPlayer.oldcid = player.id
+            player.newcid = newPlayer.cid
+            newVideo.Players.add newPlayer
+    
+    # For old compositions, delete after alpha
     if this.attributes.players
       for player in this.attributes.players
         for video in this.attributes.videos
           if player.video_id is video.id
-            addID = video.ytid
-            if addID isnt ""
-              newPlayer = this.addPlayer addID
-              newPlayer.Video.Triggers = video.triggers
-              if video.title
-                newPlayer.Video.set
-                  "title": video.title
-              # if parseInt(player.volume) isnt NaN
-              #   newPlayer.set({"volume":parseInt(player.volume)})
-              player.newcid = newPlayer.cid
+            newVideo = this.Videos.getByCid(video.newcid)
+            newPlayer = new Player
+              Composition: this
+              Video: newVideo
+            player.newcid = newPlayer.cid
+            newVideo.Players.add(newPlayer)
             break
               
     # Repopulate patterns
@@ -85,11 +102,12 @@ this.Composition = Backbone.Model.extend
         if pattern.tracks
           for track in pattern.tracks
             old_player_id = track.player_id
-            for player in this.attributes.players
-              if old_player_id is player.id
-                newTrack = newPattern.addTrack this.Players.getByCid player.newcid
-                newTrack.setLine track.line
-                break
+            for video in this.Videos.models
+              for player in video.Players.models
+                if old_player_id is player.oldcid
+                  newTrack = newPattern.addTrack player
+                  newTrack.setLine track.line
+                  break
       
     # no pattern active
     this.Pattern = null
@@ -228,8 +246,8 @@ this.Composition = Backbone.Model.extend
     
   initializeView: ->
     this.View = new CompositionView {model:this}
-    for player in this.Players.models
-      player.initializeView()
+    # for player in this.Players.models
+    #   player.initializeView()
     for video in this.Videos.models
       video.initializeView()
     for pattern in this.Patterns.models
@@ -239,12 +257,18 @@ this.Composition = Backbone.Model.extend
     this.saveLastSaved()
     App.reloadVideos()
       
-  addPlayer: (ytid) ->
-    newPlayer = new Player 
-      Composition:this
-      ytid:ytid
-    this.Players.add newPlayer
-    newPlayer
+  # addPlayer: (ytid) ->
+  #   newPlayer = new Player 
+  #     Composition:this
+  #     ytid:ytid
+  #   this.Players.add newPlayer
+  #   newPlayer
+  
+  addVideo: ->
+    newVideo = new Video
+      Composition: this
+    this.Videos.add newVideo
+    newVideo
     
   addPattern: ->
     trigger_id = this.Patterns.models.length
@@ -271,7 +295,7 @@ this.Composition = Backbone.Model.extend
       mixer: this.get("mixer")
       bpm: this.get("bpm")
       videos: this.Videos
-      players: this.Players
+      # players: this.Players
       patterns: this.Patterns
       sequences: this.Sequences
       parent_id: this.get("parent_id")
@@ -288,8 +312,16 @@ this.Composition = Backbone.Model.extend
   changesMade: ->
     unsaved = this.lastsaved isnt JSON.stringify(this)
     if this.View and unsaved
-      this.View.$(".composition-save-button").button({label:"Save!"})
+      this.View.$(".composition-save-button").button({label:"Save!!!"})
     return unsaved
+    
+  getPlayerByCid: (cid) ->
+    for video in this.Videos.models
+      for player in video.Players.models
+        if player.cid is cid
+          return player
+    return null
+  
     
 this.CompositionList = Backbone.Collection.extend
   model: Composition
@@ -335,9 +367,9 @@ this.CompositionListView = Backbone.View.extend
   export: ->
     $("#comp_export_dialog textarea").text(JSON.stringify this.model)
     $("#comp_export_dialog").dialog
-      modal: true
       width: 400
       height: 300
+      position: "right top"
     
   delete: ->
     if confirm "Are you sure you want to remove this composition (#{this.model.get('title')})?"
@@ -353,19 +385,18 @@ this.CompositionView = Backbone.View.extend
   template: _.template $('#composition-template').html()
   
   events:
-    "click .composition-save-button" : "save"
+    "click .composition-save-button"   : "save"
     "click .composition-export-button" : "export"
-    "mouseover .navigable" : "mouseoverNavigable"
-    "keydown .automulti" : "automulti"
-    "keydown .automulti2" : "automulti2"
-    "click .add-pattern" : "addPattern"
-    "click .add-player" : "addPlayer"
-    "click .add-sequence" : "addSequence"
-    "click .play-all-button" : "playAll"
-    "click .pause-all-button" : "pauseAll"
-    
-    "blur .editable" : "setInfo"
-    "blur .comp_info_bpm" : "setBpm"
+    "mouseover .navigable"             : "mouseoverNavigable"
+    "keydown .automulti"               : "automulti"
+    "keydown .automulti2"              : "automulti2"
+    "click .add-video"                 : "addVideo"
+    "click .add-pattern"               : "addPattern"
+    "click .add-sequence"              : "addSequence"
+    "click .play-all-button"           : "playAll"
+    "click .pause-all-button"          : "pauseAll"
+    "blur .editable"                   : "setInfo"
+    "blur .comp_info_bpm"              : "setBpm"
     # "change .comp_info_bpm" : "setBpm" # Doesn't seem to fire
     
     
@@ -388,7 +419,7 @@ this.CompositionView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-battery-3" }
         
-    this.$('.add-player')
+    this.$('.add-video')
       .button
         icons: { primary: "ui-icon-plus" }
 
@@ -408,7 +439,7 @@ this.CompositionView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-pause" }
     
-    this.$(".patterns-tabs").tabs()
+    # this.$(".patterns-tabs").tabs()
     
   initialize: ->
     this.render()
@@ -417,17 +448,22 @@ this.CompositionView = Backbone.View.extend
   mouseoverNavigable: (e) ->
     $(e.currentTarget).focus()
     
-  addPlayer: ->
-    input = this.$(".addplayerid").val()
-    if input is ""
-      return
-    # Full yt url
-    if (input.indexOf("youtube.com") isnt -1)
-      input = input.split("v=")[1].split("&")[0]
-    # Full src for <video>
-    if (input.indexOf("http://") isnt -1)
-      input = input.split("v=")[1].split("&")[0]
-    this.model.addPlayer input
+  addVideo: ->
+    newVideo = this.model.addVideo()
+    newVideo.initializeView()
+    newVideo.View.$(".video-sources").show()
+  
+  # addPlayer: ->
+  #   input = this.$(".addplayerid").val()
+  #   if input is ""
+  #     return
+  #   # Full yt url
+  #   if (input.indexOf("youtube.com") isnt -1)
+  #     input = input.split("v=")[1].split("&")[0]
+  #   # Full src for <video>
+  #   if (input.indexOf("http://") isnt -1)
+  #     input = input.split("v=")[1].split("&")[0]
+  #   this.model.addPlayer input
       
   addPattern: ->
     newPattern = this.model.addPattern()
@@ -437,12 +473,14 @@ this.CompositionView = Backbone.View.extend
     newSequence = this.model.addSequence()
     newSequence.initializeView()
     
+    
   # triggers 0-9 in videos 0-3
   automulti: (e) -> 
     triggerid = App.keycodes.indexOf(e.keyCode)
     if triggerid is -1 
       return
       
+    #FIXME
     player = Math.floor(triggerid / 10)
     if this.model.Players.models[player]
       this.model.Players.models[player].View.trigger(triggerid % 10)
@@ -453,23 +491,24 @@ this.CompositionView = Backbone.View.extend
     if triggerid is -1 
       return
       
-    triggers = []
+    triggers = ""
     
-    for player in this.model.Players.models
-      trigger = {}
-      trigger.player = player
-      trigger.trigger = triggerid
-      triggers.push trigger
-      
-    this.model.multitrigger triggers
-    
+    for video in this.Videos.models
+      seconds = parseFloat video.Triggers[trigger]
+      if seconds isnt seconds # Is NaN
+        for player in video.Players.models
+          triggers += "seek:#{player.cid}:#{seconds}|"
+        App.postRawMessageToViewer triggers
+        
   playAll: ->
-    for player in this.model.Players.models
-      player.View.play()
+    for video in this.model.Videos.models
+      for player in video.Players.models
+        player.View.play()
     
   pauseAll: ->
-    for player in this.model.Players.models
-      player.View.pause()
+    for video in this.model.Videos.models
+      for player in video.Players.models
+        player.View.pause()
     
   save: ->
     this.model.save()
@@ -479,9 +518,9 @@ this.CompositionView = Backbone.View.extend
     
   setInfo: ->
     this.model.set
-      title : $.trim this.$(".comp_info_title").text()
-      mixer : $.trim this.$(".comp_info_mixer").text()
-      description : $.trim this.$(".comp_info_description").text()
+      title : this.$(".comp_info_title").text().trim()
+      mixer : this.$(".comp_info_mixer").text().trim()
+      description : this.$(".comp_info_description").text().trim()
     # this.model.unsavedChanges()
     
   setBpm: ->

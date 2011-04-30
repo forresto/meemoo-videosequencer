@@ -35,12 +35,21 @@
       return _results;
     },
     addTracks: function() {
-      var player, _i, _len, _ref, _results;
-      _ref = this.get("Composition").Players.models;
+      var player, video, _i, _len, _ref, _results;
+      _ref = this.get("Composition").Videos;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        _results.push(this.addTrack(player));
+        video = _ref[_i];
+        _results.push((function() {
+          var _i, _len, _ref, _results;
+          _ref = video.Players.models;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            player = _ref[_i];
+            _results.push(this.addTrack(player));
+          }
+          return _results;
+        }).call(this));
       }
       return _results;
     },
@@ -82,9 +91,9 @@
         track = _ref[_i];
         trigger = track.Line[this.beat];
         if (trigger !== null && trigger !== void 0) {
-          seconds = track.get("Player").Video.Triggers[trigger];
+          seconds = track.get("Player").get("Video").Triggers[trigger];
           if (seconds !== null && seconds !== void 0) {
-            this.get("Composition").queueMessage("seek:" + track.get("Player").cid + ":" + seconds);
+            this.get("Composition").queueMessage("seek:" + (track.get('Player').cid) + ":" + seconds);
           }
         }
       }
@@ -195,40 +204,44 @@
       return this.$(".beat").removeClass("active");
     },
     chooseTrack: function() {
-      var dialog, disabled, player, playerel, track, _i, _j, _len, _len2, _ref, _ref2;
+      var addplayerbutton, dialog, disabled, player, track, video, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       dialog = $("<div></div>");
-      _ref = App.Composition.Players.models;
+      _ref = this.model.get("Composition").Videos.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        disabled = false;
-        _ref2 = this.model.Tracks.models;
+        video = _ref[_i];
+        _ref2 = video.Players.models;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          track = _ref2[_j];
-          if (track.get("Player").cid === player.cid) {
-            disabled = true;
+          player = _ref2[_j];
+          disabled = false;
+          _ref3 = this.model.Tracks.models;
+          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+            track = _ref3[_k];
+            if (track.get("Player").cid === player.cid) {
+              disabled = true;
+            }
           }
+          addplayerbutton = $("<div>" + player.cid + "</div>");
+          addplayerbutton.data({
+            pattern_id: this.model.cid,
+            player_id: player.cid
+          }).button({
+            disabled: disabled
+          }).click(function() {
+            var pattern_id, player_id;
+            pattern_id = $(this).data("pattern_id");
+            player_id = $(this).data("player_id");
+            App.Composition.Patterns.getByCid(pattern_id).View.addTrack(player_id);
+            return $(dialog).dialog("close");
+          });
+          dialog.append(addplayerbutton);
         }
-        playerel = $("<div>" + player.cid + "</div>");
-        playerel.data({
-          pattern_id: this.model.cid,
-          player_id: player.cid
-        }).button({
-          disabled: disabled
-        }).click(function() {
-          var pattern_id, player_id;
-          pattern_id = $(this).data("pattern_id");
-          player_id = $(this).data("player_id");
-          App.Composition.Patterns.getByCid(pattern_id).View.addTrack(player_id);
-          return $(dialog).dialog("close");
-        });
-        dialog.append(playerel);
       }
       $(this.el).append(dialog);
       return dialog.dialog();
     },
     addTrack: function(player_id) {
       var newTrack;
-      newTrack = this.model.addTrack(App.Composition.Players.getByCid(player_id));
+      newTrack = this.model.addTrack(App.Composition.getPlayerByCid(player_id));
       return newTrack.initializeView();
     },
     setBeats: function() {
