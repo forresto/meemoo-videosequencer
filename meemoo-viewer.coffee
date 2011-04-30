@@ -36,17 +36,17 @@ recieveMessage = (e) ->
     id = message[1]
     value = message[2]
     switch action
-      when "create"  then create  id,value
+      when "create"  then create  id, value
       when "remove"  then remove  id
-      when "seek"    then seek    id,value
+      when "removeAll" then removeAll()
+      when "seek"    then seek    id, value
       when "play"    then play    id
       when "pause"   then pause   id
       when "hide"    then hide    id
       when "show"    then show    id
       when "mute"    then mute    id
       when "unmute"  then unmute  id
-      when "volume"  then volume  id,value
-      # when "bpm"     then bpm     id,value
+      when "volume"  then volume  id, value
       
 
 window.addEventListener("message", recieveMessage, false)
@@ -86,6 +86,8 @@ remove = (id) ->
     $(player).parent().remove()
     sizePosition()
 
+removeAll = ->
+  $("#players").empty()
 
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
@@ -95,7 +97,6 @@ seek = (id,value) ->
     seekPercent = (parseFloat(value) + 20) / player.getDuration()
     if loadedPercent is 1 or seekPercent < loadedPercent
       player.seekTo(value, false)
-
 
 play = (id) ->
   player = document.getElementById "player_o_#{id}"

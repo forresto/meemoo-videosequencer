@@ -175,8 +175,15 @@ this.PlayerView = Backbone.View.extend
       this.$('.playprogress').progressbar "value", this.model.get('time')/this.model.get('totaltime')*100
       this.$('.loadprogress').progressbar "value", this.model.get('loaded')/this.model.get('totalsize')*100
     
+  create: ->
+    video = this.model.get("Video")
+    webm = video.get("webm")
+    mp4 = video.get("mp4")
+    ytid = video.get("ytid")
+    App.postMessageToViewer "create", this.model.cid, this.model.get("Video").get("ytid")
+    
   initialize: ->
-    window.App.postMessageToViewer "create", this.model.cid, this.model.get("Video").get("ytid")
+    this.create()
     
     this.render()
     this.model.get("Composition").View.$(".players").append($(this.el))

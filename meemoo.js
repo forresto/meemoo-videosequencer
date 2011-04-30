@@ -28,6 +28,13 @@
       }).click(function() {
         return App.popoutViewer();
       });
+      $('#viewer-reload').button({
+        icons: {
+          primary: "ui-icon-refresh"
+        }
+      }).click(function() {
+        return App.reloadVideos();
+      });
       $('#newcomposition').button({
         icons: {
           primary: "ui-icon-document"
@@ -96,41 +103,28 @@
       }
     },
     reloadVideos: function() {
-      this.reload = function() {
-        var player, video, _i, _len, _ref, _results;
-        _ref = App.Composition.Videos.models;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          video = _ref[_i];
-          _results.push((function() {
-            var _i, _len, _ref, _results;
-            _ref = video.Players.models;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              player = _ref[_i];
-              player.set({
-                loaded: 0,
-                time: 0
-              });
-              _results.push(App.postMessageToViewer("create", player.cid, video.get("ytid")));
-            }
-            return _results;
-          })());
-        }
-        return _results;
-      };
-      this.reloadTriggers = function() {
-        var video, _i, _len, _ref, _results;
-        _ref = App.Composition.Videos.models;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          video = _ref[_i];
-          _results.push(video.View.updateTriggers());
-        }
-        return _results;
-      };
-      setTimeout(this.reload, 2000);
-      return setTimeout(this.reloadTriggers, 7000);
+      var player, video, _i, _len, _ref, _results;
+      this.postRawMessageToViewer("removeAll::");
+      _ref = App.Composition.Videos.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        video = _ref[_i];
+        _results.push((function() {
+          var _i, _len, _ref, _results;
+          _ref = video.Players.models;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            player = _ref[_i];
+            player.set({
+              loaded: 0,
+              time: 0
+            });
+            _results.push(player.View.create());
+          }
+          return _results;
+        })());
+      }
+      return _results;
     },
     postMessageToViewer: function(action, id, value) {
       return this.postRawMessageToViewer("" + action + ":" + id + ":" + value);
@@ -146,7 +140,7 @@
       if (msg === "-=POPOUTCLOSED=-") {
         return this.popinViewer();
       } else if (msg === "-=REFRESH=-") {
-        return this.reloadVideos();
+        return setTimeout("App.reloadVideos()", 2000);
       } else {
         playerinfos = msg.split("|");
         _results = [];

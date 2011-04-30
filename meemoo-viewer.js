@@ -9,7 +9,7 @@
 
   Built with jQuery in CoffeeScript
 
-  */  var ASPECT, ASPECTRATIO, appWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
+  */  var ASPECT, ASPECTRATIO, appWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, removeAll, resizeTimer, seek, show, sizePosition, unmute, volume;
   resizeTimer = null;
   playerinfointerval = null;
   appWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
@@ -35,6 +35,8 @@
             return create(id, value);
           case "remove":
             return remove(id);
+          case "removeAll":
+            return removeAll();
           case "seek":
             return seek(id, value);
           case "play":
@@ -89,6 +91,9 @@
       $(player).parent().remove();
       return sizePosition();
     }
+  };
+  removeAll = function() {
+    return $("#players").empty();
   };
   seek = function(id, value) {
     var loadedPercent, player, seekPercent;

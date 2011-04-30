@@ -255,7 +255,8 @@ this.Composition = Backbone.Model.extend
     for sequence in this.Sequences.models
       sequence.initializeView()
     this.saveLastSaved()
-    App.reloadVideos()
+    
+    setTimeout "App.reloadVideos()", 2000
       
   # addPlayer: (ytid) ->
   #   newPlayer = new Player 

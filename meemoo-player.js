@@ -218,8 +218,16 @@
         return this.$('.loadprogress').progressbar("value", this.model.get('loaded') / this.model.get('totalsize') * 100);
       }
     },
+    create: function() {
+      var mp4, video, webm, ytid;
+      video = this.model.get("Video");
+      webm = video.get("webm");
+      mp4 = video.get("mp4");
+      ytid = video.get("ytid");
+      return App.postMessageToViewer("create", this.model.cid, this.model.get("Video").get("ytid"));
+    },
     initialize: function() {
-      window.App.postMessageToViewer("create", this.model.cid, this.model.get("Video").get("ytid"));
+      this.create();
       this.render();
       this.model.get("Composition").View.$(".players").append($(this.el));
       this.$('.playbutton').button({

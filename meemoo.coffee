@@ -49,6 +49,12 @@ this.AppView = Backbone.View.extend
         icons: { primary: "ui-icon-newwin" }
       .click ->
         App.popoutViewer()
+
+    $('#viewer-reload')
+      .button
+        icons: { primary: "ui-icon-refresh" }
+      .click ->
+        App.reloadVideos()
         
     $('#newcomposition')
       .button
@@ -114,16 +120,12 @@ this.AppView = Backbone.View.extend
       $('#setup').removeClass("floatingsetup")
       
   reloadVideos: ->
-    @reload = ->
-      for video in App.Composition.Videos.models
-        for player in video.Players.models
-          player.set({loaded:0,time:0})
-          App.postMessageToViewer "create", player.cid, video.get("ytid") 
-    @reloadTriggers = ->
-      for video in App.Composition.Videos.models
-        video.View.updateTriggers()
-    setTimeout @reload, 2000
-    setTimeout @reloadTriggers, 7000 #TODO save video lengths to video
+    this.postRawMessageToViewer "removeAll::"
+    
+    for video in App.Composition.Videos.models
+      for player in video.Players.models
+        player.set({loaded:0,time:0})
+        player.View.create()
       
   postMessageToViewer: (action, id, value) ->
     this.postRawMessageToViewer "#{action}:#{id}:#{value}"
@@ -139,7 +141,8 @@ this.AppView = Backbone.View.extend
     if msg is "-=POPOUTCLOSED=-"
       this.popinViewer()
     else if msg is "-=REFRESH=-"
-      this.reloadVideos()
+      # this.reloadVideos()
+      setTimeout "App.reloadVideos()", 2000
     else
       playerinfos = msg.split("|")
       for playerinfo in playerinfos

@@ -319,7 +319,7 @@
         sequence.initializeView();
       }
       this.saveLastSaved();
-      return App.reloadVideos();
+      return setTimeout("App.reloadVideos()", 2000);
     },
     addVideo: function() {
       var newVideo;

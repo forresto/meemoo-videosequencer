@@ -17,9 +17,9 @@
     <li>Local storage: <span id="localstorage">?</span></li>
     <li>Video: <span id="video">?</span>
       <ul style="font-size:.5em;">
-        <li>h264: <span id="h264">?</span></li>
-        <li>ogg: <span id="ogg">?</span></li>
         <li>webm: <span id="webm">?</span></li>
+        <li>h264: <span id="h264">?</span></li>
+        <!-- <li>ogg: <span id="ogg">?</span></li> -->
       </ul>
     </li>
     <li style="display:none">Audio: <span id="audio">?</span>
@@ -36,9 +36,9 @@
   document.getElementById("localstorage").innerHTML = Modernizr.localstorage ? "yes" : "no"
   document.getElementById("video").innerHTML = Modernizr.video ? "yes" : "no"
   if (Modernizr.video) {
+    document.getElementById("webm").innerHTML = !Modernizr.video.webm ? "no" : Modernizr.video.webm
     document.getElementById("h264").innerHTML = !Modernizr.video.h264 ? "no" : Modernizr.video.h264
     document.getElementById("ogg").innerHTML = !Modernizr.video.ogg ? "no" : Modernizr.video.ogg
-    document.getElementById("webm").innerHTML = !Modernizr.video.webm ? "no" : Modernizr.video.webm
   }
   document.getElementById("audio").innerHTML = Modernizr.audio ? "yes" : "no"
   if (Modernizr.audio) {
