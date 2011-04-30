@@ -40,8 +40,11 @@
       if (position < App.triggers.length) {
         time = parseFloat(time);
         if (this.Triggers.indexOf(time) === -1) {
-          return this.Triggers[position] = time;
+          this.Triggers[position] = time;
         }
+      }
+      if (this.View) {
+        return this.View.updateTriggers();
       }
     },
     change: function() {
@@ -260,7 +263,7 @@
         atts = {
           id: "yt_test"
         };
-        return swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=test", "yt_test", "320", "240", "8", null, null, params, atts);
+        return swfobject.embedSWF("http://www.youtube.com/e/" + ytid + "?enablejsapi=1&version=3&playerapiid=test", "yt_test", "480", "360", "8", null, null, params, atts);
       }
     },
     addPlayer: function() {

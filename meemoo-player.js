@@ -27,7 +27,7 @@
       });
     },
     remove: function() {
-      return App.Composition.Players.remove(this);
+      return this.get("Video").Players.remove(this);
     },
     change: function() {
       return this.View.updateinfo();

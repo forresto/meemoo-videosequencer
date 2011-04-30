@@ -25,7 +25,7 @@ this.Player = Backbone.Model.extend
     this.View = new PlayerView {model:this}
     this.set({playing:true})
   remove: ->
-    App.Composition.Players.remove(this)
+    this.get("Video").Players.remove(this)
     # this.destroy()
   change: ->
     this.View.updateinfo()

@@ -32,6 +32,8 @@ this.Video = Backbone.Model.extend
       time = parseFloat(time)
       if this.Triggers.indexOf(time) is -1 # if the time isn't a trigger already
         this.Triggers[position] = time
+    if this.View
+      this.View.updateTriggers()
   change: ->
     # this.Triggers.sort((a,b) -> a-b)
     if this.View
@@ -154,8 +156,6 @@ this.VideoView = Backbone.View.extend
       this.$(".video-duration").val(time)
       this.saveDuration()
       
-    
-      
   testWebm: ->
     this.testHtml5()
   testMp4: ->
@@ -196,8 +196,8 @@ this.VideoView = Backbone.View.extend
       
       params = { allowScriptAccess: "always", wmode: "opaque" }
       atts = { id: "yt_test" }
-      swfobject.embedSWF "http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=test", 
-        "yt_test", "320", "240", "8", null, null, params, atts
+      swfobject.embedSWF "http://www.youtube.com/e/#{ytid}?enablejsapi=1&version=3&playerapiid=test", 
+        "yt_test", "480", "360", "8", null, null, params, atts
   
   addPlayer: ->
     this.model.addPlayer()
