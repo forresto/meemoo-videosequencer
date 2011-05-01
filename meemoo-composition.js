@@ -176,29 +176,28 @@
       });
     },
     setBpm: function(bpm) {
-      if ((0 < bpm && bpm < 500)) {
+      if ((0 < bpm && bpm <= 500)) {
         this.set({
           bpm: bpm
         });
         this.bpm = bpm;
-        return this.bpm_ms = Math.round(1000 / this.bpm * 60);
+        this.bpm_ms = Math.round(1000 * 60 / this.bpm);
+        return this.play();
       }
     },
     play: function() {
       clearTimeout(App.timer);
-      App.timer = setTimeout("App.Composition.step()", this.bpm_ms);
-      return this.playing = true;
+      return App.timer = setTimeout("App.Composition.step()", this.bpm_ms);
     },
     stop: function() {
-      clearTimeout(App.timer);
-      return this.playing = false;
+      return clearTimeout(App.timer);
     },
     step: function() {
-      try {
+      if (this.Pattern) {
         this.Pattern.step();
-        this.play();
-      } catch (_e) {}
-      return this.sendQueuedMessages();
+      }
+      this.sendQueuedMessages();
+      return this.play();
     },
     cuePattern: function(pattern) {
       this.nextPattern = pattern;

@@ -144,25 +144,26 @@ this.Composition = Backbone.Model.extend
     this.ListView = new CompositionListView {model:this}
     
   setBpm: (bpm) ->
-    if 0 < bpm < 500
+    if 0 < bpm <= 500
       this.set {bpm:bpm}
       this.bpm = bpm
-      this.bpm_ms = Math.round 1000 / this.bpm * 60
+      this.bpm_ms = Math.round( 1000 * 60 / this.bpm )
+      this.play()
     
   play: ->
     clearTimeout App.timer
     App.timer = setTimeout "App.Composition.step()", this.bpm_ms
-    this.playing = true
+    # this.playing = true
     
   stop: ->
     clearTimeout App.timer
-    this.playing = false
+    # this.playing = false
     
   step: ->
-    try
+    if this.Pattern
       this.Pattern.step()
-      this.play()
     this.sendQueuedMessages()
+    this.play()
     
   cuePattern: (pattern) ->
     this.nextPattern = pattern
@@ -242,6 +243,8 @@ this.Composition = Backbone.Model.extend
     this.queuedMessages += message+"|"
         
   sendQueuedMessages: ->
+    # if this.queuedMessages is ""
+    #   this.queuedMessages = "::"
     App.postRawMessageToViewer this.queuedMessages
     this.queuedMessages = ""
     

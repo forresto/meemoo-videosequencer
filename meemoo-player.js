@@ -227,9 +227,9 @@
       webm = video.get("webm");
       mp4 = video.get("mp4");
       ytid = video.get("ytid");
-      if (webm && webm !== "" && Modernizr.video.webm !== "no") {
+      if (webm && webm !== "" && Modernizr.video && Modernizr.video.webm !== "no") {
         return App.postMessageToViewer("createW", this.model.cid, webm);
-      } else if (mp4 && mp4 !== "" && Modernizr.video.mp4 !== "no") {
+      } else if (mp4 && mp4 !== "" && Modernizr.video && Modernizr.video.mp4 !== "no") {
         return App.postMessageToViewer("createM", this.model.cid, mp4);
       } else if (ytid && ytid !== "") {
         return App.postMessageToViewer("createY", this.model.cid, ytid);
@@ -240,7 +240,6 @@
     initialize: function() {
       this.create();
       this.render();
-      this.model.get("Composition").View.$(".players").append($(this.el));
       this.$('.playbutton').button({
         icons: {
           primary: "ui-icon-play"
@@ -288,6 +287,8 @@
       this.$('.loadprogress').progressbar({
         value: 0
       });
+      this.model.get("Composition").View.$(".players").append($(this.el));
+      this.model.get("Video").View.updateTriggers();
       return this;
     }
   });

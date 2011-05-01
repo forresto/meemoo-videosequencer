@@ -180,9 +180,9 @@ this.PlayerView = Backbone.View.extend
     mp4 = video.get("mp4")
     ytid = video.get("ytid")
     
-    if webm and webm isnt "" and Modernizr.video.webm isnt "no"
+    if webm and webm isnt "" and Modernizr.video and Modernizr.video.webm isnt "no"
       App.postMessageToViewer "createW", this.model.cid, webm
-    else if mp4 and mp4 isnt "" and Modernizr.video.mp4 isnt "no"
+    else if mp4 and mp4 isnt "" and Modernizr.video and Modernizr.video.mp4 isnt "no"
       App.postMessageToViewer "createM", this.model.cid, mp4
     else if ytid and ytid isnt ""
       App.postMessageToViewer "createY", this.model.cid, ytid
@@ -191,9 +191,7 @@ this.PlayerView = Backbone.View.extend
     
   initialize: ->
     this.create()
-    
     this.render()
-    this.model.get("Composition").View.$(".players").append($(this.el))
     
     # jQuery UI elements
     this.$('.playbutton')
@@ -230,5 +228,9 @@ this.PlayerView = Backbone.View.extend
       .progressbar {value: 0}
     this.$('.loadprogress')
       .progressbar {value: 0}
+      
+    this.model.get("Composition").View.$(".players").append($(this.el))
+    this.model.get("Video").View.updateTriggers()
+    
       
     return this
