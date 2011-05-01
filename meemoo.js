@@ -90,14 +90,14 @@
       return this.Composition.initializeView();
     },
     popoutViewer: function() {
-      this.viewer = window.open("viewer.html", "popoutviewer");
+      this.viewer = window.open("meemoo-viewer.html", "popoutviewer");
       $('#container').hide();
       $('#viewer').remove();
       return $('#setup').addClass("floatingsetup");
     },
     popinViewer: function() {
       if ($("#viewer").length === 0) {
-        $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>');
+        $('#container').prepend('<iframe src="meemoo-viewer.html" id="viewer" name="inviewer"></iframe>');
         this.viewer = document.getElementById("viewer").contentWindow;
         $('#container').show();
         return $('#setup').removeClass("floatingsetup");

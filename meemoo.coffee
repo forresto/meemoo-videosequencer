@@ -108,14 +108,14 @@ this.AppView = Backbone.View.extend
   #   this.Composition.addPlayer ytid
     
   popoutViewer: ->
-    this.viewer = window.open("viewer.html", "popoutviewer")
+    this.viewer = window.open("meemoo-viewer.html", "popoutviewer")
     $('#container').hide()
     $('#viewer').remove()
     $('#setup').addClass("floatingsetup")
     
   popinViewer: ->
     if $("#viewer").length is 0
-      $('#container').prepend('<iframe src="viewer.html" id="viewer" name="inviewer"></iframe>')
+      $('#container').prepend('<iframe src="meemoo-viewer.html" id="viewer" name="inviewer"></iframe>')
       this.viewer = document.getElementById("viewer").contentWindow
       $('#container').show()
       $('#setup').removeClass("floatingsetup")
