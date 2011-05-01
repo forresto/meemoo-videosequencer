@@ -224,7 +224,15 @@
       webm = video.get("webm");
       mp4 = video.get("mp4");
       ytid = video.get("ytid");
-      return App.postMessageToViewer("create", this.model.cid, this.model.get("Video").get("ytid"));
+      if (webm && webm !== "" && Modernizr.video.webm !== "no") {
+        return App.postMessageToViewer("createW", this.model.cid, webm);
+      } else if (mp4 && mp4 !== "" && Modernizr.video.mp4 !== "no") {
+        return App.postMessageToViewer("createM", this.model.cid, mp4);
+      } else if (ytid && ytid !== "") {
+        return App.postMessageToViewer("createY", this.model.cid, ytid);
+      } else {
+        return alert("You can't play this video in this browser (;_;)");
+      }
     },
     initialize: function() {
       this.create();

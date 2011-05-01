@@ -31,14 +31,15 @@ recieveMessage = (e) ->
     
   messages = e.data.split("|")
   for item in messages
-    message = item.split(":")
+    message = item.split("::")
     action = message[0] # create, destroy, seek, play, pause, mute
     id = message[1]
     value = message[2]
     switch action
-      when "create"  then create  id, value
+      when "createW" then createW id, value
+      when "createM" then createM id, value
+      when "createY" then createY id, value
       when "remove"  then remove  id
-      when "removeAll" then removeAll()
       when "seek"    then seek    id, value
       when "play"    then play    id
       when "pause"   then pause   id
@@ -52,13 +53,7 @@ recieveMessage = (e) ->
 window.addEventListener("message", recieveMessage, false)
 
 
-create = (id,value) ->
-  
-  sources = value.split(",")
-  webm = sources[0]
-  mp4 = sources[1]
-  ytid = sources[2]
-  
+createY = (id,value) ->
   if $("#player_d_"+id).length > 0 # that id player already exists
     return
   
@@ -75,38 +70,72 @@ create = (id,value) ->
   $('#player_d_'+id)
     .data("ytid", value)
     .data("cid", id)
+    .data("type", "youtube")
     
   resizeTimer = setTimeout(sizePosition, 250)
+
+createW = (id, value) ->
+  createH id, value, "webm"
+
+createM = (id, value) ->
+  createH id, value, "mp4"
+
+createH = (id, value, type) ->
+  if $("#player_d_"+id).length > 0 # that id player already exists
+    return
+    
+  if value.length < 3 # no url
+    return
   
+  $('#players')
+    .append $('<div id="player_d_'+id+'" class="player_d"></div>')
+      .data("cid", id)
+      .data("type", "htmlvideo")
+      .append $("<video id='player_o_#{id}' src='#{value}' autobuffer='auto' preload autoplay></video>")
+  
+  resizeTimer = setTimeout(sizePosition, 250)
   
 remove = (id) ->
+  if id is "ALL"
+    $("#players").empty()
+    return
+    
   player = document.getElementById "player_o_#{id}"
   if player
-    player.stopVideo()
+    try player.stopVideo()
     $(player).parent().remove()
     sizePosition()
-
-removeAll = ->
-  $("#players").empty()
 
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
     # don't seek over the buffer, safety of 20 seconds
-    loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal()
-    seekPercent = (parseFloat(value) + 20) / player.getDuration()
-    if loadedPercent is 1 or seekPercent < loadedPercent
-      player.seekTo(value, false)
+    if player.tagName is "VIDEO"
+      loadedPercent = player.buffered.end() / player.duration
+      seekPercent = (parseFloat(value) + 20) / player.duration
+      if loadedPercent is 1 or seekPercent < loadedPercent
+        player.currentTime = value
+    else
+      loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal()
+      seekPercent = (parseFloat(value) + 20) / player.getDuration()
+      if loadedPercent is 1 or seekPercent < loadedPercent
+        player.seekTo(value, false)
 
 play = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    player.playVideo()
+    if player.tagName is "VIDEO"
+      player.play()
+    else
+      player.playVideo()
 
 pause = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    player.pauseVideo()
+    if player.tagName is "VIDEO"
+      player.pause()
+    else
+      player.pauseVideo()
 
 hide = (id) ->
   $("player_d_#{id}").hide()
@@ -117,17 +146,26 @@ show = (id) ->
 mute = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    player.mute()
+    if player.tagName is "VIDEO"
+      player.muted = true
+    else
+      player.mute()
 
 unmute = (id) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    player.unMute()
+    if player.tagName is "VIDEO"
+      player.muted = false
+    else
+      player.unMute()
 
 volume = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    player.setVolume(value)
+    if player.tagName is "VIDEO"
+      player.volume = value
+    else
+      player.setVolume(value)
 
 
 window.onYouTubePlayerReady = (id) ->
@@ -160,8 +198,11 @@ window.updatePlayerInfo = ->
     cid = $(player).data('cid')
     message += cid + ":" 
     playero = document.getElementById "player_o_#{cid}"
-    if playero and playero.getDuration
-      message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration()
+    if playero
+      if playero.duration #HTML video
+        message += Math.round(playero.buffered.end()*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000 + ":" + Math.round(playero.currentTime*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000
+      else if playero.getDuration #YouTube video
+        message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration()
     message += "|"
   postMessageToApp message
   
@@ -185,7 +226,7 @@ $(window).resize ->
 
 sizePosition = ->
   visibleFrames = $(".player_d:visible")
-  visiblePlayers = $(".player_d:visible object")
+  visiblePlayers = visibleFrames.children("object, video")
   numvids = visibleFrames.length
   w = $("#players").width()
   h = $("#players").height()

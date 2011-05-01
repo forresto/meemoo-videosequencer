@@ -280,8 +280,8 @@
         item = triggers[_i];
         seconds = item.player.Video.Triggers[item.trigger];
         if (seconds !== null && seconds !== void 0) {
-          message += "seek:";
-          message += "" + item.player.cid + ":";
+          message += "seek::";
+          message += "" + item.player.cid + "::";
           message += "" + seconds + "|";
         }
       }
@@ -580,7 +580,7 @@
             _ref = video.Players.models;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               player = _ref[_i];
-              triggers += "seek:" + player.cid + ":" + seconds + "|";
+              triggers += "seek::" + player.cid + "::" + seconds + "|";
             }
             return App.postRawMessageToViewer(triggers);
           }

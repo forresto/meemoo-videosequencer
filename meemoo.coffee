@@ -120,7 +120,7 @@ this.AppView = Backbone.View.extend
       $('#setup').removeClass("floatingsetup")
       
   reloadVideos: ->
-    this.postRawMessageToViewer "removeAll::"
+    this.postRawMessageToViewer "remove::ALL"
     
     for video in App.Composition.Videos.models
       for player in video.Players.models
@@ -128,7 +128,7 @@ this.AppView = Backbone.View.extend
         player.View.create()
       
   postMessageToViewer: (action, id, value) ->
-    this.postRawMessageToViewer "#{action}:#{id}:#{value}"
+    this.postRawMessageToViewer "#{action}::#{id}::#{value}"
     
   postRawMessageToViewer: (message) ->
     # console.log message

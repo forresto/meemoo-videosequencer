@@ -9,7 +9,7 @@
 
   Built with jQuery in CoffeeScript
 
-  */  var ASPECT, ASPECTRATIO, appWindow, create, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, removeAll, resizeTimer, seek, show, sizePosition, unmute, volume;
+  */  var ASPECT, ASPECTRATIO, appWindow, createH, createM, createW, createY, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
   resizeTimer = null;
   playerinfointerval = null;
   appWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
@@ -25,18 +25,20 @@
     _results = [];
     for (_i = 0, _len = messages.length; _i < _len; _i++) {
       item = messages[_i];
-      message = item.split(":");
+      message = item.split("::");
       action = message[0];
       id = message[1];
       value = message[2];
       _results.push((function() {
         switch (action) {
-          case "create":
-            return create(id, value);
+          case "createW":
+            return createW(id, value);
+          case "createM":
+            return createM(id, value);
+          case "createY":
+            return createY(id, value);
           case "remove":
             return remove(id);
-          case "removeAll":
-            return removeAll();
           case "seek":
             return seek(id, value);
           case "play":
@@ -59,12 +61,8 @@
     return _results;
   };
   window.addEventListener("message", recieveMessage, false);
-  create = function(id, value) {
-    var atts, mp4, params, sources, webm, ytid;
-    sources = value.split(",");
-    webm = sources[0];
-    mp4 = sources[1];
-    ytid = sources[2];
+  createY = function(id, value) {
+    var atts, params;
     if ($("#player_d_" + id).length > 0) {
       return;
     }
@@ -80,29 +78,56 @@
       id: "player_o_" + id
     };
     swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=" + id, "player_r_" + id, "320", "240", "8", null, null, params, atts);
-    $('#player_d_' + id).data("ytid", value).data("cid", id);
+    $('#player_d_' + id).data("ytid", value).data("cid", id).data("type", "youtube");
+    return resizeTimer = setTimeout(sizePosition, 250);
+  };
+  createW = function(id, value) {
+    return createH(id, value, "webm");
+  };
+  createM = function(id, value) {
+    return createH(id, value, "mp4");
+  };
+  createH = function(id, value, type) {
+    if ($("#player_d_" + id).length > 0) {
+      return;
+    }
+    if (value.length < 3) {
+      return;
+    }
+    $('#players').append($('<div id="player_d_' + id + '" class="player_d"></div>').data("cid", id).data("type", "htmlvideo").append($("<video id='player_o_" + id + "' src='" + value + "' autobuffer='auto' preload autoplay></video>")));
     return resizeTimer = setTimeout(sizePosition, 250);
   };
   remove = function(id) {
     var player;
+    if (id === "ALL") {
+      $("#players").empty();
+      return;
+    }
     player = document.getElementById("player_o_" + id);
     if (player) {
-      player.stopVideo();
+      try {
+        player.stopVideo();
+      } catch (_e) {}
       $(player).parent().remove();
       return sizePosition();
     }
-  };
-  removeAll = function() {
-    return $("#players").empty();
   };
   seek = function(id, value) {
     var loadedPercent, player, seekPercent;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal();
-      seekPercent = (parseFloat(value) + 20) / player.getDuration();
-      if (loadedPercent === 1 || seekPercent < loadedPercent) {
-        return player.seekTo(value, false);
+      if (player.tagName === "VIDEO") {
+        loadedPercent = player.buffered.end() / player.duration;
+        seekPercent = (parseFloat(value) + 20) / player.duration;
+        if (loadedPercent === 1 || seekPercent < loadedPercent) {
+          return player.currentTime = value;
+        }
+      } else {
+        loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal();
+        seekPercent = (parseFloat(value) + 20) / player.getDuration();
+        if (loadedPercent === 1 || seekPercent < loadedPercent) {
+          return player.seekTo(value, false);
+        }
       }
     }
   };
@@ -110,14 +135,22 @@
     var player;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      return player.playVideo();
+      if (player.tagName === "VIDEO") {
+        return player.play();
+      } else {
+        return player.playVideo();
+      }
     }
   };
   pause = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      return player.pauseVideo();
+      if (player.tagName === "VIDEO") {
+        return player.pause();
+      } else {
+        return player.pauseVideo();
+      }
     }
   };
   hide = function(id) {
@@ -130,21 +163,33 @@
     var player;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      return player.mute();
+      if (player.tagName === "VIDEO") {
+        return player.muted = true;
+      } else {
+        return player.mute();
+      }
     }
   };
   unmute = function(id) {
     var player;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      return player.unMute();
+      if (player.tagName === "VIDEO") {
+        return player.muted = false;
+      } else {
+        return player.unMute();
+      }
     }
   };
   volume = function(id, value) {
     var player;
     player = document.getElementById("player_o_" + id);
     if (player) {
-      return player.setVolume(value);
+      if (player.tagName === "VIDEO") {
+        return player.volume = value;
+      } else {
+        return player.setVolume(value);
+      }
     }
   };
   window.onYouTubePlayerReady = function(id) {
@@ -185,8 +230,12 @@
       cid = $(player).data('cid');
       message += cid + ":";
       playero = document.getElementById("player_o_" + cid);
-      if (playero && playero.getDuration) {
-        message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration();
+      if (playero) {
+        if (playero.duration) {
+          message += Math.round(playero.buffered.end() * 1000) / 1000 + ":" + Math.round(playero.duration * 1000) / 1000 + ":" + Math.round(playero.currentTime * 1000) / 1000 + ":" + Math.round(playero.duration * 1000) / 1000;
+        } else if (playero.getDuration) {
+          message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration();
+        }
       }
       message += "|";
     }
@@ -207,7 +256,7 @@
   sizePosition = function() {
     var columnWidth, divH, divW, frame, h, height, marL, marT, numvids, player_o, spaceAvailable, vidH, vidW, visibleFrames, visiblePlayers, w, width, _i, _len, _results;
     visibleFrames = $(".player_d:visible");
-    visiblePlayers = $(".player_d:visible object");
+    visiblePlayers = visibleFrames.children("object, video");
     numvids = visibleFrames.length;
     w = $("#players").width();
     h = $("#players").height();

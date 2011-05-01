@@ -180,7 +180,15 @@ this.PlayerView = Backbone.View.extend
     webm = video.get("webm")
     mp4 = video.get("mp4")
     ytid = video.get("ytid")
-    App.postMessageToViewer "create", this.model.cid, this.model.get("Video").get("ytid")
+    
+    if webm and webm isnt "" and Modernizr.video.webm isnt "no"
+      App.postMessageToViewer "createW", this.model.cid, webm
+    else if mp4 and mp4 isnt "" and Modernizr.video.mp4 isnt "no"
+      App.postMessageToViewer "createM", this.model.cid, mp4
+    else if ytid and ytid isnt ""
+      App.postMessageToViewer "createY", this.model.cid, ytid
+    else 
+      alert "You can't play this video in this browser (;_;)"
     
   initialize: ->
     this.create()

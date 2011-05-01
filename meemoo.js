@@ -104,7 +104,7 @@
     },
     reloadVideos: function() {
       var player, video, _i, _len, _ref, _results;
-      this.postRawMessageToViewer("removeAll::");
+      this.postRawMessageToViewer("remove::ALL");
       _ref = App.Composition.Videos.models;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -127,7 +127,7 @@
       return _results;
     },
     postMessageToViewer: function(action, id, value) {
-      return this.postRawMessageToViewer("" + action + ":" + id + ":" + value);
+      return this.postRawMessageToViewer("" + action + "::" + id + "::" + value);
     },
     postRawMessageToViewer: function(message) {
       return this.viewer.postMessage(message, window.location.protocol + "//" + window.location.host);

@@ -24,17 +24,16 @@
       }
     },
     initializeView: function() {
-      var player, _i, _len, _ref, _results;
+      var player, _i, _len, _ref;
       this.View = new VideoView({
         model: this
       });
       _ref = this.Players.models;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         player = _ref[_i];
-        _results.push(player.initializeView());
+        player.initializeView();
       }
-      return _results;
+      return this.View.updateTriggers();
     },
     addTrigger: function(position, time) {
       if (position < App.triggers.length) {
@@ -155,8 +154,7 @@
           primary: "ui-icon-video"
         }
       });
-      this.model.get("Composition").View.$(".videos").append($(this.el));
-      return this.updateTriggers();
+      return this.model.get("Composition").View.$(".videos").append($(this.el));
     },
     saveTitle: function() {
       return this.model.set({
@@ -278,7 +276,7 @@
         trigger = _ref[_i];
         if (trigger !== null && trigger >= 0 && this.model.get("duration") > 0) {
           left = trigger / this.model.get("duration") * 100;
-          if (left < 100) {
+          if (left <= 100) {
             triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
           }
         }

@@ -27,6 +27,8 @@ this.Video = Backbone.Model.extend
     this.View = new VideoView {model:this}
     for player in this.Players.models
       player.initializeView()
+    this.View.updateTriggers()
+    
   addTrigger: (position, time) ->
     if position < App.triggers.length # if there is room for triggers
       time = parseFloat(time)
@@ -116,7 +118,6 @@ this.VideoView = Backbone.View.extend
       icons: { primary: "ui-icon-video" }
     
     this.model.get("Composition").View.$(".videos").append($(this.el))
-    this.updateTriggers()
     
   # editTitle: ->
   #   document.designMode = 'on'
@@ -208,7 +209,7 @@ this.VideoView = Backbone.View.extend
     for trigger in this.model.Triggers
       if trigger isnt null and trigger >= 0 and this.model.get("duration") > 0
         left = trigger / this.model.get("duration") * 100
-        if left < 100
+        if left <= 100
           triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
     $(".showtriggers_#{this.model.cid}").html(triggershtml)
 

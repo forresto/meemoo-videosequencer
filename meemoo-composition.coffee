@@ -229,8 +229,8 @@ this.Composition = Backbone.Model.extend
     for item in triggers
       seconds = item.player.Video.Triggers[item.trigger]
       if seconds isnt null and seconds isnt undefined
-        message += "seek:"
-        message += "#{item.player.cid}:"
+        message += "seek::"
+        message += "#{item.player.cid}::"
         message += "#{seconds}|"
 
     if message isnt ""
@@ -498,7 +498,7 @@ this.CompositionView = Backbone.View.extend
       seconds = parseFloat video.Triggers[trigger]
       if seconds isnt seconds # Is NaN
         for player in video.Players.models
-          triggers += "seek:#{player.cid}:#{seconds}|"
+          triggers += "seek::#{player.cid}::#{seconds}|"
         App.postRawMessageToViewer triggers
         
   playAll: ->
