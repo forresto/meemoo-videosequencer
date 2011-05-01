@@ -195,8 +195,9 @@
     step: function() {
       try {
         this.Pattern.step();
-        return this.play();
+        this.play();
       } catch (_e) {}
+      return this.sendQueuedMessages();
     },
     cuePattern: function(pattern) {
       this.nextPattern = pattern;
@@ -293,10 +294,8 @@
       return this.queuedMessages += message + "|";
     },
     sendQueuedMessages: function() {
-      if (this.queuedMessages !== "") {
-        App.postRawMessageToViewer(this.queuedMessages);
-        return this.queuedMessages = "";
-      }
+      App.postRawMessageToViewer(this.queuedMessages);
+      return this.queuedMessages = "";
     },
     initializeView: function() {
       var pattern, sequence, video, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
@@ -439,6 +438,7 @@
     load: function() {
       if (App.Composition.changesMade()) {
         if (!confirm("You have unsaved changes in the current composition. Discard unsaved changes?")) {
+          $("#comp_dialog").dialog("close");
           return;
         }
       }
@@ -653,13 +653,8 @@
       }
     },
     remove: function() {
-      var player, _i, _len, _ref;
       this.model.stop();
-      _ref = this.model.Players.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        App.postMessageToViewer("remove", player.cid);
-      }
+      App.postMessageToViewer("remove", "ALL");
       return $(this.el).empty().remove();
     }
   });

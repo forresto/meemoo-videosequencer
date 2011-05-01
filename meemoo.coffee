@@ -60,10 +60,11 @@ this.AppView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-document" }
       .click ->
-        if confirm "Are you sure you want to start with a new blank composition?"
-          newComp = new Composition()
-          App.Compositions.add(newComp)
-          App.loadComposition newComp
+        if App.Composition.changesMade() and !confirm "You have unsaved changes in the current composition. Discard unsaved changes?"
+          return
+        newComp = new Composition()
+        App.Compositions.add(newComp)
+        App.loadComposition newComp
             
     $('#loadcomposition')
       .button

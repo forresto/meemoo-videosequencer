@@ -36,7 +36,7 @@
     },
     addTracks: function() {
       var player, video, _i, _len, _ref, _results;
-      _ref = this.get("Composition").Videos;
+      _ref = this.get("Composition").Videos.models;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         video = _ref[_i];
@@ -97,7 +97,6 @@
           }
         }
       }
-      this.get("Composition").sendQueuedMessages();
       this.View.step();
       this.beat++;
       if (this.beat >= this.get("beats")) {

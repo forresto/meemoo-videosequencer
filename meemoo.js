@@ -41,11 +41,12 @@
         }
       }).click(function() {
         var newComp;
-        if (confirm("Are you sure you want to start with a new blank composition?")) {
-          newComp = new Composition();
-          App.Compositions.add(newComp);
-          return App.loadComposition(newComp);
+        if (App.Composition.changesMade() && !confirm("You have unsaved changes in the current composition. Discard unsaved changes?")) {
+          return;
         }
+        newComp = new Composition();
+        App.Compositions.add(newComp);
+        return App.loadComposition(newComp);
       });
       $('#loadcomposition').button({
         icons: {

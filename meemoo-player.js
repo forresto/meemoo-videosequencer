@@ -55,7 +55,7 @@
       "click .unmutebutton": "unmute",
       "slide .volumeslider": "volume",
       "click .addtriggerbutton": "addtrigger",
-      "click .removebutton": "remove",
+      "click .removebutton": "removeConfirm",
       "mouseover .playprogress": "playprogressOver",
       "click .playprogress": "playprogressClick",
       "keydown .playprogress": "playprogressKey"
@@ -91,12 +91,15 @@
       });
       return window.App.postMessageToViewer("volume", this.model.cid, ui.value);
     },
-    remove: function() {
+    removeConfirm: function() {
       if (confirm("Are you sure you want to remove this player (" + this.model.cid + ")?")) {
-        window.App.postMessageToViewer("remove", this.model.cid);
-        $(this.el).remove();
-        return this.model.remove();
+        return this.remove();
       }
+    },
+    remove: function() {
+      window.App.postMessageToViewer("remove", this.model.cid);
+      $(this.el).remove();
+      return this.model.remove();
     },
     addtrigger: function() {
       var freeTrigger, i, lastTriggerTime, trigger, _i, _len, _ref, _results;

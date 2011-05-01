@@ -27,7 +27,7 @@ this.Pattern = Backbone.Model.extend
       track.initializeView()
       
   addTracks: ->
-    for video in this.get("Composition").Videos
+    for video in this.get("Composition").Videos.models
       for player in video.Players.models
         this.addTrack player
   
@@ -65,7 +65,7 @@ this.Pattern = Backbone.Model.extend
           this.get("Composition").queueMessage "seek::#{track.get('Player').cid}::#{seconds}"
         
     #TODO change this for multiple patterns 
-    this.get("Composition").sendQueuedMessages()
+    # this.get("Composition").sendQueuedMessages()
     
     # highlight
     this.View.step()

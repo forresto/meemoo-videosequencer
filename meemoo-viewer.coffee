@@ -12,7 +12,7 @@ Built with jQuery in CoffeeScript
 
 
 resizeTimer = null
-playerinfointerval = null
+# playerinfointerval = null
 
 # visibleFrames
 
@@ -49,6 +49,9 @@ recieveMessage = (e) ->
       when "unmute"  then unmute  id
       when "volume"  then volume  id, value
       
+  # Update with beat
+  updatePlayerInfo()
+  
 
 window.addEventListener("message", recieveMessage, false)
 
@@ -163,7 +166,7 @@ volume = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
     if player.tagName is "VIDEO"
-      player.volume = value
+      player.volume = value/100
     else
       player.setVolume(value)
 
@@ -176,9 +179,9 @@ window.onYouTubePlayerReady = (id) ->
   player.loadVideoById(ytid, 0, "medium") # small (240), medium (360), large (480)
 
   # Status updates
-  if playerinfointerval is null
-    playerinfointerval = setInterval(updatePlayerInfo, 500)
-  updatePlayerInfo()
+  # if playerinfointerval is null
+  #   playerinfointerval = setInterval(updatePlayerInfo, 500)
+  # updatePlayerInfo()
   player.addEventListener("onError", "onPlayerError")
   # player.addEventListener("onStateChange", "onPlayerStateChange")
 
@@ -194,14 +197,14 @@ window.onPlayerError = (errorCode) ->
 
 window.updatePlayerInfo = ->
   message = ""
-  for player in $(".player_d:visible")
+  for player in $(".player_d")
     cid = $(player).data('cid')
     message += cid + ":" 
     playero = document.getElementById "player_o_#{cid}"
     if playero
-      if playero.duration #HTML video
+      if playero.duration #HTML video ready
         message += Math.round(playero.buffered.end()*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000 + ":" + Math.round(playero.currentTime*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000
-      else if playero.getDuration #YouTube video
+      else if playero.getDuration #YouTube video ready
         message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration()
     message += "|"
   postMessageToApp message

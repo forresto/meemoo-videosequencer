@@ -9,56 +9,63 @@
 
   Built with jQuery in CoffeeScript
 
-  */  var ASPECT, ASPECTRATIO, appWindow, createH, createM, createW, createY, hide, mute, pause, play, playerinfointerval, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
+  */  var ASPECT, ASPECTRATIO, appWindow, createH, createM, createW, createY, hide, mute, pause, play, postMessageToApp, recieveMessage, remove, resizeTimer, seek, show, sizePosition, unmute, volume;
   resizeTimer = null;
-  playerinfointerval = null;
   appWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
   postMessageToApp = function(message) {
     return appWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
   };
   recieveMessage = function(e) {
-    var action, id, item, message, messages, value, _i, _len, _results;
+    var action, id, item, message, messages, value, _i, _len;
     if (e.origin !== window.location.protocol + "//" + window.location.host) {
       return;
     }
     messages = e.data.split("|");
-    _results = [];
     for (_i = 0, _len = messages.length; _i < _len; _i++) {
       item = messages[_i];
       message = item.split("::");
       action = message[0];
       id = message[1];
       value = message[2];
-      _results.push((function() {
-        switch (action) {
-          case "createW":
-            return createW(id, value);
-          case "createM":
-            return createM(id, value);
-          case "createY":
-            return createY(id, value);
-          case "remove":
-            return remove(id);
-          case "seek":
-            return seek(id, value);
-          case "play":
-            return play(id);
-          case "pause":
-            return pause(id);
-          case "hide":
-            return hide(id);
-          case "show":
-            return show(id);
-          case "mute":
-            return mute(id);
-          case "unmute":
-            return unmute(id);
-          case "volume":
-            return volume(id, value);
-        }
-      })());
+      switch (action) {
+        case "createW":
+          createW(id, value);
+          break;
+        case "createM":
+          createM(id, value);
+          break;
+        case "createY":
+          createY(id, value);
+          break;
+        case "remove":
+          remove(id);
+          break;
+        case "seek":
+          seek(id, value);
+          break;
+        case "play":
+          play(id);
+          break;
+        case "pause":
+          pause(id);
+          break;
+        case "hide":
+          hide(id);
+          break;
+        case "show":
+          show(id);
+          break;
+        case "mute":
+          mute(id);
+          break;
+        case "unmute":
+          unmute(id);
+          break;
+        case "volume":
+          volume(id, value);
+      }
     }
-    return _results;
+    return updatePlayerInfo();
   };
   window.addEventListener("message", recieveMessage, false);
   createY = function(id, value) {
@@ -186,7 +193,7 @@
     player = document.getElementById("player_o_" + id);
     if (player) {
       if (player.tagName === "VIDEO") {
-        return player.volume = value;
+        return player.volume = value / 100;
       } else {
         return player.setVolume(value);
       }
@@ -197,10 +204,6 @@
     player = document.getElementById("player_o_" + id);
     ytid = $("#player_d_" + id).data("ytid");
     player.loadVideoById(ytid, 0, "medium");
-    if (playerinfointerval === null) {
-      playerinfointerval = setInterval(updatePlayerInfo, 500);
-    }
-    updatePlayerInfo();
     return player.addEventListener("onError", "onPlayerError");
   };
   window.onPlayerError = function(errorCode) {
@@ -224,7 +227,7 @@
   window.updatePlayerInfo = function() {
     var cid, message, player, playero, _i, _len, _ref;
     message = "";
-    _ref = $(".player_d:visible");
+    _ref = $(".player_d");
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       player = _ref[_i];
       cid = $(player).data('cid');

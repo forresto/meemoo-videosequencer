@@ -161,6 +161,7 @@ this.Composition = Backbone.Model.extend
     try
       this.Pattern.step()
       this.play()
+    this.sendQueuedMessages()
     
   cuePattern: (pattern) ->
     this.nextPattern = pattern
@@ -240,9 +241,8 @@ this.Composition = Backbone.Model.extend
     this.queuedMessages += message+"|"
         
   sendQueuedMessages: ->
-    if this.queuedMessages isnt ""
-      App.postRawMessageToViewer this.queuedMessages
-      this.queuedMessages = ""
+    App.postRawMessageToViewer this.queuedMessages
+    this.queuedMessages = ""
     
   initializeView: ->
     this.View = new CompositionView {model:this}
@@ -361,6 +361,7 @@ this.CompositionListView = Backbone.View.extend
   load: ->
     if App.Composition.changesMade()
       if !confirm "You have unsaved changes in the current composition. Discard unsaved changes?"
+        $("#comp_dialog").dialog("close")
         return
     App.loadComposition this.model
     $("#comp_dialog").dialog("close")
@@ -537,6 +538,5 @@ this.CompositionView = Backbone.View.extend
       
   remove: ->
     this.model.stop() # stop patterns
-    for player in this.model.Players.models
-      App.postMessageToViewer("remove", player.cid)
+    App.postMessageToViewer("remove", "ALL")
     $(this.el).empty().remove()

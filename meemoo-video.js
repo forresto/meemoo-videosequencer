@@ -65,12 +65,23 @@
       };
     },
     addPlayer: function() {
-      if (this.get("ytid") !== "") {
-        return this.Players.add(new Player({
-          Composition: this.get("Composition"),
-          Video: this
-        }));
+      return this.Players.add(new Player({
+        Composition: this.get("Composition"),
+        Video: this
+      }));
+    },
+    remove: function() {
+      var player, _i, _len, _ref;
+      _ref = this.Players.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        if (player.View) {
+          player.View.remove();
+        } else {
+          player.remove();
+        }
       }
+      return this.get("Composition").Videos.remove(this);
     }
   });
   this.VideoList = Backbone.Collection.extend({
@@ -282,6 +293,12 @@
         }
       }
       return $(".showtriggers_" + this.model.cid).html(triggershtml);
+    },
+    "delete": function() {
+      if (confirm("Are you sure you want to remove this video (" + this.model.cid + ") and all players?")) {
+        $(this.el).remove();
+        return this.model.remove();
+      }
     }
   });
   window.onYouTubePlayerReady = function(id) {

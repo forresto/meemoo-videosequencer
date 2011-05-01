@@ -16,17 +16,13 @@ this.Player = Backbone.Model.extend
 
   # loaded, totalsize, time, totaltime
   initialize: ->
-    # if this.get("ytid")
-    #   this.Video = this.get("Composition").Videos.getOrAddVideo(this.get("Composition"), this.get("ytid"))
     if this.get("Composition") is App.Composition
       this.initializeView()
-      # this.Video.initializeView()
   initializeView: ->
     this.View = new PlayerView {model:this}
     this.set({playing:true})
   remove: ->
     this.get("Video").Players.remove(this)
-    # this.destroy()
   change: ->
     this.View.updateinfo()
   toJSON: ->
@@ -53,7 +49,7 @@ this.PlayerView = Backbone.View.extend
     "click .unmutebutton" : "unmute"
     "slide .volumeslider" : "volume"
     "click .addtriggerbutton" : "addtrigger"
-    "click .removebutton" : "remove"
+    "click .removebutton" : "removeConfirm"
     "mouseover .playprogress" : "playprogressOver"
     "click .playprogress" : "playprogressClick"
     "keydown .playprogress" : "playprogressKey"
@@ -81,11 +77,14 @@ this.PlayerView = Backbone.View.extend
     this.model.set({volume:ui.value})
     window.App.postMessageToViewer("volume", this.model.cid, ui.value)
     
-  remove: ->
+  removeConfirm: ->
     if confirm "Are you sure you want to remove this player (#{this.model.cid})?"
-      window.App.postMessageToViewer("remove", this.model.cid)
-      $(this.el).remove()
-      this.model.remove()
+      this.remove()
+      
+  remove: ->
+    window.App.postMessageToViewer("remove", this.model.cid)
+    $(this.el).remove()
+    this.model.remove()
       
   # add 10 triggers
   addtrigger: ->
