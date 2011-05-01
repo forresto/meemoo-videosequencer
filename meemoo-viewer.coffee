@@ -100,14 +100,25 @@ createH = (id, value, type) ->
   
 remove = (id) ->
   if id is "ALL"
+    for playerd in $(".player_d")
+      cid = $(playerd).data('cid')
+      player = document.getElementById "player_o_#{cid}"
+      if player.tagName is "VIDEO"
+        player.pause()
+        player.src = ""
+      else
+        player.stopVideo()
     $("#players").empty()
-    return
-    
-  player = document.getElementById "player_o_#{id}"
-  if player
-    try player.stopVideo()
-    $(player).parent().remove()
-    sizePosition()
+  else
+    player = document.getElementById "player_o_#{id}"
+    if player
+      if player.tagName is "VIDEO"
+        player.pause()
+        player.src = ""
+      else
+        player.stopVideo()
+      $(player).parent().remove()
+      sizePosition()
 
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"

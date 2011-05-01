@@ -105,18 +105,33 @@
     return resizeTimer = setTimeout(sizePosition, 250);
   };
   remove = function(id) {
-    var player;
+    var cid, player, playerd, _i, _len, _ref;
     if (id === "ALL") {
-      $("#players").empty();
-      return;
-    }
-    player = document.getElementById("player_o_" + id);
-    if (player) {
-      try {
-        player.stopVideo();
-      } catch (_e) {}
-      $(player).parent().remove();
-      return sizePosition();
+      _ref = $(".player_d");
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        playerd = _ref[_i];
+        cid = $(playerd).data('cid');
+        player = document.getElementById("player_o_" + cid);
+        if (player.tagName === "VIDEO") {
+          player.pause();
+          player.src = "";
+        } else {
+          player.stopVideo();
+        }
+      }
+      return $("#players").empty();
+    } else {
+      player = document.getElementById("player_o_" + id);
+      if (player) {
+        if (player.tagName === "VIDEO") {
+          player.pause();
+          player.src = "";
+        } else {
+          player.stopVideo();
+        }
+        $(player).parent().remove();
+        return sizePosition();
+      }
     }
   };
   seek = function(id, value) {

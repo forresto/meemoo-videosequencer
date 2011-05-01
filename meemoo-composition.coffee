@@ -153,11 +153,11 @@ this.Composition = Backbone.Model.extend
   play: ->
     clearTimeout App.timer
     App.timer = setTimeout "App.Composition.step()", this.bpm_ms
-    # this.playing = true
     
   stop: ->
-    clearTimeout App.timer
-    # this.playing = false
+    this.Pattern = null
+    # clearTimeout App.timer
+    this.playing = false
     
   step: ->
     if this.Pattern
@@ -170,7 +170,7 @@ this.Composition = Backbone.Model.extend
     if this.playing is false
       this.Pattern = pattern
       this.nextPattern = null
-      this.play()
+      this.playing = true
       
   cueSequence: (sequence) ->
     this.nextSequence = sequence
@@ -178,13 +178,13 @@ this.Composition = Backbone.Model.extend
       this.Sequence = sequence
       this.nextSequence = null
       this.loop()
-      this.play()
+      this.playing = true
       
   playSequence: (sequence) ->
     this.Sequence = sequence
     this.nextPattern = null
     this.loop()
-    this.play()
+    # this.play()
       
   stopSequence: (sequence) ->
     if this.Sequence is sequence
@@ -486,11 +486,15 @@ this.CompositionView = Backbone.View.extend
     if triggerid is -1 
       return
       
-    #FIXME
-    player = Math.floor(triggerid / 10)
-    if this.model.Players.models[player]
-      this.model.Players.models[player].View.trigger(triggerid % 10)
-      
+    count = 0
+    for video in this.model.Videos.models
+      for player in video.Players.models
+        if count is Math.floor(triggerid / 10)
+          player.View.trigger(triggerid % 10)
+          break
+        else 
+          count++
+        
   # all triggers in all videos
   automulti2: (e) ->
     triggerid = App.keycodes.indexOf(e.keyCode)
@@ -499,8 +503,8 @@ this.CompositionView = Backbone.View.extend
       
     triggers = ""
     
-    for video in this.Videos.models
-      seconds = parseFloat video.Triggers[trigger]
+    for video in this.model.Videos.models
+      seconds = parseFloat video.Triggers[triggerid]
       if seconds isnt seconds # Is NaN
         for player in video.Players.models
           triggers += "seek::#{player.cid}::#{seconds}|"

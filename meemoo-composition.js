@@ -190,7 +190,8 @@
       return App.timer = setTimeout("App.Composition.step()", this.bpm_ms);
     },
     stop: function() {
-      return clearTimeout(App.timer);
+      this.Pattern = null;
+      return this.playing = false;
     },
     step: function() {
       if (this.Pattern) {
@@ -204,7 +205,7 @@
       if (this.playing === false) {
         this.Pattern = pattern;
         this.nextPattern = null;
-        return this.play();
+        return this.playing = true;
       }
     },
     cueSequence: function(sequence) {
@@ -213,14 +214,13 @@
         this.Sequence = sequence;
         this.nextSequence = null;
         this.loop();
-        return this.play();
+        return this.playing = true;
       }
     },
     playSequence: function(sequence) {
       this.Sequence = sequence;
       this.nextPattern = null;
-      this.loop();
-      return this.play();
+      return this.loop();
     },
     stopSequence: function(sequence) {
       if (this.Sequence === sequence) {
@@ -552,15 +552,33 @@
       return newSequence.initializeView();
     },
     automulti: function(e) {
-      var player, triggerid;
+      var count, player, triggerid, video, _i, _len, _ref, _results;
       triggerid = App.keycodes.indexOf(e.keyCode);
       if (triggerid === -1) {
         return;
       }
-      player = Math.floor(triggerid / 10);
-      if (this.model.Players.models[player]) {
-        return this.model.Players.models[player].View.trigger(triggerid % 10);
+      count = 0;
+      _ref = this.model.Videos.models;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        video = _ref[_i];
+        _results.push((function() {
+          var _i, _len, _ref, _results;
+          _ref = video.Players.models;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            player = _ref[_i];
+            if (count === Math.floor(triggerid / 10)) {
+              player.View.trigger(triggerid % 10);
+              break;
+            } else {
+              count++;
+            }
+          }
+          return _results;
+        })());
       }
+      return _results;
     },
     automulti2: function(e) {
       var player, seconds, triggerid, triggers, video, _i, _len, _ref, _results;
@@ -569,11 +587,11 @@
         return;
       }
       triggers = "";
-      _ref = this.Videos.models;
+      _ref = this.model.Videos.models;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         video = _ref[_i];
-        seconds = parseFloat(video.Triggers[trigger]);
+        seconds = parseFloat(video.Triggers[triggerid]);
         _results.push((function() {
           var _i, _len, _ref;
           if (seconds !== seconds) {
