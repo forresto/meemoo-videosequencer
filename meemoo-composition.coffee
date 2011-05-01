@@ -82,6 +82,7 @@ this.Composition = Backbone.Model.extend
             newPlayer = new Player
               Composition: this
               Video: newVideo
+            newPlayer.oldcid = player.id
             player.newcid = newPlayer.cid
             newVideo.Players.add(newPlayer)
             break
