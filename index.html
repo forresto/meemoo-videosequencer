@@ -6,14 +6,118 @@
   
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   
+  <style type="text/css">
+  body {
+    padding: 0 1em 1em 2em;
+    font-family: Helvetica, Arial, sans-serif;
+    color: #222;
+    background-color: #eee;
+  }
+  </style>
+  
+  
 </head>
 <body>
   
-  <iframe src="http://rhizome.org/commissions/proposal/2256/" style="width:100%;height:500px"></iframe>
+  <!-- <iframe src="http://rhizome.org/commissions/proposal/2256/" style="width:100%;height:500px"></iframe> -->
+  
+  
+  <h1>Meemoo: a web application for remixing web video</h2>
+  <p>
+    This project is an open-source web application that enables users to remix web video. 
+    I'm currently <a href="http://rhizome.org/commissions/proposal/2256/">looking for support</a> to create a community site around sharing the mixes.
+  </p>
+  
+  <h2>About</h2>
+  <p>
+    I am a strong believer in the idea that <a href="http://www.everythingisaremix.info/">everything is a remix</a>. Sampling, mashup&nbsp;music, and open source software are obvious examples, but I would argue that all science, language, and culture combines, evolves, and builds on the creations and discoveries of the past.
+  </p>
+  <p>
+    <img src="http://i.imgur.com/szONf.jpg" alt="image"><br>
+    <a href="http://www.youtube.com/kutiman">Kutiman</a>&nbsp;(Ophir Kutiel) has created audiovisual treasures, greater than the sum of their parts, from musical clips found on YouTube. Anecdotal evidence suggests that the (unwitting) participants in his musical creations appreciate being remixed, because of the high production value and the attention that it brings them. <a href="http://www.inbflat.net/">In B flat</a> (Darren Solomon) is another web experiment with mixing videos, this time with knowing participants. I am building on (remixing) these ideas to create a web community that will encourage all kinds of AV/cultural mixing, mashing, and creation.
+  </p>
+  
+  <h2>Proposal</h2>
+  <p>
+    <img src="http://i.imgur.com/ChAgc.jpg" alt="image"><br>
+    My project is a web application that will allow experimenting with mixing web video with tools familiar to people who create digital music: patterns and pattern sequencers. Mixes will be sharable on a community site, which will promote the videos that are mixed. I am making this tool for my own use, but I'm interested in how others will use (and abuse) it.
+  </p>
+  <p>
+    There are three major stages:
+  </p>
+  <ol>
+    <li>Web application base programming</li>
+    <li>Web application visual and interaction design</li>
+    <li>Community site for sharing remix "source code" and promoting remixable videos</li>
+  </ol>
+  <p>
+    The bulk of the first stage, application programming, is done.
+  </p>
+  
+  <h2>The Web App</h2>
+  <p>
+    If you would like to try the web application, here is the secret pre-alpha link: <a href="http://meemoo.org/meemoo.html">meemoo.org/meemoo.html</a> (runs best in Firefox 4 and Chrome 10). This is the first time that I have publicized this link, and I'm quite interested in getting feedback.
+  </p>
+  <ul>
+    <li>Click [Add Video] and add a full URL to a video file (WebM/H.264) and/or YouTube ID. Click [Test] to test the video and fill in the duration field.</li>
+    <li>If the video works [Add Player]</li>
+    <li>Add triggers by hovering over the playing track and pressing the 0-9 and a-z keys on your keyboard</li>
+    <li>Activate the trigger by pressing the key again</li>
+    <li>Press [Add Pattern] and type in the boxes to add those triggers to the pattern, press play on the pattern</li>
+    <li>If you have made it this far, experiment with [Next] and [Chance] on the patterns, and sequences</li>
+    <li>Press [Save], and it will save your compositions to your browser's localStorage for future sessions</li>
+    <li>If you make something nice press [Export as text...] and email it to me, forrest at sembiki dot com</li>
+    <li><em>No warranties, expressed or implied.</em> Since this app is in active development, I might make changes that will mess up saved compositions. I'll try not to, and at this point the save format (JSON) is pretty stable.</li>
+  </ul>
 
-  <div id="intro">
-    Can your browser run this? Chrome 10 or Firefox 4 is probably your best bet.
+
+  <!--
+
+      <div id="proposal-content" class="span-24">
+          <div class="section-row-titles">
+              <span class="nav-item">Project Timeline and Budget</span>
+          </div>
+          <hr class="hr3-no-margin">
+          <div class="proposal-content">
+
+              <strong>2011</strong><br>January - May <br><div class="indent">In my spare time, I have completed the bulk of the web application.</div><br>June - August<br><div class="indent">Programming and closed alpha testing community site.</div><br>September<br><div class="indent">Limited open beta testing community site; moderating and improving site features</div><br>October<br><div class="indent">Community site launch; studying how people use the tool</div><br><strong>2012</strong><br>May<br><div class="indent">Organize a show presenting live video remixing and the best of the community site. Space, promotion, and documentation: <strong>$250</strong></div><br>Ongoing<br><ul><li>Online and in-person user testing with digital music makers and VJs<br></li><li>Improving and managing the open-source element of the web application<br></li><li>Creating tools for taking compositions offline for refinement and live performance<br></li><li>Writing MA thesis at Media Lab Helsinki about the project<br></li><li>Programming and design, self: 200 hours, <strong>$3000</strong><br></li><li>Programming and design, potential collaborators and consultants: 50 hours, <strong>$750</strong><br></li><li>10 months hosting: <strong>$1000</strong> (This number depends on the popularity of the site. If it becomes popular bandwidth and CPU time might cost more, in which case I will solicit donations from users. If hosting ends up costing less this amount will support the site for longer than 10 months. Ads will only be considered as a last resort.)<br></li></ul><br>Estimated total:&nbsp;<strong>$5000</strong>
+
+          </div>
+      </div>
+
+      <div id="proposal-content" class="span-24">
+          <div class="section-row-titles">
+              <span class="nav-item">About the Artist(s) Involved</span>
+          </div>
+          <hr class="hr3-no-margin">
+          <div class="proposal-content">
+
+              I have been experimenting with interactive web technology since 1997. My first experiments involved HTML and JavaScript. I enjoyed being able to look at the source of any page to see the code behind the design. In 2002 I discovered ActionScript and Flash, which allowed me to make more interactive experiments. Now the HTML+JavaScript combination and browsers have gotten nice enough that I'm happy programming this complex interactive application with these web standards.<br>I am an independent web developer, and my portfolio is&nbsp;<a href="http://sembiki.com/">sembiki.com</a>.<br>Since August of 2010 I have been studying at <a href="http://mlab.taik.fi/">Media Lab Helsinki</a>, which is part of Aalto School of Art and Design. This will be the project portion of my MA thesis. There is an emphasis on design research here, which will inform the development of this project.<br><ul><li>Slithering&nbsp;and MegaCam's PaintCam (in the work samples) were shown at the Encoded Views computational photography exhibition at&nbsp;<a href="http://www.pixelache.ac/helsinki/">Pixelache Helsinki Festival of Electronic Art and Subcultures</a>, March 2011.<br></li></ul>
+
+          </div>
+      </div>
+
+      <div id="proposal-content" class="span-24">
+          <div class="section-row-titles">
+              <span class="nav-item">Artist(s) Work Samples</span>
+          </div>
+          <hr class="hr3-no-margin">
+          <div class="proposal-content">
+
+              <a href="http://forresto.com/2011/04/slithering-trading-dimensions-in-video/">Slithering</a>: Dancing with slit-scan video processing (C++, 2011)<br><img src="http://farm6.static.flickr.com/5067/5606175811_533e8e6186_z.jpg" alt="image"><br><a href="http://forresto.com/2011/03/introducing-paintcam/">MegaCam</a>: Computational photography toys with webcam (Flash, 2010)<br><img src="http://farm5.static.flickr.com/4001/4258037769_f4ac6f3201_z.jpg?zz=1" alt="image"><br><a href="http://taggraph.com/">TagGraph</a>: Visual representation of photo tag data in Flickr and Facebook (Flash, 2008)<br><img src="http://farm2.static.flickr.com/1206/525122282_7f9bb94b91.jpg" alt="image">
+
+          </div>
+      </div>
   </div>
+  
+  -->
+  
+  
+  
+
+  <h3>
+    Can your browser run this? Chrome 10 or Firefox 4 is probably your best bet.
+  </h3>
   <ul>
     <li>Modern JavaScript with JSON: <span id="js">?</span></li>
     <li>Local storage: <span id="localstorage">?</span></li>
@@ -32,6 +136,15 @@
       </ul>
     </li>
   </ul>
+  
+  <h2>Who made this?</h2>
+  <p>
+    <a href="http://forresto.com/">Forrest Oliphant</a> at <a href="http://sembiki.com/">Sembiki Interactive</a>
+  </p>
+  <p>
+    To complement the audio-visual remixing, all of the code for the app is <a href="https://github.com/sembiki/meemoo">open source and available on GitHub</a>.
+  </p>
+  
 
 <script type="text/javascript">
   document.getElementById("js").innerHTML = Array.prototype.indexOf && JSON.parse && JSON.stringify ? "yes" : "no"

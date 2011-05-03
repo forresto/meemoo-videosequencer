@@ -7,5 +7,9 @@
                                                                    '                         
 
 
-early alpha coming soon
+### Meemoo: a web application for remixing web video
+
+Read all about it here: http://meemoo.org/
+
+
 
