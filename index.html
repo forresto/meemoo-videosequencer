@@ -8,8 +8,8 @@
   
   <style type="text/css">
   body {
-    max-width: 850px;
-    margin: 0 auto 50px;
+    max-width: 750px;
+    margin: 0 auto 75px;
     font-family: Georgia, 'Times New Roman', serif;
     color: #080000;
     background-color: #FDFDFA;
@@ -17,14 +17,31 @@
   h1 {
     padding-bottom: 3px;
     border-bottom: #CDCDCC 2px solid;
+    font-size: 28px;
+  }
+  h2 {
+    font-size: 20px;
   }
   p {
-    font-size: 19px;
-    line-height: 29px;
+    font-size: 17px;
+    line-height: 27px;
   }
   ol, ul {
     font-size: 15px;
     line-height: 25px;
+  }
+  nav {
+    text-align: center;
+  }
+  nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav ul li {
+    display: inline-block;
+    margin: 0 1.5em;
+    padding: 0;
   }
   </style>
   
@@ -32,10 +49,16 @@
 </head>
 <body>
   
-  <!-- <iframe src="http://rhizome.org/commissions/proposal/2256/" style="width:100%;height:500px"></iframe> -->
+  <nav>
+    <h1>Meemoo: a web application for remixing web video</h1>
+    <ul>
+      <li>Home</li>
+      <li><a href="http://meemoo.noisepages.com/">Blog</a></li>
+      <li><a href="http://getsatisfaction.com/sembiki">Feedback</a></li>
+      <li><a href="https://github.com/sembiki/meemoo">Source</a></li>
+    </ul>
+  </nav>
   
-  
-  <h1>Meemoo: a web application for remixing web video</h1>
   <p>
     This project is an open-source web application that enables users to remix web video. 
     I'm currently <a href="http://rhizome.org/commissions/proposal/2256/">looking for support</a> to create a community site around sharing the mixes.
@@ -133,7 +156,7 @@
   
 
   <h3>
-    Can your browser run this? Chrome 10 or Firefox 4 is probably your best bet.
+    Can your browser run this?
   </h3>
   <ul>
     <li>Modern JavaScript with JSON: <span id="js">?</span></li>
@@ -153,13 +176,16 @@
       </ul>
     </li>
   </ul>
+  <p>
+    Chrome 10+ and Firefox 4+ seem to work best.
+  </p>
   
   <h2>Who made this?</h2>
   <p>
     <a href="http://forresto.com/">Forrest Oliphant</a> at <a href="http://sembiki.com/">Sembiki Interactive</a>
   </p>
   <p>
-    To complement the audio-visual remixing, this app is free (GPL) and <a href="https://github.com/sembiki/meemoo">available on GitHub</a>.
+    To complement the audio-visual remixing, this app is free software (GPL) and the source is <a href="https://github.com/sembiki/meemoo">available on GitHub</a>.
   </p>
   
 
@@ -170,7 +196,7 @@
   if (Modernizr.video) {
     document.getElementById("webm").innerHTML = !Modernizr.video.webm ? "no" : Modernizr.video.webm
     document.getElementById("h264").innerHTML = !Modernizr.video.h264 ? "no" : Modernizr.video.h264
-    document.getElementById("ogg").innerHTML = !Modernizr.video.ogg ? "no" : Modernizr.video.ogg
+    // document.getElementById("ogg").innerHTML = !Modernizr.video.ogg ? "no" : Modernizr.video.ogg
   }
   document.getElementById("audio").innerHTML = Modernizr.audio ? "yes" : "no"
   if (Modernizr.audio) {
@@ -180,17 +206,36 @@
   }
 </script>
 
-  
+
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-274009-19']);
   _gaq.push(['_trackPageview']);
-
+  
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
+</script>
+
+
+<script type="text/javascript" charset="utf-8">
+  var is_ssl = ("https:" == document.location.protocol);
+  var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
+  document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript" charset="utf-8">
+  var feedback_widget_options = {};
+
+  feedback_widget_options.display = "overlay";  
+  feedback_widget_options.company = "sembiki";
+  feedback_widget_options.placement = "left";
+  feedback_widget_options.color = "#222";
+  feedback_widget_options.style = "idea";
+  
+  var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
 </script>
 
 </body>
