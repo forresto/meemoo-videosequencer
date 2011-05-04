@@ -9,6 +9,21 @@
 
   Built with backbone.js, jQuery, and jQueryUI in CoffeeScript
 
+  This file is part of Meemoo.
+
+    Meemoo is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Meemoo is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Meemoo.  If not, see <http://www.gnu.org/licenses/>.
+
   */  this.Video = Backbone.Model.extend({
     defaults: {
       "title": ""
@@ -276,7 +291,8 @@
       }
     },
     addPlayer: function() {
-      return this.model.addPlayer();
+      this.model.addPlayer();
+      return _gaq.push(['_trackEvent', 'Video', 'Add Player', JSON.stringify(this.model)]);
     },
     updateTriggers: function() {
       var left, trigger, triggersformhtml, triggershtml, _i, _len, _ref;

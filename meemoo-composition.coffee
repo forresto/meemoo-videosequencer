@@ -526,6 +526,10 @@ this.CompositionView = Backbone.View.extend
     this.model.ListView.render()
     this.$(".composition-save-button").button({label:"Save"})
     
+    # Research
+    _gaq.push(['_trackEvent', 'Composition', 'Composition Save', JSON.stringify(this.model)])
+    
+    
   setInfo: ->
     this.model.set
       title : this.$(".comp_info_title").text().trim()

@@ -648,9 +648,10 @@
       this.model.save();
       this.model.saveLastSaved();
       this.model.ListView.render();
-      return this.$(".composition-save-button").button({
+      this.$(".composition-save-button").button({
         label: "Save"
       });
+      return _gaq.push(['_trackEvent', 'Composition', 'Composition Save', JSON.stringify(this.model)]);
     },
     setInfo: function() {
       return this.model.set({

@@ -226,7 +226,11 @@ this.VideoView = Backbone.View.extend
   
   addPlayer: ->
     this.model.addPlayer()
-  
+    
+    # Research
+    _gaq.push(['_trackEvent', 'Video', 'Add Player', JSON.stringify(this.model)])
+    
+    
   updateTriggers: ->
     triggershtml = ""
     triggersformhtml = ""
