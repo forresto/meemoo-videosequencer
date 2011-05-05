@@ -12,8 +12,10 @@
 Read all about it here: http://meemoo.org/
 
 
+<a href="http://flattr.com/thing/183497/Meemoo-a-web-application-for-remixing-web-video" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
 
-#### &copy;opyleft
+
+#### Copyright &copy;
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
 
