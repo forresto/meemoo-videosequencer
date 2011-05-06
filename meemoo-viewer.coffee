@@ -46,10 +46,10 @@ recieveMessage = (e) ->
     
   messages = e.data.split("|")
   for item in messages
-    message = item.split("::")
-    action = message[0] # create, destroy, seek, play, pause, mute
-    id = message[1]
-    value = message[2]
+    message = item.split("/")
+    action = message[1] # create, destroy, seek, play, pause, mute
+    id = message[2]
+    value = message[3]
     switch action
       when "createW" then createW id, value
       when "createM" then createM id, value
@@ -77,7 +77,7 @@ createY = (id,value) ->
   
   if value.length < 3 # no ytid
     return
-  
+    
   $('#players').append '<div id="player_d_'+id+'" class="player_d"><div id="player_r_'+id+'"></div></div>'
   
   params = { allowScriptAccess: "always", wmode: "opaque" }
@@ -104,6 +104,9 @@ createH = (id, value, type) ->
     
   if value.length < 3 # no url
     return
+    
+  # full urls
+  value = decodeURIComponent(value)
   
   $('#players')
     .append $('<div id="player_d_'+id+'" class="player_d"></div>')

@@ -243,9 +243,9 @@
       mp4 = video.get("mp4");
       ytid = video.get("ytid");
       if (webm && webm !== "" && Modernizr.video && Modernizr.video.webm !== "no") {
-        return App.postMessageToViewer("createW", this.model.cid, webm);
+        return App.postMessageToViewer("createW", this.model.cid, encodeURIComponent(webm));
       } else if (mp4 && mp4 !== "" && Modernizr.video && Modernizr.video.mp4 !== "no") {
-        return App.postMessageToViewer("createM", this.model.cid, mp4);
+        return App.postMessageToViewer("createM", this.model.cid, encodeURIComponent(mp4));
       } else if (ytid && ytid !== "") {
         return App.postMessageToViewer("createY", this.model.cid, ytid);
       } else {

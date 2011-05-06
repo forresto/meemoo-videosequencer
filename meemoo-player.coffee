@@ -196,9 +196,9 @@ this.PlayerView = Backbone.View.extend
     ytid = video.get("ytid")
     
     if webm and webm isnt "" and Modernizr.video and Modernizr.video.webm isnt "no"
-      App.postMessageToViewer "createW", this.model.cid, webm
+      App.postMessageToViewer "createW", this.model.cid, encodeURIComponent(webm)
     else if mp4 and mp4 isnt "" and Modernizr.video and Modernizr.video.mp4 isnt "no"
-      App.postMessageToViewer "createM", this.model.cid, mp4
+      App.postMessageToViewer "createM", this.model.cid, encodeURIComponent(mp4)
     else if ytid and ytid isnt ""
       App.postMessageToViewer "createY", this.model.cid, ytid
     else 

@@ -281,8 +281,8 @@
         item = triggers[_i];
         seconds = item.player.Video.Triggers[item.trigger];
         if (seconds !== null && seconds !== void 0) {
-          message += "seek::";
-          message += "" + item.player.cid + "::";
+          message += "/seek/";
+          message += "" + item.player.cid + "/";
           message += "" + seconds + "|";
         }
       }
@@ -294,6 +294,9 @@
       return this.queuedMessages += message + "|";
     },
     sendQueuedMessages: function() {
+      if (this.queuedMessages === "") {
+        this.queuedMessages = "/";
+      }
       App.postRawMessageToViewer(this.queuedMessages);
       return this.queuedMessages = "";
     },
@@ -320,10 +323,14 @@
       this.saveLastSaved();
       return setTimeout("App.reloadVideos()", 2000);
     },
-    addVideo: function() {
+    addVideo: function(first_load) {
       var newVideo;
+      if (first_load == null) {
+        first_load = "";
+      }
       newVideo = new Video({
-        Composition: this
+        Composition: this,
+        firstValue: first_load
       });
       this.Videos.add(newVideo);
       return newVideo;
@@ -537,7 +544,8 @@
     },
     addVideo: function() {
       var newVideo;
-      newVideo = this.model.addVideo();
+      newVideo = this.model.addVideo(this.$(".add-video-input").val());
+      this.$(".add-video-input").val("");
       newVideo.initializeView();
       return newVideo.View.$(".video-sources").show();
     },
@@ -598,7 +606,7 @@
             _ref = video.Players.models;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               player = _ref[_i];
-              triggers += "seek::" + player.cid + "::" + seconds + "|";
+              triggers += "/seek/" + player.cid + "/" + seconds + "|";
             }
             return App.postRawMessageToViewer(triggers);
           }
@@ -651,7 +659,7 @@
       this.$(".composition-save-button").button({
         label: "Save"
       });
-      return _gaq.push(['_trackEvent', 'Composition', 'Composition Save', JSON.stringify(this.model)]);
+      return _gaq.push(['_trackEvent', 'Composition', 'Save ' + this.model.id, JSON.stringify(this.model)]);
     },
     setInfo: function() {
       return this.model.set({

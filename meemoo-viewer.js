@@ -38,10 +38,10 @@
     messages = e.data.split("|");
     for (_i = 0, _len = messages.length; _i < _len; _i++) {
       item = messages[_i];
-      message = item.split("::");
-      action = message[0];
-      id = message[1];
-      value = message[2];
+      message = item.split("/");
+      action = message[1];
+      id = message[2];
+      value = message[3];
       switch (action) {
         case "createW":
           createW(id, value);
@@ -116,6 +116,7 @@
     if (value.length < 3) {
       return;
     }
+    value = decodeURIComponent(value);
     $('#players').append($('<div id="player_d_' + id + '" class="player_d"></div>').data("cid", id).data("type", "htmlvideo").append($("<video id='player_o_" + id + "' src='" + value + "' autobuffer='auto' preload autoplay></video>")));
     return resizeTimer = setTimeout(sizePosition, 250);
   };

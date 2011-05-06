@@ -33,11 +33,22 @@ this.Video = Backbone.Model.extend
     this.Players = new PlayerList()
     this.Triggers = []
     this.addTrigger 0, 0
+    
+    loadthis = this.get("firstValue")
+    if loadthis and loadthis isnt ""
+      if (loadthis.indexOf(".webm") isnt -1)
+        this.set({webm:loadthis})
+      else if (loadthis.indexOf(".mp4") isnt -1 or loadthis.indexOf(".m4v") isnt -1 or loadthis.indexOf(".mov") isnt -1)
+        this.set({mp4:loadthis})
+      else if (loadthis.indexOf("youtube.com") isnt -1) # Full yt url
+        loadthis = loadthis.split("v=")[1].split("&")[0]
+        this.set({ytid:loadthis})
+      else
+        this.set({ytid:loadthis})
+    
     if this.get("title") is ""
       this.set
         "title": this.get("ytid")
-    # if this.get("Composition") is App.Composition
-    #   this.initializeView()
   initializeView: ->
     this.View = new VideoView {model:this}
     for player in this.Players.models
@@ -225,10 +236,15 @@ this.VideoView = Backbone.View.extend
         "yt_test", "480", "360", "8", null, null, params, atts
   
   addPlayer: ->
+    duration = parseFloat this.model.get("duration")
+    if duration isnt duration
+      alert "Please [Edit sources] and input the video's duration before adding a player."
+      return
+      
     this.model.addPlayer()
     
     # Research
-    _gaq.push(['_trackEvent', 'Video', 'Add Player', JSON.stringify(this.model)])
+    _gaq.push(['_trackEvent', 'Video', 'Add Player '+this.model.get("ytid") , JSON.stringify(this.model)])
     
     
   updateTriggers: ->

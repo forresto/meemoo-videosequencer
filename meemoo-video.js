@@ -29,9 +29,31 @@
       "title": ""
     },
     initialize: function() {
+      var loadthis;
       this.Players = new PlayerList();
       this.Triggers = [];
       this.addTrigger(0, 0);
+      loadthis = this.get("firstValue");
+      if (loadthis && loadthis !== "") {
+        if (loadthis.indexOf(".webm") !== -1) {
+          this.set({
+            webm: loadthis
+          });
+        } else if (loadthis.indexOf(".mp4") !== -1 || loadthis.indexOf(".m4v") !== -1 || loadthis.indexOf(".mov") !== -1) {
+          this.set({
+            mp4: loadthis
+          });
+        } else if (loadthis.indexOf("youtube.com") !== -1) {
+          loadthis = loadthis.split("v=")[1].split("&")[0];
+          this.set({
+            ytid: loadthis
+          });
+        } else {
+          this.set({
+            ytid: loadthis
+          });
+        }
+      }
       if (this.get("title") === "") {
         return this.set({
           "title": this.get("ytid")
@@ -291,8 +313,14 @@
       }
     },
     addPlayer: function() {
+      var duration;
+      duration = parseFloat(this.model.get("duration"));
+      if (duration !== duration) {
+        alert("Please [Edit sources] and input the video's duration before adding a player.");
+        return;
+      }
       this.model.addPlayer();
-      return _gaq.push(['_trackEvent', 'Video', 'Add Player', JSON.stringify(this.model)]);
+      return _gaq.push(['_trackEvent', 'Video', 'Add Player ' + this.model.get("ytid"), JSON.stringify(this.model)]);
     },
     updateTriggers: function() {
       var left, trigger, triggersformhtml, triggershtml, _i, _len, _ref;

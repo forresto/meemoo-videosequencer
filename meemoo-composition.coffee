@@ -232,8 +232,8 @@ this.Composition = Backbone.Model.extend
     for item in triggers
       seconds = item.player.Video.Triggers[item.trigger]
       if seconds isnt null and seconds isnt undefined
-        message += "seek::"
-        message += "#{item.player.cid}::"
+        message += "/seek/"
+        message += "#{item.player.cid}/"
         message += "#{seconds}|"
 
     if message isnt ""
@@ -243,8 +243,8 @@ this.Composition = Backbone.Model.extend
     this.queuedMessages += message+"|"
         
   sendQueuedMessages: ->
-    # if this.queuedMessages is ""
-    #   this.queuedMessages = "::"
+    if this.queuedMessages is ""
+      this.queuedMessages = "/"
     App.postRawMessageToViewer this.queuedMessages
     this.queuedMessages = ""
     
@@ -269,9 +269,10 @@ this.Composition = Backbone.Model.extend
   #   this.Players.add newPlayer
   #   newPlayer
   
-  addVideo: ->
+  addVideo: (first_load="") ->
     newVideo = new Video
       Composition: this
+      firstValue: first_load
     this.Videos.add newVideo
     newVideo
     
@@ -455,9 +456,11 @@ this.CompositionView = Backbone.View.extend
     $(e.currentTarget).focus()
     
   addVideo: ->
-    newVideo = this.model.addVideo()
+    newVideo = this.model.addVideo this.$(".add-video-input").val()
+    this.$(".add-video-input").val("")
     newVideo.initializeView()
     newVideo.View.$(".video-sources").show()
+    
   
   # addPlayer: ->
   #   input = this.$(".addplayerid").val()
@@ -507,7 +510,7 @@ this.CompositionView = Backbone.View.extend
       seconds = parseFloat video.Triggers[triggerid]
       if seconds isnt seconds # Is NaN
         for player in video.Players.models
-          triggers += "seek::#{player.cid}::#{seconds}|"
+          triggers += "/seek/#{player.cid}/#{seconds}|"
         App.postRawMessageToViewer triggers
         
   playAll: ->
@@ -527,7 +530,7 @@ this.CompositionView = Backbone.View.extend
     this.$(".composition-save-button").button({label:"Save"})
     
     # Research
-    _gaq.push(['_trackEvent', 'Composition', 'Composition Save', JSON.stringify(this.model)])
+    _gaq.push(['_trackEvent', 'Composition', 'Save '+this.model.id, JSON.stringify(this.model)])
     
     
   setInfo: ->

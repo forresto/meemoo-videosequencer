@@ -268,7 +268,11 @@ input.setuptrack {
   width: 69px;
   overflow: hidden;
 }
-  
+
+input.add-video-input {
+  width: 300px;
+}
+
 input.comp_info_bpm,
 input.pattern_chance,
 input.sequence_length,

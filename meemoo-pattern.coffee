@@ -77,7 +77,7 @@ this.Pattern = Backbone.Model.extend
       if trigger isnt null and trigger isnt undefined
         seconds = track.get("Player").get("Video").Triggers[trigger]
         if seconds isnt null and seconds isnt undefined
-          this.get("Composition").queueMessage "seek::#{track.get('Player').cid}::#{seconds}"
+          this.get("Composition").queueMessage "/seek/#{track.get('Player').cid}/#{seconds}"
         
     #TODO change this for multiple patterns 
     # this.get("Composition").sendQueuedMessages()
