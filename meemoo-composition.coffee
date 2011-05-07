@@ -509,10 +509,10 @@ this.CompositionView = Backbone.View.extend
     
     for video in this.model.Videos.models
       seconds = parseFloat video.Triggers[triggerid]
-      if seconds isnt seconds # Is NaN
+      if seconds is seconds # Isnt NaN
         for player in video.Players.models
           triggers += "/seek/#{player.cid}/#{seconds}|"
-        App.postRawMessageToViewer triggers
+    App.postRawMessageToViewer triggers
         
   playAll: ->
     for video in this.model.Videos.models

@@ -590,30 +590,25 @@
       return _results;
     },
     automulti2: function(e) {
-      var player, seconds, triggerid, triggers, video, _i, _len, _ref, _results;
+      var player, seconds, triggerid, triggers, video, _i, _j, _len, _len2, _ref, _ref2;
       triggerid = App.keycodes.indexOf(e.keyCode);
       if (triggerid === -1) {
         return;
       }
       triggers = "";
       _ref = this.model.Videos.models;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         video = _ref[_i];
         seconds = parseFloat(video.Triggers[triggerid]);
-        _results.push((function() {
-          var _i, _len, _ref;
-          if (seconds !== seconds) {
-            _ref = video.Players.models;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              player = _ref[_i];
-              triggers += "/seek/" + player.cid + "/" + seconds + "|";
-            }
-            return App.postRawMessageToViewer(triggers);
+        if (seconds === seconds) {
+          _ref2 = video.Players.models;
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            player = _ref2[_j];
+            triggers += "/seek/" + player.cid + "/" + seconds + "|";
           }
-        })());
+        }
       }
-      return _results;
+      return App.postRawMessageToViewer(triggers);
     },
     playAll: function() {
       var player, video, _i, _len, _ref, _results;
