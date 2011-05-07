@@ -37,18 +37,27 @@ this.Video = Backbone.Model.extend
     loadthis = this.get("firstValue")
     if loadthis and loadthis isnt ""
       if (loadthis.indexOf(".webm") isnt -1)
-        this.set({webm:loadthis})
+        this.set
+          webm: loadthis
+          # testFirst: "webm"
       else if (loadthis.indexOf(".mp4") isnt -1 or loadthis.indexOf(".m4v") isnt -1 or loadthis.indexOf(".mov") isnt -1)
-        this.set({mp4:loadthis})
+        this.set
+          mp4: loadthis
+          # testFirst: "mp4"
       else if (loadthis.indexOf("youtube.com") isnt -1) # Full yt url
         loadthis = loadthis.split("v=")[1].split("&")[0]
-        this.set({ytid:loadthis})
+        this.set
+          ytid: loadthis
+          # testFirst: "ytid"
       else
-        this.set({ytid:loadthis})
+        this.set
+          ytid: loadthis
+          # testFirst: "ytid"
     
     if this.get("title") is ""
       this.set
         "title": this.get("ytid")
+    
   initializeView: ->
     this.View = new VideoView {model:this}
     for player in this.Players.models
@@ -192,10 +201,40 @@ this.VideoView = Backbone.View.extend
       this.$(".video-duration").val(time)
       this.saveDuration()
       
+  testFirst: ->
+    webm = this.model.get("webm")
+    if _.isString(webm) and webm isnt ""
+      this.testWebm()
+      return
+    mp4 = this.model.get("mp4")
+    if _.isString(mp4) and mp4 isnt ""
+      this.testMp4()
+      return
+    ytid = this.model.get("ytid")
+    if _.isString(ytid) and ytid isnt ""
+      this.testYtid()
+      return
+    
+    
   testWebm: ->
-    this.testHtml5()
+    webm = this.model.get("webm")
+    if _.isString(webm) and webm isnt ""
+      video = this.testHtml5()
+      source = $("<source />").attr
+        src: webm
+        type: "video/webm"
+      video.append(source)
+      this.$(".video-test").append(video)
   testMp4: ->
     this.testHtml5()
+    mp4 = this.model.get("mp4")
+    if _.isString(mp4) and mp4 isnt ""
+      video = this.testHtml5()
+      source = $("<source />").attr
+        src: mp4
+        type: "video/mp4"
+      video.append(source)
+      this.$(".video-test").append(video)
   testHtml5: ->
     $(".video-test").empty()
     video = $('<video autobuffer="metadata" controls></video>')
@@ -204,19 +243,7 @@ this.VideoView = Backbone.View.extend
       .bind "loadedmetadata", ->
         video_id = $(this).data("video_id")
         App.Composition.Videos.getByCid(video_id).View.setDuration this.duration
-    webm = this.model.get("webm")
-    if _.isString(webm) and webm isnt ""
-      source = $("<source />").attr
-        src: webm
-        type: "video/webm"
-      video.append(source)
-    mp4 = this.model.get("mp4")
-    if _.isString(mp4) and mp4 isnt ""
-      source = $("<source />").attr
-        src: mp4
-        type: "video/mp4"
-      video.append(source)
-    this.$(".video-test").append(video)
+    return video
     
   testYtid: ->
     $(".video-test").empty()

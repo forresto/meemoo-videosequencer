@@ -460,6 +460,7 @@ this.CompositionView = Backbone.View.extend
     this.$(".add-video-input").val("")
     newVideo.initializeView()
     newVideo.View.$(".video-sources").show()
+    newVideo.View.testFirst()
     
   
   # addPlayer: ->

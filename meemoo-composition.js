@@ -547,7 +547,8 @@
       newVideo = this.model.addVideo(this.$(".add-video-input").val());
       this.$(".add-video-input").val("");
       newVideo.initializeView();
-      return newVideo.View.$(".video-sources").show();
+      newVideo.View.$(".video-sources").show();
+      return newVideo.View.testFirst();
     },
     addPattern: function() {
       var newPattern;

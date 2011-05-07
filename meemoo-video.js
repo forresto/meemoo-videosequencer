@@ -257,14 +257,52 @@
         return this.saveDuration();
       }
     },
+    testFirst: function() {
+      var mp4, webm, ytid;
+      webm = this.model.get("webm");
+      if (_.isString(webm) && webm !== "") {
+        this.testWebm();
+        return;
+      }
+      mp4 = this.model.get("mp4");
+      if (_.isString(mp4) && mp4 !== "") {
+        this.testMp4();
+        return;
+      }
+      ytid = this.model.get("ytid");
+      if (_.isString(ytid) && ytid !== "") {
+        this.testYtid();
+      }
+    },
     testWebm: function() {
-      return this.testHtml5();
+      var source, video, webm;
+      webm = this.model.get("webm");
+      if (_.isString(webm) && webm !== "") {
+        video = this.testHtml5();
+        source = $("<source />").attr({
+          src: webm,
+          type: "video/webm"
+        });
+        video.append(source);
+        return this.$(".video-test").append(video);
+      }
     },
     testMp4: function() {
-      return this.testHtml5();
+      var mp4, source, video;
+      this.testHtml5();
+      mp4 = this.model.get("mp4");
+      if (_.isString(mp4) && mp4 !== "") {
+        video = this.testHtml5();
+        source = $("<source />").attr({
+          src: mp4,
+          type: "video/mp4"
+        });
+        video.append(source);
+        return this.$(".video-test").append(video);
+      }
     },
     testHtml5: function() {
-      var mp4, source, video, webm;
+      var video;
       $(".video-test").empty();
       video = $('<video autobuffer="metadata" controls></video>').data({
         video_id: this.model.cid
@@ -273,23 +311,7 @@
         video_id = $(this).data("video_id");
         return App.Composition.Videos.getByCid(video_id).View.setDuration(this.duration);
       });
-      webm = this.model.get("webm");
-      if (_.isString(webm) && webm !== "") {
-        source = $("<source />").attr({
-          src: webm,
-          type: "video/webm"
-        });
-        video.append(source);
-      }
-      mp4 = this.model.get("mp4");
-      if (_.isString(mp4) && mp4 !== "") {
-        source = $("<source />").attr({
-          src: mp4,
-          type: "video/mp4"
-        });
-        video.append(source);
-      }
-      return this.$(".video-test").append(video);
+      return video;
     },
     testYtid: function() {
       var atts, params, videodiv, ytid;
