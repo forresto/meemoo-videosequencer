@@ -132,7 +132,9 @@
           player.pause();
           player.src = "";
         } else {
-          player.stopVideo();
+          try {
+            player.stopVideo();
+          } catch (_e) {}
         }
       }
       return $("#players").empty();
@@ -143,7 +145,9 @@
           player.pause();
           player.src = "";
         } else {
-          player.stopVideo();
+          try {
+            player.stopVideo();
+          } catch (_e) {}
         }
         $(player).parent().remove();
         return sizePosition();
@@ -156,7 +160,7 @@
     if (player) {
       if (player.tagName === "VIDEO") {
         loadedPercent = player.buffered.end() / player.duration;
-        seekPercent = (parseFloat(value) + 20) / player.duration;
+        seekPercent = (parseFloat(value) + 3) / player.duration;
         if (loadedPercent === 1 || seekPercent < loadedPercent) {
           return player.currentTime = value;
         }
@@ -164,7 +168,9 @@
         loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal();
         seekPercent = (parseFloat(value) + 20) / player.getDuration();
         if (loadedPercent === 1 || seekPercent < loadedPercent) {
-          return player.seekTo(value, false);
+          try {
+            return player.seekTo(value, false);
+          } catch (_e) {}
         }
       }
     }
@@ -176,7 +182,9 @@
       if (player.tagName === "VIDEO") {
         return player.play();
       } else {
-        return player.playVideo();
+        try {
+          return player.playVideo();
+        } catch (_e) {}
       }
     }
   };
@@ -187,7 +195,9 @@
       if (player.tagName === "VIDEO") {
         return player.pause();
       } else {
-        return player.pauseVideo();
+        try {
+          return player.pauseVideo();
+        } catch (_e) {}
       }
     }
   };
@@ -204,7 +214,9 @@
       if (player.tagName === "VIDEO") {
         return player.muted = true;
       } else {
-        return player.mute();
+        try {
+          return player.mute();
+        } catch (_e) {}
       }
     }
   };
@@ -215,7 +227,9 @@
       if (player.tagName === "VIDEO") {
         return player.muted = false;
       } else {
-        return player.unMute();
+        try {
+          return player.unMute();
+        } catch (_e) {}
       }
     }
   };
@@ -226,7 +240,9 @@
       if (player.tagName === "VIDEO") {
         return player.volume = value / 100;
       } else {
-        return player.setVolume(value);
+        try {
+          return player.setVolume(value);
+        } catch (_e) {}
       }
     }
   };

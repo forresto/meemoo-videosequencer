@@ -125,7 +125,7 @@ remove = (id) ->
         player.pause()
         player.src = ""
       else
-        player.stopVideo()
+        try player.stopVideo()
     $("#players").empty()
   else
     player = document.getElementById "player_o_#{id}"
@@ -134,24 +134,25 @@ remove = (id) ->
         player.pause()
         player.src = ""
       else
-        player.stopVideo()
+        try player.stopVideo()
       $(player).parent().remove()
       sizePosition()
 
 seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
-    # don't seek over the buffer, safety of 20 seconds
     if player.tagName is "VIDEO"
       loadedPercent = player.buffered.end() / player.duration
-      seekPercent = (parseFloat(value) + 20) / player.duration
+      seekPercent = (parseFloat(value) + 3) / player.duration
+      # don't seek over the buffer, safety of 3 seconds
       if loadedPercent is 1 or seekPercent < loadedPercent
         player.currentTime = value
     else
       loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal()
       seekPercent = (parseFloat(value) + 20) / player.getDuration()
+      # don't seek over the buffer, safety of 20 seconds
       if loadedPercent is 1 or seekPercent < loadedPercent
-        player.seekTo(value, false)
+        try player.seekTo(value, false)
 
 play = (id) ->
   player = document.getElementById "player_o_#{id}"
@@ -159,7 +160,7 @@ play = (id) ->
     if player.tagName is "VIDEO"
       player.play()
     else
-      player.playVideo()
+      try player.playVideo()
 
 pause = (id) ->
   player = document.getElementById "player_o_#{id}"
@@ -167,7 +168,7 @@ pause = (id) ->
     if player.tagName is "VIDEO"
       player.pause()
     else
-      player.pauseVideo()
+      try player.pauseVideo()
 
 hide = (id) ->
   $("player_d_#{id}").hide()
@@ -181,7 +182,7 @@ mute = (id) ->
     if player.tagName is "VIDEO"
       player.muted = true
     else
-      player.mute()
+      try player.mute()
 
 unmute = (id) ->
   player = document.getElementById "player_o_#{id}"
@@ -189,7 +190,7 @@ unmute = (id) ->
     if player.tagName is "VIDEO"
       player.muted = false
     else
-      player.unMute()
+      try player.unMute()
 
 volume = (id,value) ->
   player = document.getElementById "player_o_#{id}"
@@ -197,7 +198,7 @@ volume = (id,value) ->
     if player.tagName is "VIDEO"
       player.volume = value/100
     else
-      player.setVolume(value)
+      try player.setVolume(value)
 
 
 window.onYouTubePlayerReady = (id) ->
