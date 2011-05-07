@@ -12,7 +12,7 @@
 Read all about it here: http://meemoo.org/
 
 
-<a href="http://flattr.com/thing/183497/Meemoo-a-web-application-for-remixing-web-video" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
+<a href="http://flattr.com/thing/183497/Meemoo-a-web-application-for-remixing-web-video" target="_blank"><img src="https://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a> or <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=K7UYG9Y6XLHHS"><img src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" alt="Paypal Donate" /></a>
 
 
 #### Copyright &copy;
