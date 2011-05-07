@@ -142,7 +142,7 @@ seek = (id,value) ->
   player = document.getElementById "player_o_#{id}"
   if player
     if player.tagName is "VIDEO"
-      loadedPercent = player.buffered.end() / player.duration
+      loadedPercent = player.buffered.end(0) / player.duration
       seekPercent = (parseFloat(value) + 3) / player.duration
       # don't seek over the buffer, safety of 3 seconds
       if loadedPercent is 1 or seekPercent < loadedPercent
@@ -233,7 +233,7 @@ window.updatePlayerInfo = ->
     playero = document.getElementById "player_o_#{cid}"
     if playero
       if playero.duration #HTML video ready
-        message += Math.round(playero.buffered.end()*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000 + ":" + Math.round(playero.currentTime*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000
+        message += Math.round(playero.buffered.end(0)*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000 + ":" + Math.round(playero.currentTime*1000)/1000 + ":" + Math.round(playero.duration*1000)/1000
       else if playero.getDuration #YouTube video ready
         message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration()
     message += "|"

@@ -159,7 +159,7 @@
     player = document.getElementById("player_o_" + id);
     if (player) {
       if (player.tagName === "VIDEO") {
-        loadedPercent = player.buffered.end() / player.duration;
+        loadedPercent = player.buffered.end(0) / player.duration;
         seekPercent = (parseFloat(value) + 3) / player.duration;
         if (loadedPercent === 1 || seekPercent < loadedPercent) {
           return player.currentTime = value;
@@ -282,7 +282,7 @@
       playero = document.getElementById("player_o_" + cid);
       if (playero) {
         if (playero.duration) {
-          message += Math.round(playero.buffered.end() * 1000) / 1000 + ":" + Math.round(playero.duration * 1000) / 1000 + ":" + Math.round(playero.currentTime * 1000) / 1000 + ":" + Math.round(playero.duration * 1000) / 1000;
+          message += Math.round(playero.buffered.end(0) * 1000) / 1000 + ":" + Math.round(playero.duration * 1000) / 1000 + ":" + Math.round(playero.currentTime * 1000) / 1000 + ":" + Math.round(playero.duration * 1000) / 1000;
         } else if (playero.getDuration) {
           message += playero.getVideoBytesLoaded() + ":" + playero.getVideoBytesTotal() + ":" + playero.getCurrentTime() + ":" + playero.getDuration();
         }
