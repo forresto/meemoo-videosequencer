@@ -120,14 +120,14 @@
       var freeTrigger, i, lastTriggerTime, trigger, _i, _len, _ref, _results;
       if (this.model.get('totaltime') > 0) {
         lastTriggerTime = 0;
-        _ref = this.model.get("Video").Triggers;
+        _ref = this.model.get("Video").get("triggers");
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           trigger = _ref[_i];
           if (trigger > lastTriggerTime) {
             lastTriggerTime = Math.ceil(trigger);
           }
         }
-        freeTrigger = this.model.get("Video").Triggers.length;
+        freeTrigger = this.model.get("Video").get("triggers").length;
         _results = [];
         for (i = 0; i <= 8; i++) {
           _results.push(this.model.get("Video").addTrigger(freeTrigger + i, lastTriggerTime + ((i + 1) * 2)));
@@ -185,7 +185,7 @@
     },
     triggerOrAdd: function(triggerid) {
       var seconds;
-      seconds = parseFloat(this.model.get("Video").Triggers[triggerid]);
+      seconds = parseFloat(this.model.get("Video").get("triggers")[triggerid]);
       if (seconds !== seconds) {
         return this.model.get("Video").addTrigger(triggerid, this.model.get('time'));
       } else {
@@ -195,7 +195,7 @@
     },
     trigger: function(triggerid) {
       var seconds;
-      seconds = this.model.get("Video").Triggers[triggerid];
+      seconds = this.model.get("Video").get("triggers")[triggerid];
       if (seconds === void 0 || seconds === null) {
         return;
       }
@@ -209,15 +209,15 @@
       if (prev) {
         while (last > 0 && (seconds === null || seconds === void 0)) {
           last--;
-          seconds = this.model.get("Video").Triggers[last];
+          seconds = this.model.get("Video").get("triggers")[last];
         }
         if (last === 0) {
           seconds = 0;
         }
       } else {
-        while (last < this.model.get("Video").Triggers.length - 1 && (seconds === null || seconds === void 0)) {
+        while (last < this.model.get("Video").get("triggers").length - 1 && (seconds === null || seconds === void 0)) {
           last++;
-          seconds = this.model.get("Video").Triggers[last];
+          seconds = this.model.get("Video").get("triggers")[last];
         }
       }
       if (seconds !== void 0 && seconds !== null) {

@@ -26,13 +26,12 @@
 
   */  this.Video = Backbone.Model.extend({
     defaults: {
-      "title": ""
+      "title": "",
+      "triggers": []
     },
     initialize: function() {
       var loadthis;
       this.Players = new PlayerList();
-      this.Triggers = [];
-      this.addTrigger(0, 0);
       loadthis = this.get("firstValue");
       if (loadthis && loadthis !== "") {
         if (loadthis.indexOf(".webm") !== -1) {
@@ -70,20 +69,18 @@
         player = _ref[_i];
         player.initializeView();
       }
-      return this.View.updateTriggers();
+      return this.updateTriggers();
     },
     addTrigger: function(position, time) {
       if (position < App.triggers.length) {
         time = parseFloat(time);
-        if (this.Triggers.indexOf(time) === -1) {
-          this.Triggers[position] = time;
+        if (this.get("triggers").indexOf(time) === -1) {
+          this.get("triggers")[position] = time;
+          return this.updateTriggers();
         }
       }
-      if (this.View) {
-        return this.View.updateTriggers();
-      }
     },
-    change: function() {
+    updateTriggers: function() {
       if (this.View) {
         return this.View.updateTriggers();
       }
@@ -97,7 +94,7 @@
         webm: this.get("webm"),
         mp4: this.get("mp4"),
         ytid: this.get("ytid"),
-        triggers: this.Triggers,
+        triggers: this.get("triggers"),
         players: this.Players
       };
     },
@@ -157,9 +154,9 @@
       "blur .video-ytid": "saveYtid",
       "click .video-ytid-test": "testYtid",
       "blur .video-duration": "saveDuration",
-      "click video-triggers-fill-straight": "triggersFillStraight",
-      "click video-triggers-fill-staggered": "triggersFillStaggered",
-      "click video-triggers-sort": "triggersSort"
+      "click .video-triggers-fill-straight": "triggersFillStraight",
+      "click .video-triggers-fill-staggered": "triggersFillStaggered",
+      "click .video-triggers-sort": "triggersSort"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -189,6 +186,7 @@
         text: false
       });
       this.$(".video-triggers").hide();
+      this.$(".video-triggers button").button();
       this.$(".video-sources").hide();
       this.$(".video-ytid-test").button({
         icons: {
@@ -207,9 +205,6 @@
       });
       return this.model.get("Composition").View.$(".videos").append($(this.el));
     },
-    triggersFillStraight: function() {},
-    triggersFillStaggered: function() {},
-    triggersSort: function() {},
     saveTitle: function() {
       return this.model.set({
         "title": this.$(".video-title").text().trim()
@@ -217,6 +212,55 @@
     },
     editTriggers: function() {
       return this.$(".video-triggers").toggle('fast');
+    },
+    triggersFillStraight: function() {
+      var division, duration, i, triggers, _ref;
+      duration = parseFloat(this.model.get("duration"));
+      if (duration === duration) {
+        division = duration / App.triggers.length;
+        triggers = [];
+        for (i = 0, _ref = App.triggers.length - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+          triggers.push(i * division);
+        }
+        this.model.set({
+          "triggers": triggers
+        });
+        return this.updateTriggers();
+      }
+    },
+    triggersFillStaggered: function() {
+      var col, division, duration, i, row, triggers, _ref;
+      duration = parseFloat(this.model.get("duration"));
+      if (duration === duration) {
+        division = duration / App.triggers.length;
+        triggers = [];
+        for (i = 0, _ref = App.triggers.length - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+          row = Math.floor(i / 4);
+          col = Math.floor(i % 4);
+          triggers[col * 10 + row] = i * division;
+        }
+        this.model.set({
+          "triggers": triggers
+        });
+        return this.updateTriggers();
+      }
+    },
+    triggersSort: function() {
+      var sorted, unsorted;
+      unsorted = this.model.get("triggers");
+      sorted = unsorted.sort(function(a, b) {
+        return a - b;
+      });
+      this.model.set({
+        "triggers": sorted
+      });
+      return this.updateTriggers();
+    },
+    triggersClear: function() {
+      this.model.set({
+        "triggers": []
+      });
+      return this.updateTriggers();
     },
     editSources: function() {
       this.$(".video-test").empty();
@@ -261,7 +305,7 @@
       if (time === time) {
         this.$(".video-duration").val(time);
         this.saveDuration();
-        if (this.model.Triggers === []) {
+        if (this.model.get("triggers").length === 0) {
           return this.triggersFillStaggered();
         }
       }
@@ -354,20 +398,23 @@
       return _gaq.push(['_trackEvent', 'Video', 'Add Player ' + this.model.get("ytid"), JSON.stringify(this.model)]);
     },
     updateTriggers: function() {
-      var left, trigger, triggersformhtml, triggershtml, _i, _len, _ref;
+      var duration, left, trigger, triggersformhtml, triggershtml, _i, _len, _ref;
       triggershtml = "";
       triggersformhtml = "";
-      _ref = this.model.Triggers;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        trigger = _ref[_i];
-        if (trigger !== null && trigger >= 0 && this.model.get("duration") > 0) {
-          left = trigger / this.model.get("duration") * 100;
-          if (left <= 100) {
-            triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+      duration = parseFloat(this.model.get("duration"));
+      if (duration === duration && duration > 0) {
+        _ref = this.model.get("triggers");
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          trigger = _ref[_i];
+          if (trigger !== null && trigger >= 0) {
+            left = trigger / duration * 100;
+            if (left <= 100) {
+              triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+            }
           }
         }
+        return $(".showtriggers_" + this.model.cid).html(triggershtml);
       }
-      return $(".showtriggers_" + this.model.cid).html(triggershtml);
     },
     "delete": function() {
       if (confirm("Are you sure you want to remove this video (" + this.model.cid + ") and all players?")) {

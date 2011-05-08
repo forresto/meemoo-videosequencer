@@ -75,12 +75,10 @@ this.PlayerView = Backbone.View.extend
   play: ->
     this.model.set({playing:true})
     window.App.postMessageToViewer("play", this.model.cid)
-    # this.model.get("Video").View.updateTriggers()
     
   pause: ->
     this.model.set({playing:false})
     window.App.postMessageToViewer("pause", this.model.cid)
-    # this.model.get("Video").View.updateTriggers()
     
   mute: ->
     window.App.postMessageToViewer("mute", this.model.cid)
@@ -105,10 +103,10 @@ this.PlayerView = Backbone.View.extend
   addtrigger: ->
     if this.model.get('totaltime') > 0
       lastTriggerTime = 0
-      for trigger in this.model.get("Video").Triggers
+      for trigger in this.model.get("Video").get("triggers")
         if trigger > lastTriggerTime
           lastTriggerTime = Math.ceil trigger
-      freeTrigger = this.model.get("Video").Triggers.length
+      freeTrigger = this.model.get("Video").get("triggers").length
       for i in [0..8]
         this.model.get("Video").addTrigger freeTrigger+i, lastTriggerTime + ((i + 1) * 2)
       
@@ -148,7 +146,7 @@ this.PlayerView = Backbone.View.extend
       this.triggerOrAdd(triggerid)
     
   triggerOrAdd: (triggerid) ->
-    seconds = parseFloat this.model.get("Video").Triggers[triggerid]
+    seconds = parseFloat this.model.get("Video").get("triggers")[triggerid]
     if seconds isnt seconds # Is NaN
       # New trigger
       this.model.get("Video").addTrigger triggerid, this.model.get('time')
@@ -157,7 +155,7 @@ this.PlayerView = Backbone.View.extend
       this.seek seconds
   
   trigger: (triggerid) ->
-    seconds = this.model.get("Video").Triggers[triggerid]
+    seconds = this.model.get("Video").get("triggers")[triggerid]
     if (seconds is undefined or seconds is null)
       return
     this.lastTrigger = triggerid
@@ -169,12 +167,12 @@ this.PlayerView = Backbone.View.extend
     if prev
       while last > 0 && (seconds is null or seconds is undefined)
         last--
-        seconds = this.model.get("Video").Triggers[last]
+        seconds = this.model.get("Video").get("triggers")[last]
       if last is 0 then seconds = 0
     else #next
-      while last < this.model.get("Video").Triggers.length-1 && (seconds is null or seconds is undefined)
+      while last < this.model.get("Video").get("triggers").length-1 && (seconds is null or seconds is undefined)
         last++
-        seconds = this.model.get("Video").Triggers[last]
+        seconds = this.model.get("Video").get("triggers")[last]
     if seconds isnt undefined and seconds isnt null
       this.lastTrigger = last
       this.seek seconds

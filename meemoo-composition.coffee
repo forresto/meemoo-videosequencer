@@ -61,7 +61,7 @@ this.Composition = Backbone.Model.extend
           webm: video.webm
           mp4: video.mp4
           ytid: video.ytid
-        newVideo.Triggers = video.triggers
+          triggers: video.triggers
         video.newcid = newVideo.cid
         this.Videos.add newVideo
         if video.players
@@ -230,7 +230,7 @@ this.Composition = Backbone.Model.extend
   multitrigger: (triggers) ->
     message = ""
     for item in triggers
-      seconds = item.player.Video.Triggers[item.trigger]
+      seconds = item.player.Video.get("triggers")[item.trigger]
       if seconds isnt null and seconds isnt undefined
         message += "/seek/"
         message += "#{item.player.cid}/"
@@ -508,7 +508,7 @@ this.CompositionView = Backbone.View.extend
     triggers = ""
     
     for video in this.model.Videos.models
-      seconds = parseFloat video.Triggers[triggerid]
+      seconds = parseFloat video.get("triggers")[triggerid]
       if seconds is seconds # Isnt NaN
         for player in video.Players.models
           triggers += "/seek/#{player.cid}/#{seconds}|"

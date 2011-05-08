@@ -61,9 +61,9 @@
             duration: video.duration,
             webm: video.webm,
             mp4: video.mp4,
-            ytid: video.ytid
+            ytid: video.ytid,
+            triggers: video.triggers
           });
-          newVideo.Triggers = video.triggers;
           video.newcid = newVideo.cid;
           this.Videos.add(newVideo);
           if (video.players) {
@@ -279,7 +279,7 @@
       message = "";
       for (_i = 0, _len = triggers.length; _i < _len; _i++) {
         item = triggers[_i];
-        seconds = item.player.Video.Triggers[item.trigger];
+        seconds = item.player.Video.get("triggers")[item.trigger];
         if (seconds !== null && seconds !== void 0) {
           message += "/seek/";
           message += "" + item.player.cid + "/";
@@ -599,7 +599,7 @@
       _ref = this.model.Videos.models;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         video = _ref[_i];
-        seconds = parseFloat(video.Triggers[triggerid]);
+        seconds = parseFloat(video.get("triggers")[triggerid]);
         if (seconds === seconds) {
           _ref2 = video.Players.models;
           for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {

@@ -106,7 +106,7 @@
         track = _ref[_i];
         trigger = track.Line[this.beat];
         if (trigger !== null && trigger !== void 0) {
-          seconds = track.get("Player").get("Video").Triggers[trigger];
+          seconds = track.get("Player").get("Video").get("triggers")[trigger];
           if (seconds !== null && seconds !== void 0) {
             this.get("Composition").queueMessage("/seek/" + (track.get('Player').cid) + "/" + seconds);
           }

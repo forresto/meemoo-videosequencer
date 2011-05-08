@@ -26,13 +26,15 @@ This file is part of Meemoo.
 ###
 
 this.Video = Backbone.Model.extend
+  # events:
+  #   "change:triggers" : "updateTriggers"
+    
   defaults:
     "title": ""
-  
+    "triggers": []
+    
   initialize: ->
     this.Players = new PlayerList()
-    this.Triggers = []
-    this.addTrigger 0, 0
     
     loadthis = this.get("firstValue")
     if loadthis and loadthis isnt ""
@@ -62,17 +64,15 @@ this.Video = Backbone.Model.extend
     this.View = new VideoView {model:this}
     for player in this.Players.models
       player.initializeView()
-    this.View.updateTriggers()
+    this.updateTriggers()
     
   addTrigger: (position, time) ->
     if position < App.triggers.length # if there is room for triggers
       time = parseFloat(time)
-      if this.Triggers.indexOf(time) is -1 # if the time isn't a trigger already
-        this.Triggers[position] = time
-    if this.View
-      this.View.updateTriggers()
-  change: ->
-    # this.Triggers.sort((a,b) -> a-b)
+      if this.get("triggers").indexOf(time) is -1 # if the time isn't a trigger already
+        this.get("triggers")[position] = time
+        this.updateTriggers()
+  updateTriggers: ->
     if this.View
       this.View.updateTriggers()
   toJSON: ->
@@ -83,7 +83,7 @@ this.Video = Backbone.Model.extend
       webm     : this.get("webm")
       mp4      : this.get("mp4")
       ytid     : this.get("ytid")
-      triggers : this.Triggers
+      triggers : this.get("triggers")
       players  : this.Players
       
   addPlayer: ->
@@ -134,9 +134,9 @@ this.VideoView = Backbone.View.extend
     "click .video-ytid-test"     : "testYtid"
     "blur .video-duration"       : "saveDuration"
     
-    "click video-triggers-fill-straight" : "triggersFillStraight"
-    "click video-triggers-fill-staggered" : "triggersFillStaggered"
-    "click video-triggers-sort" : "triggersSort"
+    "click .video-triggers-fill-straight"  : "triggersFillStraight"
+    "click .video-triggers-fill-staggered" : "triggersFillStaggered"
+    "click .video-triggers-sort"           : "triggersSort"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -156,6 +156,7 @@ this.VideoView = Backbone.View.extend
       text: false
       
     this.$(".video-triggers").hide()
+    this.$(".video-triggers button").button()
     
     this.$(".video-sources").hide()
     this.$(".video-ytid-test").button
@@ -168,12 +169,6 @@ this.VideoView = Backbone.View.extend
     this.model.get("Composition").View.$(".videos").append($(this.el))
     
     
-  triggersFillStraight: ->
-    
-  triggersFillStaggered: ->
-    
-  triggersSort: ->
-    
   # editTitle: ->
   #   document.designMode = 'on'
     
@@ -184,6 +179,41 @@ this.VideoView = Backbone.View.extend
       
   editTriggers: ->
     this.$(".video-triggers").toggle('fast')
+    
+  triggersFillStraight: ->
+    duration = parseFloat this.model.get("duration")
+    if duration is duration # !NaN
+      division = duration / App.triggers.length
+      triggers = []
+      for i in [0..App.triggers.length-1]
+        triggers.push i*division
+      this.model.set({"triggers":triggers})
+      this.updateTriggers()
+      
+  triggersFillStaggered: ->
+    duration = parseFloat this.model.get("duration")
+    if duration is duration # !NaN
+      division = duration / App.triggers.length
+      triggers = []
+      for i in [0..App.triggers.length-1]
+        row = Math.floor i/4
+        col = Math.floor i%4
+        triggers[col*10+row] = i*division
+      this.model.set({"triggers":triggers})
+      this.updateTriggers()
+      
+  triggersSort: ->
+    unsorted = this.model.get("triggers")
+    sorted = unsorted.sort((a,b) -> a-b)
+    this.model.set({"triggers":sorted})
+    this.updateTriggers()
+    
+  triggersClear: ->
+    this.model.set({"triggers":[]})
+    this.updateTriggers()
+    
+    
+    
     
   editSources: ->
     this.$(".video-test").empty()
@@ -211,7 +241,7 @@ this.VideoView = Backbone.View.extend
     if time is time # Not NaN
       this.$(".video-duration").val(time)
       this.saveDuration()
-      if this.model.Triggers is []
+      if this.model.get("triggers").length is 0
         this.triggersFillStaggered()
       
   testFirst: ->
@@ -290,12 +320,14 @@ this.VideoView = Backbone.View.extend
   updateTriggers: ->
     triggershtml = ""
     triggersformhtml = ""
-    for trigger in this.model.Triggers
-      if trigger isnt null and trigger >= 0 and this.model.get("duration") > 0
-        left = trigger / this.model.get("duration") * 100
-        if left <= 100
-          triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
-    $(".showtriggers_#{this.model.cid}").html(triggershtml)
+    duration = parseFloat this.model.get("duration");
+    if duration is duration and duration > 0
+      for trigger in this.model.get("triggers")
+        if trigger isnt null and trigger >= 0
+          left = trigger / duration * 100
+          if left <= 100
+            triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
+      $(".showtriggers_#{this.model.cid}").html(triggershtml)
     
   delete: ->
     if confirm "Are you sure you want to remove this video (#{this.model.cid}) and all players?"

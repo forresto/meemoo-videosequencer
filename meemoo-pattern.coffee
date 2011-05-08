@@ -75,7 +75,7 @@ this.Pattern = Backbone.Model.extend
     for track in this.Tracks.models
       trigger = track.Line[this.beat]
       if trigger isnt null and trigger isnt undefined
-        seconds = track.get("Player").get("Video").Triggers[trigger]
+        seconds = track.get("Player").get("Video").get("triggers")[trigger]
         if seconds isnt null and seconds isnt undefined
           this.get("Composition").queueMessage "/seek/#{track.get('Player').cid}/#{seconds}"
         
