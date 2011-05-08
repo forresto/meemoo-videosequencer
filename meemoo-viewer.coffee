@@ -112,7 +112,9 @@ createH = (id, value, type) ->
     .append $('<div id="player_d_'+id+'" class="player_d"></div>')
       .data("cid", id)
       .data("type", "htmlvideo")
-      .append $("<video id='player_o_#{id}' src='#{value}' autobuffer='auto' preload autoplay></video>")
+      .html("<video id='player_o_#{id}' src='#{value}' autobuffer='auto' autoplay></video>")
+      # .append $("<video id='player_o_#{id}' src='#{value}' autobuffer='auto' preload autoplay></video>")
+      # JQuery bug causes video to play in background http://bugs.jquery.com/ticket/9174
   
   resizeTimer = setTimeout(sizePosition, 250)
   
@@ -121,11 +123,12 @@ remove = (id) ->
     for playerd in $(".player_d")
       cid = $(playerd).data('cid')
       player = document.getElementById "player_o_#{cid}"
-      if player.tagName is "VIDEO"
-        player.pause()
-        player.src = ""
-      else
-        try player.stopVideo()
+      if player
+        if player.tagName is "VIDEO"
+          player.pause()
+          player.src = ""
+        else
+          try player.stopVideo()
     $("#players").empty()
   else
     player = document.getElementById "player_o_#{id}"

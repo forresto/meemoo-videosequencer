@@ -117,7 +117,7 @@
       return;
     }
     value = decodeURIComponent(value);
-    $('#players').append($('<div id="player_d_' + id + '" class="player_d"></div>').data("cid", id).data("type", "htmlvideo").append($("<video id='player_o_" + id + "' src='" + value + "' autobuffer='auto' preload autoplay></video>")));
+    $('#players').append($('<div id="player_d_' + id + '" class="player_d"></div>').data("cid", id).data("type", "htmlvideo").html("<video id='player_o_" + id + "' src='" + value + "' autobuffer='auto' autoplay></video>"));
     return resizeTimer = setTimeout(sizePosition, 250);
   };
   remove = function(id) {
@@ -128,13 +128,15 @@
         playerd = _ref[_i];
         cid = $(playerd).data('cid');
         player = document.getElementById("player_o_" + cid);
-        if (player.tagName === "VIDEO") {
-          player.pause();
-          player.src = "";
-        } else {
-          try {
-            player.stopVideo();
-          } catch (_e) {}
+        if (player) {
+          if (player.tagName === "VIDEO") {
+            player.pause();
+            player.src = "";
+          } else {
+            try {
+              player.stopVideo();
+            } catch (_e) {}
+          }
         }
       }
       return $("#players").empty();
