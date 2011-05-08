@@ -133,6 +133,10 @@ this.VideoView = Backbone.View.extend
     "blur .video-ytid"           : "saveYtid"
     "click .video-ytid-test"     : "testYtid"
     "blur .video-duration"       : "saveDuration"
+    
+    "click video-triggers-fill-straight" : "triggersFillStraight"
+    "click video-triggers-fill-staggered" : "triggersFillStaggered"
+    "click video-triggers-sort" : "triggersSort"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -162,6 +166,13 @@ this.VideoView = Backbone.View.extend
       icons: { primary: "ui-icon-video" }
     
     this.model.get("Composition").View.$(".videos").append($(this.el))
+    
+    
+  triggersFillStraight: ->
+    
+  triggersFillStaggered: ->
+    
+  triggersSort: ->
     
   # editTitle: ->
   #   document.designMode = 'on'
@@ -200,6 +211,8 @@ this.VideoView = Backbone.View.extend
     if time is time # Not NaN
       this.$(".video-duration").val(time)
       this.saveDuration()
+      if this.model.Triggers is []
+        this.triggersFillStaggered()
       
   testFirst: ->
     webm = this.model.get("webm")

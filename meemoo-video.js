@@ -156,7 +156,10 @@
       "click .video-mp4-test": "testMp4",
       "blur .video-ytid": "saveYtid",
       "click .video-ytid-test": "testYtid",
-      "blur .video-duration": "saveDuration"
+      "blur .video-duration": "saveDuration",
+      "click video-triggers-fill-straight": "triggersFillStraight",
+      "click video-triggers-fill-staggered": "triggersFillStaggered",
+      "click video-triggers-sort": "triggersSort"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -204,6 +207,9 @@
       });
       return this.model.get("Composition").View.$(".videos").append($(this.el));
     },
+    triggersFillStraight: function() {},
+    triggersFillStaggered: function() {},
+    triggersSort: function() {},
     saveTitle: function() {
       return this.model.set({
         "title": this.$(".video-title").text().trim()
@@ -254,7 +260,10 @@
       time = parseFloat(time);
       if (time === time) {
         this.$(".video-duration").val(time);
-        return this.saveDuration();
+        this.saveDuration();
+        if (this.model.Triggers === []) {
+          return this.triggersFillStaggered();
+        }
       }
     },
     testFirst: function() {
