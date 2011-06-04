@@ -156,7 +156,8 @@
       "blur .video-duration": "saveDuration",
       "click .video-triggers-fill-straight": "triggersFillStraight",
       "click .video-triggers-fill-staggered": "triggersFillStaggered",
-      "click .video-triggers-sort": "triggersSort"
+      "click .video-triggers-sort": "triggersSort",
+      "click .video-triggers-clear": "triggersClear"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -258,7 +259,7 @@
     },
     triggersClear: function() {
       this.model.set({
-        "triggers": []
+        "triggers": [0]
       });
       return this.updateTriggers();
     },
@@ -398,9 +399,8 @@
       return _gaq.push(['_trackEvent', 'Video', 'Add Player ' + this.model.get("ytid"), JSON.stringify(this.model)]);
     },
     updateTriggers: function() {
-      var duration, left, trigger, triggersformhtml, triggershtml, _i, _len, _ref;
+      var duration, left, trigger, triggershtml, _i, _len, _ref;
       triggershtml = "";
-      triggersformhtml = "";
       duration = parseFloat(this.model.get("duration"));
       if (duration === duration && duration > 0) {
         _ref = this.model.get("triggers");

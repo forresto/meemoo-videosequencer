@@ -137,6 +137,7 @@ this.VideoView = Backbone.View.extend
     "click .video-triggers-fill-straight"  : "triggersFillStraight"
     "click .video-triggers-fill-staggered" : "triggersFillStaggered"
     "click .video-triggers-sort"           : "triggersSort"
+    "click .video-triggers-clear"          : "triggersClear"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -209,7 +210,7 @@ this.VideoView = Backbone.View.extend
     this.updateTriggers()
     
   triggersClear: ->
-    this.model.set({"triggers":[]})
+    this.model.set({"triggers":[0]})
     this.updateTriggers()
     
     
@@ -319,7 +320,6 @@ this.VideoView = Backbone.View.extend
     
   updateTriggers: ->
     triggershtml = ""
-    triggersformhtml = ""
     duration = parseFloat this.model.get("duration");
     if duration is duration and duration > 0
       for trigger in this.model.get("triggers")
