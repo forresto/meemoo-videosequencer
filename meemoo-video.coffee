@@ -329,7 +329,7 @@ this.VideoView = Backbone.View.extend
     duration = parseFloat this.model.get("duration");
     if duration is duration and duration > 0
       triggers = this.model.get("triggers")
-      for i in [0..App.triggers.length]
+      for i in [0..App.triggers.length-1]
         trigger = triggers[i]
         if trigger isnt null and trigger >= 0
           this.$(".video-triggers-edit-#{i} input").val(trigger)

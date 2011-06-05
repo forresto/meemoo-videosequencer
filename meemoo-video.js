@@ -420,7 +420,7 @@
       duration = parseFloat(this.model.get("duration"));
       if (duration === duration && duration > 0) {
         triggers = this.model.get("triggers");
-        for (i = 0, _ref = App.triggers.length; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+        for (i = 0, _ref = App.triggers.length - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
           trigger = triggers[i];
           if (trigger !== null && trigger >= 0) {
             this.$(".video-triggers-edit-" + i + " input").val(trigger);
