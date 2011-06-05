@@ -157,7 +157,8 @@
       "click .video-triggers-fill-straight": "triggersFillStraight",
       "click .video-triggers-fill-staggered": "triggersFillStaggered",
       "click .video-triggers-sort": "triggersSort",
-      "click .video-triggers-clear": "triggersClear"
+      "click .video-triggers-clear": "triggersClear",
+      "blur .video-triggers-edit input": "triggerEditInput"
     },
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
@@ -250,7 +251,13 @@
       var sorted, unsorted;
       unsorted = this.model.get("triggers");
       sorted = unsorted.sort(function(a, b) {
-        return a - b;
+        if (a === null) {
+          return 1;
+        } else if (b === null) {
+          return -1;
+        } else {
+          return a - b;
+        }
       });
       this.model.set({
         "triggers": sorted
@@ -262,6 +269,15 @@
         "triggers": [0]
       });
       return this.updateTriggers();
+    },
+    triggerEditInput: function(e) {
+      var idx, input, time;
+      input = $(e.target);
+      idx = input.attr("data-idx");
+      time = parseFloat(input.val());
+      if (time === time) {
+        return this.model.addTrigger(idx, time);
+      }
     },
     editSources: function() {
       this.$(".video-test").empty();
@@ -399,18 +415,21 @@
       return _gaq.push(['_trackEvent', 'Video', 'Add Player ' + this.model.get("ytid"), JSON.stringify(this.model)]);
     },
     updateTriggers: function() {
-      var duration, left, trigger, triggershtml, _i, _len, _ref;
+      var duration, i, left, trigger, triggers, triggershtml, _ref;
       triggershtml = "";
       duration = parseFloat(this.model.get("duration"));
       if (duration === duration && duration > 0) {
-        _ref = this.model.get("triggers");
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          trigger = _ref[_i];
+        triggers = this.model.get("triggers");
+        for (i = 0, _ref = App.triggers.length; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+          trigger = triggers[i];
           if (trigger !== null && trigger >= 0) {
+            this.$(".video-triggers-edit-" + i + " input").val(trigger);
             left = trigger / duration * 100;
             if (left <= 100) {
-              triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + _i + "' style='left:" + left + "%;'>" + App.triggers[_i] + "</span>";
+              triggershtml += "<span class='showtrigger v_" + this.model.cid + "_t_" + i + "' style='left:" + left + "%;'>" + App.triggers[i] + "</span>";
             }
+          } else {
+            this.$(".video-triggers-edit-" + i + " input").val("");
           }
         }
         return $(".showtriggers_" + this.model.cid).html(triggershtml);

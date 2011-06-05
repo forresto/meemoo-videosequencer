@@ -317,6 +317,14 @@ input.sequence_length {
   }
 
 
+.video-triggers-edit {
+  font-family: monospace;
+  white-space: nowrap;
+}
+  .video-triggers-edit input {
+    font-family: sans-serif;
+    width: 42px;
+  }
 
 
 input::-webkit-outer-spin-button,

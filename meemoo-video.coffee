@@ -138,6 +138,7 @@ this.VideoView = Backbone.View.extend
     "click .video-triggers-fill-staggered" : "triggersFillStaggered"
     "click .video-triggers-sort"           : "triggersSort"
     "click .video-triggers-clear"          : "triggersClear"
+    "blur .video-triggers-edit input"      : "triggerEditInput"
   
   render: ->
     $(this.el).html this.template this.model.toJSON()
@@ -205,7 +206,7 @@ this.VideoView = Backbone.View.extend
       
   triggersSort: ->
     unsorted = this.model.get("triggers")
-    sorted = unsorted.sort((a,b) -> a-b)
+    sorted = unsorted.sort((a,b) -> if a is null then 1 else if b is null then -1 else a-b)
     this.model.set({"triggers":sorted})
     this.updateTriggers()
     
@@ -213,7 +214,12 @@ this.VideoView = Backbone.View.extend
     this.model.set({"triggers":[0]})
     this.updateTriggers()
     
-    
+  triggerEditInput: (e) ->
+    input = $(e.target)
+    idx = input.attr("data-idx")
+    time = parseFloat(input.val())
+    if time is time
+      this.model.addTrigger(idx, time)
     
     
   editSources: ->
@@ -322,11 +328,17 @@ this.VideoView = Backbone.View.extend
     triggershtml = ""
     duration = parseFloat this.model.get("duration");
     if duration is duration and duration > 0
-      for trigger in this.model.get("triggers")
+      triggers = this.model.get("triggers")
+      for i in [0..App.triggers.length]
+        trigger = triggers[i]
         if trigger isnt null and trigger >= 0
+          this.$(".video-triggers-edit-#{i} input").val(trigger)
           left = trigger / duration * 100
           if left <= 100
-            triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{_i}' style='left:#{left}%;'>#{App.triggers[_i]}</span>"
+            triggershtml += "<span class='showtrigger v_#{this.model.cid}_t_#{i}' style='left:#{left}%;'>#{App.triggers[i]}</span>"
+        else
+          this.$(".video-triggers-edit-#{i} input").val("")
+      # All players triggger views
       $(".showtriggers_#{this.model.cid}").html(triggershtml)
     
   delete: ->

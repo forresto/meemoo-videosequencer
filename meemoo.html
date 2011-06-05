@@ -186,6 +186,15 @@ This file is part of Meemoo.
     <button class="video-triggers-sort" type="button">Sort</button>
     <button class="video-triggers-clear" type="button">Clear</button>
     <div class="video-triggers-edit">
+      <% for (i=0; i<App.triggers.length; i++) { %>
+        <span class="video-triggers-edit video-triggers-edit-<%= i %>">
+          <%= App.triggers[i] %>
+          <input type="number" data-idx="<%= i %>" value="<%= this.model.get('triggers')[i] %>" />
+        </span>
+        <% if ((i+1)%10 === 0) { %>
+          <br />
+        <% } %>
+      <% } %>
     </div>
   </div>
   <div class="video-sources" title="<%= this.model.cid %>">
