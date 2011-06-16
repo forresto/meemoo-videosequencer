@@ -1,0 +1,65 @@
+<html>
+  <body>
+    <!-- 1. The <div> tag will contain the <iframe> (and video player) -->
+    <div id="player"></div>
+    <div id="scrub" style="background-color:red; color:white; width:900px; height:150px; padding:10px;">0</div>
+    
+    <script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "http://www.youtube.com/player_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubePlayerAPIReady() {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          videoId: 'PyUq7dICATw',
+          playerVars: { 'autoplay': 1, 'controls': 1, 'html5': 1},
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+
+      // 5. The API calls this function when the player's state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      var done = false;
+      function onPlayerStateChange(event) {
+        // if (event.data == YT.PlayerState.PLAYING && !done) {
+        //   done = true;
+        // }
+      }
+      function stopVideo() {
+        player.stopVideo();
+      }
+      function seekVideo(seconds) {
+        var loadedPercent = player.getVideoBytesLoaded() / player.getVideoBytesTotal()
+        var seekPercent = (parseFloat(seconds) + 20) / player.getDuration()
+        // don't seek over the buffer, safety of 20 seconds
+        if (loadedPercent === 1 || seekPercent < loadedPercent)
+          player.seekTo(seconds, false)
+      }
+      
+      var scrub = document.getElementById("scrub");
+      scrub.addEventListener("mousemove", function(e){
+        percentage = e.offsetX / e.target.offsetWidth;
+        e.target.innerHTML = Math.round(percentage * 10000) / 100;
+        seekVideo(percentage*player.getDuration());
+      });
+    </script>
+    
+    
+  </body>
+</html>
