@@ -5,18 +5,19 @@
 
 This file is part of Meemoo.
   
-  Meemoo is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Meemoo is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Affero General Public License as 
+  published by the Free Software Foundation, either version 3 of 
+  the License, or (at your option) any later version.
   
-  Meemoo is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  Meemoo is distributed in the hope that it will be useful, but 
+  WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Affero General Public License for more details.
   
-  You should have received a copy of the GNU General Public License
-  along with Meemoo.  If not, see <http://www.gnu.org/licenses/>. 
+  You should have received a copy of the GNU Affero General 
+  Public License along with Meemoo.  If not, see 
+  <http://www.gnu.org/licenses/>.
   
 -->
 
@@ -39,12 +40,19 @@ This file is part of Meemoo.
         // 'lib/backbone.js',
         // 'lib/backbone-localstorage.js',
         // 'meemoo-composition.js',
+        // 'meemoo-composition-view.js',
         // 'meemoo-video.js',
+        // 'meemoo-video-view.js',
         // 'meemoo-player.js',
+        // 'meemoo-player-view.js',
         // 'meemoo-pattern.js',
+        // 'meemoo-pattern-view.js',
         // 'meemoo-patterntrack.js',
+        // 'meemoo-patterntrack-view.js',
         // 'meemoo-sequence.js',
+        // 'meemoo-sequence-view.js',
         // 'meemoo-sequencetrack.js',
+        // 'meemoo-sequencetrack-view.js',
         // 'meemoo.js',
         'meemoo.min.js',
         'meemoo.css'
@@ -175,14 +183,14 @@ This file is part of Meemoo.
   <div class="video-list">
     <span class="video-cid"><%= this.model.cid %></span>
     <span class="video-title editable" contenteditable="true" title="Click to edit title"><%= this.model.get("title") %></span>
-    <button class="video-edit-triggers" type="button">Edit triggers</button>
-    <button class="video-edit-sources" type="button">Edit sources</button>
+    <button class="video-edit-triggers" type="button">Triggers</button>
+    <button class="video-edit-sources" type="button">Sources</button>
     <button class="video-addplayer" type="button">Add player</button>
     <button class="video-delete" type="button">Delete video (and all players)</button>
   </div>
   <div class="video-triggers" title="<%= this.model.cid %>">
-    <button class="video-triggers-fill-staggered" type="button">Fill staggered (1qaz...)</button>
-    <button class="video-triggers-fill-straight" type="button">Fill straight (1234...)</button>
+    <button class="video-triggers-fill-straight" type="button">Across (1234...)</button>
+    <button class="video-triggers-fill-staggered" type="button">Down (1qaz...)</button>
     <button class="video-triggers-sort" type="button">Sort</button>
     <button class="video-triggers-clear" type="button">Clear</button>
     <div class="video-triggers-edit">
