@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>1 iframe of the node test by Sembiki Interactive</title>
+  </head>
+  <body>
+    
+    <p id="send">
+      id: <input id="id" type="number" />
+      message: <input id="message" type="text" />
+      <input id="send" type="submit" onclick="sendMessageParent(); return false;" value="send to parent" />
+      <input id="send" type="submit" onclick="sendMessageSib(); return false;" value="send to sib" />
+      <input id="send" type="submit" onclick="sendChainParent(); return false;" value="chain to parent" />
+      <input id="send" type="submit" onclick="sendChainSib(); return false;" value="chain to sib" />
+    </p>
+    
+    <p id="status">
+      this page should be loaded in iframe-node<strong>s</strong>.html
+    </p>
+    
+    <script>
+    
+    (function() {
+      
+      var parentWindow = window.opener ? window.opener : window.parent ? window.parent : void 0;
+      
+      var postMessageToParent = function(message) {
+        // parentWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
+        parentWindow.postMessage(message, "*");
+      };
+      
+      var recieveMessage = function(e) {
+        var message = e.data.split("/");
+        
+        switch (message[1]) {
+          case "name":
+            break;
+          case "chain":
+            document.getElementById("id").value = parseInt(message[2])+1;
+            document.getElementById("message").value = message[3];
+            sendChainSib();
+            break;
+          case "chainparent":
+            document.getElementById("id").value = parseInt(message[2])+1;
+            document.getElementById("message").value = message[3];
+            sendChainParent();
+            break;
+        }
+        
+        document.getElementById("status").innerHTML = (new Date().getTime()) +": "+ message;
+      };
+      
+      window.addEventListener("message", recieveMessage, false);
+      
+      // Post on loaded
+      postMessageToParent("/loaded");
+      
+      window.sendMessageParent = function() {
+        var windowIndex = parseInt(document.getElementById("id").value);
+        postMessageToParent("/forward/"+windowIndex+"/"+document.getElementById("message").value);
+      };
+      
+      window.sendMessageSib = function() {
+        var windowIndex = parseInt(document.getElementById("id").value);
+        var sib = parentWindow.frames[windowIndex];
+        if (sib) {
+          sib.postMessage(document.getElementById("message").value, "*")
+        }
+      };
+      
+      window.sendChainParent = function() {
+        var windowIndex = parseInt(document.getElementById("id").value);
+        var message = "/chainparent/"+windowIndex+"/"+document.getElementById("message").value
+        postMessageToParent("/forward/"+windowIndex+"/"+encodeURIComponent(message));
+      };
+      
+      window.sendChainSib = function() {
+        var windowIndex = parseInt(document.getElementById("id").value);
+        var sib = parentWindow.frames[windowIndex];
+        if (sib) {
+          sib.postMessage("/chain/"+windowIndex+"/"+document.getElementById("message").value, "*")
+        }
+      };
+      
+    }).call(this);
+      
+    </script>
+    
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>iframe node test by Sembiki Interactive</title>
+  </head>
+  <body>
+    
+    <div style="vertical-align:middle;">
+      <iframe src="iframe-node.html" id="id0" name="name0" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id1" name="name1" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id2" name="name2" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id3" name="name3" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id4" name="name4" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id5" name="name5" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id6" name="name6" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id7" name="name7" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id8" name="name8" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id9" name="name9" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id10" name="name10" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id11" name="name11" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id12" name="name12" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id13" name="name13" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id14" name="name14" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id15" name="name15" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id16" name="name16" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id17" name="name17" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id18" name="name18" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id19" name="name19" width="250" height="150"></iframe> &rarr;
+      <iframe src="iframe-node.html" id="id20" name="name20" width="250" height="150"></iframe> 
+    </div>
+    
+    <p id="status">
+      Load 10 iframes and have them communicate with each other and this window with window.postMessage()
+    </p>
+    
+    <script>
+      
+      var start, count, lastTime;
+      
+      start = new Date().getTime();
+      count = 0;
+      
+      var postMessageToWindow = function(message, toWindow) {
+        // toWindow.postMessage(message, window.location.protocol + "//" + window.location.host);
+        toWindow.postMessage(message, "*");
+      };
+      
+      var recieveMessage = function(e) {
+        var message = e.data.split("/");
+        
+        switch (message[1]) {
+          case "loaded":
+            postMessageToWindow("/name/"+e.source.name, e.source);
+            count++;
+            break;
+          case "forward":
+            var windowIndex = parseInt(message[2]);
+            if (0 <= windowIndex && windowIndex < window.frames.length) {
+              postMessageToWindow(decodeURIComponent(message[3]), window.frames[windowIndex]);
+            }
+            break;
+        }
+        
+        document.getElementById("status").innerHTML += "<br />" + (new Date().getTime()) +": "+ message;
+        
+      };
+      
+      window.addEventListener("message", recieveMessage, false);
+      
+    </script>
+    
+  </body>
+</html>
