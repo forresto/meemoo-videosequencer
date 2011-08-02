@@ -6,8 +6,8 @@
   <body>
     
     <p id="send">
-      id: <input id="id" type="number" />
-      message: <input id="message" type="text" />
+      id: <input id="id" type="number" value="0" />
+      message: <input id="message" type="text" value="moo" />
       <input id="send" type="submit" onclick="sendMessageParent(); return false;" value="send to parent" />
       <input id="send" type="submit" onclick="sendMessageSib(); return false;" value="send to sib" />
       <input id="send" type="submit" onclick="sendChainParent(); return false;" value="chain to parent" />
