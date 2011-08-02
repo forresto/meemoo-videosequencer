@@ -47,7 +47,11 @@
             break;
         }
         
-        document.getElementById("status").innerHTML = (new Date().getTime()) +": "+ message;
+        document.getElementById("status").innerHTML = e.data;
+        var sentTime = parseInt(message[4]);
+        if (sentTime==sentTime){
+          document.getElementById("status").innerHTML += " ("+ (new Date().getTime() - sentTime) + "ms)";
+        }
       };
       
       window.addEventListener("message", recieveMessage, false);
@@ -69,16 +73,18 @@
       };
       
       window.sendChainParent = function() {
+        var time = new Date().getTime();
         var windowIndex = parseInt(document.getElementById("id").value);
-        var message = "/chainparent/"+windowIndex+"/"+document.getElementById("message").value
+        var message = "/chainparent/"+windowIndex+"/"+document.getElementById("message").value+"/"+time;
         postMessageToParent("/forward/"+windowIndex+"/"+encodeURIComponent(message));
       };
       
       window.sendChainSib = function() {
+        var time = new Date().getTime();
         var windowIndex = parseInt(document.getElementById("id").value);
         var sib = parentWindow.frames[windowIndex];
         if (sib) {
-          sib.postMessage("/chain/"+windowIndex+"/"+document.getElementById("message").value, "*")
+          sib.postMessage("/chain/"+windowIndex+"/"+document.getElementById("message").value+"/"+time, "*")
         }
       };
       
