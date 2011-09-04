@@ -42,6 +42,7 @@ this.Composition = Backbone.Model.extend
       if pastedJSON isnt ""
         loadComp = JSON.parse(pastedJSON);
         if loadComp.id
+          # Simplest tracking of parents
           this.attributes.parent_id = loadComp.id
           if loadComp.parent_id
             this.attributes.parent_id += "," + loadComp.parent_id
@@ -88,21 +89,7 @@ this.Composition = Backbone.Model.extend
             newPlayer.oldcid = player.id
             player.newcid = newPlayer.cid
             newVideo.Players.add newPlayer
-    
-    # For old compositions, delete after alpha
-    if this.attributes.players
-      for player in this.attributes.players
-        for video in this.attributes.videos
-          if player.video_id is video.id
-            newVideo = this.Videos.getByCid(video.newcid)
-            newPlayer = new Player
-              Composition: this
-              Video: newVideo
-            newPlayer.oldcid = player.id
-            player.newcid = newPlayer.cid
-            newVideo.Players.add(newPlayer)
-            break
-              
+            
     # Repopulate patterns
     this.Patterns = new PatternList()
     
@@ -251,7 +238,7 @@ this.Composition = Backbone.Model.extend
         message += "/seek/"
         message += "#{item.player.cid}/"
         message += "#{seconds}|"
-
+        
     if message isnt ""
       App.postRawMessageToViewer message
       
@@ -278,13 +265,7 @@ this.Composition = Backbone.Model.extend
     
     setTimeout "App.reloadVideos()", 2000
       
-  # addPlayer: (ytid) ->
-  #   newPlayer = new Player 
-  #     Composition:this
-  #     ytid:ytid
-  #   this.Players.add newPlayer
-  #   newPlayer
-  
+    
   addVideo: (first_load="") ->
     newVideo = new Video
       Composition: this
@@ -317,7 +298,6 @@ this.Composition = Backbone.Model.extend
       mixer: this.get("mixer")
       bpm: this.get("bpm")
       videos: this.Videos
-      # players: this.Players
       patterns: this.Patterns
       sequences: this.Sequences
       parent_id: this.get("parent_id")

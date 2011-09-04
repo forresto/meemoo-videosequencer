@@ -32,7 +32,7 @@
       "mixer": "me!"
     },
     initialize: function() {
-      var loadComp, newPattern, newPlayer, newSeq, newSeqTrack, newTrack, newVideo, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len10, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+      var loadComp, newPattern, newPlayer, newSeq, newSeqTrack, newTrack, newVideo, old_player_id, pastedJSON, pattern, player, sequence, track, video, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _m, _n, _o, _p, _ref, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
       if (this.get("loadJSON") !== void 0) {
         pastedJSON = this.get("loadJSON");
         if (pastedJSON !== "") {
@@ -97,32 +97,11 @@
           }
         }
       }
-      if (this.attributes.players) {
-        _ref3 = this.attributes.players;
-        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-          player = _ref3[_k];
-          _ref4 = this.attributes.videos;
-          for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-            video = _ref4[_l];
-            if (player.video_id === video.id) {
-              newVideo = this.Videos.getByCid(video.newcid);
-              newPlayer = new Player({
-                Composition: this,
-                Video: newVideo
-              });
-              newPlayer.oldcid = player.id;
-              player.newcid = newPlayer.cid;
-              newVideo.Players.add(newPlayer);
-              break;
-            }
-          }
-        }
-      }
       this.Patterns = new PatternList();
       if (this.attributes.patterns) {
-        _ref5 = this.attributes.patterns;
-        for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
-          pattern = _ref5[_m];
+        _ref3 = this.attributes.patterns;
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          pattern = _ref3[_k];
           newPattern = new Pattern({
             Composition: this,
             trigger_id: pattern.trigger_id,
@@ -133,16 +112,16 @@
           this.Patterns.add(newPattern);
           pattern.newcid = newPattern.cid;
           if (pattern.tracks) {
-            _ref6 = pattern.tracks;
-            for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
-              track = _ref6[_n];
+            _ref4 = pattern.tracks;
+            for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+              track = _ref4[_l];
               old_player_id = track.player_id;
-              _ref7 = this.Videos.models;
-              for (_o = 0, _len7 = _ref7.length; _o < _len7; _o++) {
-                video = _ref7[_o];
-                _ref8 = video.Players.models;
-                for (_p = 0, _len8 = _ref8.length; _p < _len8; _p++) {
-                  player = _ref8[_p];
+              _ref5 = this.Videos.models;
+              for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+                video = _ref5[_m];
+                _ref6 = video.Players.models;
+                for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
+                  player = _ref6[_n];
                   if (old_player_id === player.oldcid) {
                     newTrack = newPattern.addTrack(player);
                     newTrack.setLine(track.line);
@@ -160,18 +139,18 @@
       this.queuedMessages = "";
       this.Sequences = new SequenceList();
       if (this.attributes.sequences) {
-        _ref9 = this.attributes.sequences;
-        for (_q = 0, _len9 = _ref9.length; _q < _len9; _q++) {
-          sequence = _ref9[_q];
+        _ref7 = this.attributes.sequences;
+        for (_o = 0, _len7 = _ref7.length; _o < _len7; _o++) {
+          sequence = _ref7[_o];
           newSeq = new Sequence({
             Composition: this,
             length: sequence.length
           });
           this.Sequences.add(newSeq);
           if (sequence.tracks) {
-            _ref10 = sequence.tracks;
-            for (_r = 0, _len10 = _ref10.length; _r < _len10; _r++) {
-              track = _ref10[_r];
+            _ref8 = sequence.tracks;
+            for (_p = 0, _len8 = _ref8.length; _p < _len8; _p++) {
+              track = _ref8[_p];
               if (track.line.length > 0) {
                 newSeqTrack = newSeq.addTrack();
                 newSeqTrack.setLine(track.line);

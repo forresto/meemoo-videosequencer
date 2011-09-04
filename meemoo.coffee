@@ -76,7 +76,7 @@ this.AppView = Backbone.View.extend
       .button
         icons: { primary: "ui-icon-document" }
       .click ->
-        if App.Composition.changesMade() and !confirm "You have unsaved changes in the current composition. Discard unsaved changes?"
+        if App.Composition and App.Composition.changesMade() and !confirm "You have unsaved changes in the current composition. Discard unsaved changes?"
           return
         newComp = new Composition()
         App.Compositions.add(newComp)

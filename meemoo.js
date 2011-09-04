@@ -57,7 +57,7 @@
         }
       }).click(function() {
         var newComp;
-        if (App.Composition.changesMade() && !confirm("You have unsaved changes in the current composition. Discard unsaved changes?")) {
+        if (App.Composition && App.Composition.changesMade() && !confirm("You have unsaved changes in the current composition. Discard unsaved changes?")) {
           return;
         }
         newComp = new Composition();

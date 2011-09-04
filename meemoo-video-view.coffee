@@ -260,6 +260,18 @@ this.VideoView = Backbone.View.extend
       this.model.remove()
 
 
+# http://code.google.com/intl/nl/apis/youtube/iframe_api_reference.html
+# window.onYouTubePlayerAPIReady = ->
+#   ytid = $("#yt_test_d").data("ytid")
+#   
+#   player = new YT.Player 'yt_test',
+#     height: '390'
+#     width: '640'
+#     videoId: 'u1zgFlCw8Aw'
+#     events:
+#       'onReady': onPlayerReady
+#       'onStateChange': onPlayerStateChange
+
 
 window.onYouTubePlayerReady = (id) ->
   player = document.getElementById("yt_test")
