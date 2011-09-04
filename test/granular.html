@@ -1,0 +1,125 @@
+<html>
+  <head>
+    <title>Granular Folk Song Synth with HTML5 Video by Sembiki Interactive</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/eggplant/jquery-ui.css" rel="stylesheet" type="text/css">
+    
+    <script src=http://davidbau.com/encode/seedrandom-min.js></script>
+  </head>
+  <body>
+    
+    <h1>Granular Folk Song Synth with HTML5 Video by Sembiki Interactive</h1>
+    
+    <div>
+      <video id="player" src="http://www.archive.org/download/ForrestPlaysTaik/forresto-plays-taik-banjo-360.webm" />
+    </div>
+    
+    <div id="scrub"></div>
+    
+    <div id="slider-range"></div>
+    
+    Start <input id="start" type="number" />
+    End <input id="end" type="number" />
+    Duration <input id="duration" type="number" />
+    Random Span <input id="random" type="number" value="1000" />
+    
+    Random Seed <input id="randomseed" type="text" value="" />
+    
+    <div id="pattern"></div>
+    
+    <script>
+      var player = document.getElementById("player");
+      
+      // var scrub = document.getElementById("scrub");
+      // scrub.addEventListener("mousemove", function(e){
+      //   percentage = e.offsetX / e.target.offsetWidth;
+      //   e.target.innerHTML = Math.round(percentage * 10000) / 100;
+      //   seekVideo(percentage*player.getDuration());
+      // });
+      // 
+      // $("#scrub").progressbar({
+      //   value: 0,
+      //   mousemove: function( event, ui ) {
+      //     $( "#amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " ms" );
+      //   }
+      // });
+      
+      // Video looping
+      var loopInterval, loopStart, msStart, msEnd, msDuration, randomSpread;
+      
+      $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: 30000,
+        values: [ 0, 1000 ],
+        slide: function( event, ui ) {
+          if (ui.values[ 0 ] != msStart) {
+            loop( ui.values[ 0 ], parseInt(ui.values[ 0 ])+parseInt(msDuration) );
+          } else {
+            loop( ui.values[ 0 ], ui.values[ 1 ] );
+          }
+        }
+      });
+      
+      msStart = $("#slider-range").slider( "values", 0 );
+      msEnd = $("#slider-range").slider( "values", 1 );
+      msDuration = msEnd - msStart;
+      msRandom = $("#random").val();
+      
+      $( "#start" )
+        .val( msStart )
+        .change(function(){
+          var s = parseInt($(this).val());
+          loop( s, s + msDuration );
+        });
+      $( "#end" )
+        .val( msEnd )
+        .change(function(){
+          var e = parseInt($(this).val());
+          loop( msStart, e);
+        });
+      $( "#duration" )
+        .val( msEnd - msStart )
+        .change(function(){
+          var d = parseInt($(this).val());
+          loop( msStart, msStart+d );
+        });
+      $( "#random" )
+        .change(function(){
+          randomSpread = $(this).val()/1000;
+          
+          $( "#pattern" ) = 
+        });
+      
+      function loop(start, end) {
+        var duration = end-start;
+        if (duration > 33) {
+          $( "#start" ).val( start );
+          $( "#end" ).val( end );
+          $( "#duration" ).val( duration );
+          $("#slider-range").slider( "values", 0, start )
+          $("#slider-range").slider( "values", 1, end )
+          msStart = start;
+          msEnd = end;
+          msDuration = duration;
+          loopStart = start/1000;
+          clearInterval(loopInterval);
+          loopInterval = setInterval(doLoop, duration);
+        }
+      };
+      
+      function doLoop() {
+        if (msRandom > 0) {
+          player.currentTime = loopStart + Math.random()*randomSpread;
+        } else {
+          player.currentTime = loopStart;
+        }
+      }
+      
+      
+    </script>
+    
+    
+  </body>
+</html>
