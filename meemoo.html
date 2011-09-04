@@ -33,29 +33,32 @@ This file is part of Meemoo.
     yepnope({
       test : hasFeatures,
       yep  : [
+        // CSS
+        'meemoo.css',
+        
+        // JS
         'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js',
         'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js',
         'http://www.youtube.com/player_api',
-        // 'lib/underscore.js',
-        // 'lib/backbone.js',
-        // 'lib/backbone-localstorage.js',
-        // 'meemoo-composition.js',
-        // 'meemoo-composition-view.js',
-        // 'meemoo-video.js',
-        // 'meemoo-video-view.js',
-        // 'meemoo-player.js',
-        // 'meemoo-player-view.js',
-        // 'meemoo-pattern.js',
-        // 'meemoo-pattern-view.js',
-        // 'meemoo-patterntrack.js',
-        // 'meemoo-patterntrack-view.js',
-        // 'meemoo-sequence.js',
-        // 'meemoo-sequence-view.js',
-        // 'meemoo-sequencetrack.js',
-        // 'meemoo-sequencetrack-view.js',
-        // 'meemoo.js',
-        'meemoo.min.js',
-        'meemoo.css'
+        'lib/underscore.js',
+        'lib/backbone.js',
+        'lib/backbone-localstorage.js',
+        'compiled/meemoo-composition.js',
+        'compiled/meemoo-composition-view.js',
+        'compiled/meemoo-video.js',
+        'compiled/meemoo-video-view.js',
+        'compiled/meemoo-player.js',
+        'compiled/meemoo-player-view.js',
+        'compiled/meemoo-pattern.js',
+        'compiled/meemoo-pattern-view.js',
+        'compiled/meemoo-patterntrack.js',
+        'compiled/meemoo-patterntrack-view.js',
+        'compiled/meemoo-sequence.js',
+        'compiled/meemoo-sequence-view.js',
+        'compiled/meemoo-sequencetrack.js',
+        'compiled/meemoo-sequencetrack-view.js',
+        'compiled/meemoo-app.js',
+        // 'compiled/meemoo.min.js'
       ],
       complete : function(){
         if (hasFeatures) {

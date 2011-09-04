@@ -1,3 +1,3 @@
 git status
 mate .
-coffee -c -w *.coffee
+coffee -o compiled/ -c -w *.coffee
