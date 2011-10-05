@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Meemoo Sequencer by Sembiki Interactive... coming soon</title>
+  <title>Meemoo modular JavaScript multimedia graph framework (HTML5!) by Sembiki Interactive and Media Lab Helsinki</title>
   
   <script type="text/javascript" src="lib/modernizr.custom.js"></script>
   
@@ -64,14 +64,14 @@
 </head>
 <body>
   
-  <h1>Meemoo: a web application for remixing web video</h1>
+  <h1>Meemoo: modular web media framework</h1>
 
   <nav>
     <ul>
       <li>Home</li>
       <li><a href="http://meemoo.noisepages.com/">Blog</a></li>
       <li><a href="http://getsatisfaction.com/sembiki">Feedback</a></li>
-      <li><a href="https://github.com/sembiki/meemoo">Source</a></li>
+      <li><a href="https://github.com/meemoo">Source</a></li>
       <li><a href="#donate">Donate</a></li>
       <li>
         <a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://meemoo.org/"></a>
@@ -81,10 +81,32 @@
       </li>
     </ul>
   </nav>
-  
+
+  <h2>The Idea</h2>
+  <p>
+    I am a strong believer in the idea that <a href="http://www.everythingisaremix.info/">everything is a remix</a>. Sampling, mashup music, and open source software are obvious examples, but I would argue that all science, language, and culture combines, evolves, and builds on the creations and discoveries of the past.
+  </p>
+
+  <h2>The Project</h2>
+  <p>
+    Meemoo is a web application that allows experimenting with mixing web media. 
+    A Meemoo composition is a graph of modules and the wires that connect them. 
+    Modules are HTML pages that can live anywhere online, using any web technology.
+    Wires represent how the modules send messages to each other.
+  </p>
+  <p>
+    One composition will allow web video to be remixed with modules familiar to people who create digital music: patterns and pattern sequencers. 
+  </p>
+  <p>
+    In the future, compositions will be sharable on a community site, which will promote well-made compositions and modules. 
+    All compositions and modules will be forkable in the open source spirit of creative collaboration.
+  </p>
+
+
+  <!-- 
   <p>
     This project is an open-source web application that enables users to remix web video. 
-    <!-- I'm currently <a href="http://rhizome.org/commissions/proposal/2256/">looking for support</a> to create a community site around sharing the mixes. -->
+    I'm currently <a href="http://rhizome.org/commissions/proposal/2256/">looking for support</a> to create a community site around sharing the mixes. 
   </p>
   
   <h2>The Idea</h2>
@@ -132,6 +154,8 @@
     <li>If you make something nice press [Export as text...] and email it to me, forrest at sembiki dot com</li>
     <li><em>No warranties, expressed or implied.</em> Since this app is in active development, I might make changes that will mess up saved compositions. I'll try not to, and at this point the save format (JSON) is pretty stable.</li>
   </ul>
+  
+  -->
 
 
 
@@ -145,7 +169,7 @@
       <ul style="font-size:.75em;">
         <li>webm: <span id="webm">?</span></li>
         <li>h264: <span id="h264">?</span></li>
-        <!-- <li>ogg: <span id="ogg">?</span></li> -->
+        <li>ogg: <span id="ogg">?</span></li>
       </ul>
     </li>
     <li style="display:none">Audio: <span id="audio">?</span>
@@ -157,15 +181,15 @@
     </li>
   </ul>
   <p>
-    Chrome 10+ and Firefox 4+ seem to work best.
+    Chrome 12+ and Firefox 6+ seem to work best.
   </p>
   
   <h2>Who made this?</h2>
   <p>
-    <a href="http://forresto.com/">Forrest Oliphant</a> at <a href="http://sembiki.com/">Sembiki Interactive</a>
+    <a href="http://forresto.com/">Forrest Oliphant</a> at <a href="http://sembiki.com/">Sembiki Interactive</a> and <a href="http://mlab.taik.fi/">Media Lab Helsinki</a>
   </p>
   <p>
-    To complement the audio-visual remixing, this app is free software (AGPL) and the source is <a href="https://github.com/sembiki/meemoo">available on GitHub</a>.
+    This app is free software (AGPL) and the source is <a href="https://github.com/meemoo">available on GitHub</a>.
   </p>
   
   <h2><a name="donate"></a>Donate</h2>
