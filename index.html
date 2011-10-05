@@ -170,7 +170,7 @@
   if (Modernizr.video) {
     document.getElementById("webm").innerHTML = !Modernizr.video.webm ? "no" : Modernizr.video.webm
     document.getElementById("h264").innerHTML = !Modernizr.video.h264 ? "no" : Modernizr.video.h264
-    // document.getElementById("ogg").innerHTML = !Modernizr.video.ogg ? "no" : Modernizr.video.ogg
+    document.getElementById("ogg").innerHTML = !Modernizr.video.ogg ? "no" : Modernizr.video.ogg
   }
   document.getElementById("audio").innerHTML = Modernizr.audio ? "yes" : "no"
   if (Modernizr.audio) {
